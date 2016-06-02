@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+/** Bebop/Bebop2のライブストリーム処理用のヘルパークラス */
 public class ARStreamManager {
 	private static final boolean DEBUG = false; // FIXME 実働時はfalseにすること
 	private static final String TAG = "ARStreamManager";

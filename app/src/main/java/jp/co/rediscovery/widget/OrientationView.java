@@ -13,9 +13,7 @@ import android.view.View;
 
 import jp.co.rediscovery.firstflight.R;
 
-/**
- * カメラのPan/Tiltに対応する位置に十字線を描くためのView
- */
+/** カメラのPan/Tiltに対応する位置に十字線を描くためのView */
 public class OrientationView extends View {
 
 	private int mPan, mTilt;

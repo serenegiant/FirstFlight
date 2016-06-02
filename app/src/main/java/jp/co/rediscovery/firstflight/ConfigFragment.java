@@ -25,6 +25,7 @@ import com.serenegiant.widget.RelativeRadioGroup;
 
 import static jp.co.rediscovery.firstflight.AppConst.*;
 
+/** 設定画面 */
 public class ConfigFragment extends BaseFlightControllerFragment {
 	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること
 	private static String TAG = ConfigFragment.class.getSimpleName();
@@ -300,7 +301,7 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 	private void initConfigOperation(final View root) {
 		if (DEBUG) Log.v(TAG, "initConfigOperation:");
 		final RadioGroup group = (RadioGroup)root.findViewById(R.id.operation_radiogroup);
-		switch (mPref.getInt(KEY_OPERATION_TYPE, 0)) {
+		switch (mPref.getInt(APP_CONFIG_KEY_OPERATION_TYPE, 0)) {
 		case 1:		// モード2
 			group.check(R.id.operation_mode2_radiobutton);
 			break;
@@ -331,11 +332,11 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 		SeekBar seekbar = (SeekBar)root.findViewById(R.id.gamepad_sensitivity_seekbar);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
-		mGamepadMaxControlValue = mPref.getFloat(KEY_GAMEPAD_SENSITIVITY, 1.0f);
+		mGamepadMaxControlValue = mPref.getFloat(APP_CONFIG_KEY_GAMEPAD_SENSITIVITY, 1.0f);
 		try {
-			seekbar.setProgress((int) (mGamepadMaxControlValue + SCALE_OFFSET));
+			seekbar.setProgress((int) (mGamepadMaxControlValue + APP_SCALE_OFFSET));
 		} catch (final Exception e) {
-			seekbar.setProgress(SCALE_OFFSET);
+			seekbar.setProgress(APP_SCALE_OFFSET);
 		}
 		seekbar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateGamepadMaxControlValue(mGamepadMaxControlValue);
@@ -344,11 +345,11 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 		seekbar = (SeekBar)root.findViewById(R.id.gamepad_scale_seekbar_x);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
-		mGamepadScaleX = mPref.getFloat(KEY_GAMEPAD_SCALE_X, 1.0f);
+		mGamepadScaleX = mPref.getFloat(APP_CONFIG_KEY_GAMEPAD_SCALE_X, 1.0f);
 		try {
-			seekbar.setProgress((int) (mGamepadScaleX * SCALE_FACTOR + SCALE_OFFSET));
+			seekbar.setProgress((int) (mGamepadScaleX * APP_SCALE_FACTOR + APP_SCALE_OFFSET));
 		} catch (final Exception e) {
-			seekbar.setProgress(SCALE_OFFSET);
+			seekbar.setProgress(APP_SCALE_OFFSET);
 		}
 		seekbar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateGamepadScaleX(mGamepadScaleX);
@@ -357,11 +358,11 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 		seekbar = (SeekBar)root.findViewById(R.id.gamepad_scale_seekbar_y);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
-		mGamepadScaleY = mPref.getFloat(KEY_GAMEPAD_SCALE_Y, 1.0f);
+		mGamepadScaleY = mPref.getFloat(APP_CONFIG_KEY_GAMEPAD_SCALE_Y, 1.0f);
 		try {
-			seekbar.setProgress((int) (mGamepadScaleY * SCALE_FACTOR + SCALE_OFFSET));
+			seekbar.setProgress((int) (mGamepadScaleY * APP_SCALE_FACTOR + APP_SCALE_OFFSET));
 		} catch (final Exception e) {
-			seekbar.setProgress(SCALE_OFFSET);
+			seekbar.setProgress(APP_SCALE_OFFSET);
 		}
 		seekbar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateGamepadScaleY(mGamepadScaleY);
@@ -370,11 +371,11 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 		seekbar = (SeekBar)root.findViewById(R.id.gamepad_scale_seekbar_z);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
-		mGamepadScaleZ = mPref.getFloat(KEY_GAMEPAD_SCALE_Z, 1.0f);
+		mGamepadScaleZ = mPref.getFloat(APP_CONFIG_KEY_GAMEPAD_SCALE_Z, 1.0f);
 		try {
-			seekbar.setProgress((int) (mGamepadScaleZ * SCALE_FACTOR + SCALE_OFFSET));
+			seekbar.setProgress((int) (mGamepadScaleZ * APP_SCALE_FACTOR + APP_SCALE_OFFSET));
 		} catch (final Exception e) {
-			seekbar.setProgress(SCALE_OFFSET);
+			seekbar.setProgress(APP_SCALE_OFFSET);
 		}
 		seekbar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateGamepadScaleZ(mGamepadScaleZ);
@@ -383,11 +384,11 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 		seekbar = (SeekBar)root.findViewById(R.id.gamepad_scale_seekbar_r);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
-		mGamepadScaleR = mPref.getFloat(KEY_GAMEPAD_SCALE_R, 1.0f);
+		mGamepadScaleR = mPref.getFloat(APP_CONFIG_KEY_GAMEPAD_SCALE_R, 1.0f);
 		try {
-			seekbar.setProgress((int) (mGamepadScaleR * SCALE_FACTOR + SCALE_OFFSET));
+			seekbar.setProgress((int) (mGamepadScaleR * APP_SCALE_FACTOR + APP_SCALE_OFFSET));
 		} catch (final Exception e) {
-			seekbar.setProgress(SCALE_OFFSET);
+			seekbar.setProgress(APP_SCALE_OFFSET);
 		}
 		seekbar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateGamepadScaleR(mGamepadScaleR);
@@ -606,23 +607,23 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 					updateMaxRotationSpeed(rotation);
 					break;
 				case R.id.gamepad_sensitivity_seekbar:	// -5.00〜+5.00
-					final float sensitivity = (progress - SCALE_OFFSET) / 100f;
+					final float sensitivity = (progress - APP_SCALE_OFFSET) / 100f;
 					updateGamepadMaxControlValue(sensitivity);
 					break;
 				case R.id.gamepad_scale_seekbar_x:
-					final float gamepad_scale_x = (progress - SCALE_OFFSET) / SCALE_FACTOR;
+					final float gamepad_scale_x = (progress - APP_SCALE_OFFSET) / APP_SCALE_FACTOR;
 					updateGamepadScaleX(gamepad_scale_x);
 					break;
 				case R.id.gamepad_scale_seekbar_y:
-					final float gamepad_scale_y = (progress - SCALE_OFFSET) / SCALE_FACTOR;
+					final float gamepad_scale_y = (progress - APP_SCALE_OFFSET) / APP_SCALE_FACTOR;
 					updateGamepadScaleY(gamepad_scale_y);
 					break;
 				case R.id.gamepad_scale_seekbar_z:
-					final float gamepad_scale_z = (progress - SCALE_OFFSET) / SCALE_FACTOR;
+					final float gamepad_scale_z = (progress - APP_SCALE_OFFSET) / APP_SCALE_FACTOR;
 					updateGamepadScaleZ(gamepad_scale_z);
 					break;
 				case R.id.gamepad_scale_seekbar_r:
-					final float gamepad_scale_r = (progress - SCALE_OFFSET) / SCALE_FACTOR;
+					final float gamepad_scale_r = (progress - APP_SCALE_OFFSET) / APP_SCALE_FACTOR;
 					updateGamepadScaleR(gamepad_scale_r);
 					break;
 				}
@@ -667,38 +668,38 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 				break;
 			// ゲームパッド
 			case R.id.gamepad_sensitivity_seekbar:
-				final float sensitivity = (seekBar.getProgress() - SCALE_OFFSET) / 100f;
+				final float sensitivity = (seekBar.getProgress() - APP_SCALE_OFFSET) / 100f;
 				if (sensitivity != mGamepadMaxControlValue) {
 					mGamepadMaxControlValue = sensitivity;
-					mPref.edit().putFloat(KEY_GAMEPAD_SENSITIVITY, sensitivity).apply();
+					mPref.edit().putFloat(APP_CONFIG_KEY_GAMEPAD_SENSITIVITY, sensitivity).apply();
 				}
 				break;
 			case R.id.gamepad_scale_seekbar_x:
-				final float gamepad_scale_x = (seekBar.getProgress() - SCALE_OFFSET) / SCALE_FACTOR;
+				final float gamepad_scale_x = (seekBar.getProgress() - APP_SCALE_OFFSET) / APP_SCALE_FACTOR;
 				if (gamepad_scale_x != mGamepadScaleX) {
 					mGamepadScaleX = gamepad_scale_x;
-					mPref.edit().putFloat(KEY_GAMEPAD_SCALE_X, gamepad_scale_x).apply();
+					mPref.edit().putFloat(APP_CONFIG_KEY_GAMEPAD_SCALE_X, gamepad_scale_x).apply();
 				}
 				break;
 			case R.id.gamepad_scale_seekbar_y:
-				final float gamepad_scale_y = (seekBar.getProgress() - SCALE_OFFSET) / SCALE_FACTOR;
+				final float gamepad_scale_y = (seekBar.getProgress() - APP_SCALE_OFFSET) / APP_SCALE_FACTOR;
 				if (gamepad_scale_y != mGamepadScaleY) {
 					mGamepadScaleY = gamepad_scale_y;
-					mPref.edit().putFloat(KEY_GAMEPAD_SCALE_Y, gamepad_scale_y).apply();
+					mPref.edit().putFloat(APP_CONFIG_KEY_GAMEPAD_SCALE_Y, gamepad_scale_y).apply();
 				}
 				break;
 			case R.id.gamepad_scale_seekbar_z:
-				final float gamepad_scale_z = (seekBar.getProgress() - SCALE_OFFSET) / SCALE_FACTOR;
+				final float gamepad_scale_z = (seekBar.getProgress() - APP_SCALE_OFFSET) / APP_SCALE_FACTOR;
 				if (gamepad_scale_z != mGamepadScaleZ) {
 					mGamepadScaleZ = gamepad_scale_z;
-					mPref.edit().putFloat(KEY_GAMEPAD_SCALE_Z, gamepad_scale_z).apply();
+					mPref.edit().putFloat(APP_CONFIG_KEY_GAMEPAD_SCALE_Z, gamepad_scale_z).apply();
 				}
 				break;
 			case R.id.gamepad_scale_seekbar_r:
-				final float gamepad_scale_r = (seekBar.getProgress() - SCALE_OFFSET) / SCALE_FACTOR;
+				final float gamepad_scale_r = (seekBar.getProgress() - APP_SCALE_OFFSET) / APP_SCALE_FACTOR;
 				if (gamepad_scale_r != mGamepadScaleR) {
 					mGamepadScaleR = gamepad_scale_r;
-					mPref.edit().putFloat(KEY_GAMEPAD_SCALE_R, gamepad_scale_r).apply();
+					mPref.edit().putFloat(APP_CONFIG_KEY_GAMEPAD_SCALE_R, gamepad_scale_r).apply();
 				}
 				break;
 			}
@@ -756,10 +757,10 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 	private void onCheckedChanged(final int checkedId) {
 		switch (checkedId) {
 		case R.id.operation_mode1_radiobutton:
-			mPref.edit().putInt(KEY_OPERATION_TYPE, 0).apply();
+			mPref.edit().putInt(APP_CONFIG_KEY_OPERATION_TYPE, 0).apply();
 			break;
 		case R.id.operation_mode2_radiobutton:
-			mPref.edit().putInt(KEY_OPERATION_TYPE, 1).apply();
+			mPref.edit().putInt(APP_CONFIG_KEY_OPERATION_TYPE, 1).apply();
 			break;
 		case R.id.network_outdoor_radiobutton:
 			if ((mController instanceof IWiFiController)

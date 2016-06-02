@@ -16,6 +16,7 @@ import jp.co.rediscovery.opencv.ImageProcessor;
 
 import static jp.co.rediscovery.firstflight.AutoPilotConst.*;
 
+/** ライントレース用の操縦画面Fragment */
 public class AutoPilotFragment extends BaseAutoPilotFragment {
 	private static final boolean DEBUG = false; // FIXME 実働時はfalseにすること
 	private static final String TAG = AutoPilotFragment.class.getSimpleName();

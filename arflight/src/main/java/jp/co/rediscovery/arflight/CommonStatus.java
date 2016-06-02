@@ -3,6 +3,7 @@ package jp.co.rediscovery.arflight;
 import jp.co.rediscovery.arflight.attribute.AttributeCalibration;
 import jp.co.rediscovery.arflight.attribute.AttributePosition;
 
+/** 各機体/スカイコントローラー共通のステータスクラス */
 public class CommonStatus {
 	public static final int ALARM_NON = 0;
 	public static final int ALARM_USER_EMERGENCY = 1;
@@ -21,7 +22,10 @@ public class CommonStatus {
 	private AttributePosition mPosition = new AttributePosition();
 	private AttributePosition mHomePosition = new AttributePosition();
 
-	/** 異常状態をセット */
+	/**
+	 * 異常状態をセット
+	 * @param alarm_state
+	 */
 	public void setAlarm(final int alarm_state) {
 		synchronized (mStateSync) {
 			if (mAlarmState != alarm_state) {
@@ -30,21 +34,30 @@ public class CommonStatus {
 		}
 	}
 
-	/** 異常状態を取得 */
+	/**
+	 * 異常状態を取得
+	 * @return ALARM_XXX定数のどれか
+	 */
 	public int getAlarm() {
 		synchronized (mStateSync) {
 			return mAlarmState;
 		}
 	}
 
-	/** バッテリー残量をセット */
+	/**
+	 * バッテリー残量をセット
+	 * @param battery_state [0,100]
+	 */
 	public void setBattery(final int battery_state) {
 		synchronized (mStateSync) {
 			mBatteryState = battery_state;
 		}
 	}
 
-	/** バッテリー残量を取得 */
+	/**
+	 * バッテリー残量を取得
+	 * @return [0,100]
+	 */
 	public int getBattery() {
 		synchronized (mStateSync) {
 			return mBatteryState;
@@ -95,6 +108,7 @@ public class CommonStatus {
 	 * @param latitude
 	 * @param longitude
 	 * @param altitude
+	 * @param heading 方位角(北磁極に対する回転方向, 未使用)
 	 */
 	public void setPosition(final double latitude, final double longitude, final double altitude, final double heading) {
 		synchronized (mSync) {
@@ -102,7 +116,10 @@ public class CommonStatus {
 		}
 	}
 
-	/** 経度をセット */
+	/**
+	 * 経度をセット
+	 * @param latitude
+	 */
 	public void latitude(final double latitude) {
 		synchronized (mSync) {
 			mPosition.latitude(latitude);
@@ -115,40 +132,60 @@ public class CommonStatus {
 		}
 	}
 
-	/** 経度をセット */
+	/**
+	 * 経度をセット
+	 * @param longitude
+	 */
 	public void longitude(final double longitude) {
 		synchronized (mSync) {
 			mPosition.longitude(longitude);
 		}
 	}
-	/** 経度を取得[度] */
+
+	/**
+	 * 経度を取得[度]を取得
+	 * @return
+	 */
 	public double longitude() {
 		synchronized (mSync) {
 			return mPosition.longitude();
 		}
 	}
 
-	/** 高度[m]を設定  */
+	/**
+	 * 高度[m]を設定
+	 * @param altitude
+	 */
 	public void altitude(final double altitude) {
 		synchronized (mSync) {
 			mPosition.altitude(altitude);
 		}
 	}
-	/** 高度[m]を取得 */
+
+	/**
+	 * 高度[m]を取得
+	 * @return
+	 */
 	public double altitude() {
 		synchronized (mSync) {
 			return mPosition.altitude();
 		}
 	}
 
-	/** 方位角[度]を設定 */
+	/**
+	 * 方位角[度]を設定
+	 * @param heading
+	 */
 	public void heading(final double heading) {
 		synchronized (mSync) {
 			mPosition.heading(heading);
 		}
 	}
 
-	/** 方位角[度]を取得 */
+	/**
+	 * 方位角[度]を取得
+	 * @return
+	 */
 	public double heading() {
 		synchronized (mSync) {
 			return mPosition.heading();
@@ -156,7 +193,7 @@ public class CommonStatus {
 	}
 
 	/**
-	 * 座標をセット
+	 * ホーム座標をセット
 	 * @param latitude
 	 * @param longitude
 	 * @param altitude
@@ -167,39 +204,59 @@ public class CommonStatus {
 		}
 	}
 
-	/** 経度をセット */
+	/**
+	 * ホーム座標の経度をセット
+	 * @param latitude
+	 */
 	public void homeLatitude(final double latitude) {
 		synchronized (mSync) {
 			mHomePosition.latitude(latitude);
 		}
 	}
-	/** 緯度を取得[度] */
+	/**
+	 * ホーム座標の緯度を取得[度]
+	 * @return
+	 */
 	public double homeLatitude() {
 		synchronized (mSync) {
 			return mHomePosition.latitude();
 		}
 	}
 
-	/** 経度をセット */
+	/**
+	 * ホーム座標の経度をセット
+	 * @param longitude
+	 */
 	public void homeLongitude(final double longitude) {
 		synchronized (mSync) {
 			mHomePosition.longitude(longitude);
 		}
 	}
-	/** 経度を取得[度] */
+
+	/**
+	 * ホーム座標の経度を取得[度]
+	 * @return
+	 */
 	public double homeLongitude() {
 		synchronized (mSync) {
 			return mHomePosition.longitude();
 		}
 	}
 
-	/** 高度[m]を設定  */
+	/**
+	 * ホーム座標の高度[m]を設定
+	 * @param altitude
+	 */
 	public void homeAltitude(final double altitude) {
 		synchronized (mSync) {
 			mHomePosition.altitude(altitude);
 		}
 	}
-	/** 高度[m]を取得 */
+
+	/**
+	 * ホーム座標の高度[m]を取得
+	 * @return
+	 */
 	public double homeAltitude() {
 		synchronized (mSync) {
 			return mHomePosition.altitude();
@@ -208,17 +265,29 @@ public class CommonStatus {
 
 	private AttributeCalibration mAttributeCalibration = new AttributeCalibration();
 
-	/** 機器のキャリブレーション状態を設定 */
+	/**
+	 * 機器の磁気センサーのキャリブレーション状態を設定
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param failed
+	 */
 	public void updateCalibrationState(final boolean x, final boolean y, final boolean z, final boolean failed) {
 		mAttributeCalibration.update(x, y, z, failed);
 	}
 
-	/** 機体のキャリブレーションが必要かどうかを設定 */
+	/**
+	 * 機体の磁気センサーのキャリブレーションが必要かどうかを設定
+	 * @param need_calibration
+	 */
 	public void needCalibration(final boolean need_calibration) {
 		mAttributeCalibration.needCalibration(need_calibration);
 	}
 
-	/** 機体のキャリブレーションが必要かどうかを取得 */
+	/**
+	 * 機体のキャリブレーションが必要かどうかを取得
+	 * @return
+	 */
 	public boolean needCalibration() {
 		return mAttributeCalibration.needCalibration();
 	}

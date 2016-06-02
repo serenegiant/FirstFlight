@@ -15,6 +15,7 @@ import com.serenegiant.utils.HandlerThreadHandler;
 import java.util.HashMap;
 import java.util.Map;
 
+/**　Fragmentでの共通処理を実装したクラス　*/
 public class BaseFragment extends Fragment {
 	private static final boolean DEBUG = false; // FIXME 実働時はfalseにすること
 	private static final String TAG = BaseFragment.class.getSimpleName();

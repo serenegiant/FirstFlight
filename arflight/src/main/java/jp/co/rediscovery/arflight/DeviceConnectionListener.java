@@ -1,5 +1,9 @@
 package jp.co.rediscovery.arflight;
 
+/**
+ * IDeviceControllerからのコールバックリスナー
+ * 機体との接続状態等の通知用
+ */
 public interface DeviceConnectionListener {
 	/**
 	 * 接続した時のコールバック

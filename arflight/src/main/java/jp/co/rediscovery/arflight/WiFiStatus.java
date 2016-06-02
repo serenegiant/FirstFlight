@@ -1,8 +1,6 @@
 package jp.co.rediscovery.arflight;
 
-/**
- * Created by saki on 16/02/07.
- */
+/** WiFiの接続状態保持用のクラス */
 public class WiFiStatus {
 	public final int txPower;
 	public String ssid;
@@ -24,6 +22,11 @@ public class WiFiStatus {
 //	factor = 2.0 : 障害物のない理想空間
 //	factor < 2.0 : 電波が反射しながら伝搬する空間
 //	factor > 2.0 : 障害物に吸収され減衰しながら伝搬する空間
+
+	/**
+	 * 概算で距離を計算してみる(電波状況・空間状況・送信強度全部わからへんからあまりあてにはならへんけど)
+	 * @return
+	 */
 	public float distance() {
 		try {
 			return (float)Math.pow(10.0, (txPower - rssi) / (10 * factor));

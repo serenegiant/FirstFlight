@@ -36,6 +36,7 @@ import jp.co.rediscovery.arflight.controllers.SkyController;
 import com.serenegiant.net.NetworkChangedReceiver;
 import com.serenegiant.utils.HandlerThreadHandler;
 
+/*** 検出・接続した機体を管理するための非UI Fragment */
 public class ManagerFragment extends Fragment {
 	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること
 	private static final String TAG = "ManagerFragment";
@@ -218,7 +219,7 @@ public class ManagerFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
 		if (DEBUG) Log.i(TAG, "onResume:");
-//		startDiscovery();
+//		startDiscovery();	// これは明示的に接続画面から呼び出すべき
 	}
 
 	@Override
@@ -245,6 +246,7 @@ public class ManagerFragment extends Fragment {
 		super.onDetach();
 	}
 
+	/** 機体探索開始 */
 	public void startDiscovery() {
 		if (DEBUG) Log.v(TAG, "startDiscovery:");
 		mDeviceListUpdatedReceiverDelegate.onServicesDevicesListUpdated();
@@ -252,6 +254,7 @@ public class ManagerFragment extends Fragment {
 		registerReceivers();
 	}
 
+	/** 機体探索終了 */
 	public void stopDiscovery() {
 		if (DEBUG) Log.v(TAG, "stopDiscovery:");
 		unregisterReceivers();
@@ -259,7 +262,7 @@ public class ManagerFragment extends Fragment {
 	}
 
 	/**
-	 * コールバックを追加する
+	 * 検出した機体一覧が変更された時のコールバックを追加する
 	 * @param callback
 	 */
 	public void addCallback(final ManagerCallback callback) {
@@ -279,7 +282,7 @@ public class ManagerFragment extends Fragment {
 	}
 
 	/**
-	 * コールバックを除去する
+	 * 検出した機体一覧が変更された時のコールバックを除去する
 	 * @param callback
 	 */
 	public void removeCallback(final ManagerCallback callback) {
@@ -329,7 +332,7 @@ public class ManagerFragment extends Fragment {
 	/**
 	 * 指定したARDiscoveryDeviceServiceインスタンスに対応するIDeviceControllerを取得する
 	 * @param device
-	 * @return
+	 * @return 一致するものがなければ生成する
 	 */
 	public IDeviceController getController(final ARDiscoveryDeviceService device) {
 		IDeviceController result = null;
@@ -344,6 +347,11 @@ public class ManagerFragment extends Fragment {
 		return result;
 	}
 
+	/**
+	 * #getControllerの下請け
+	 * @param name
+	 * @return nameに一致するものがなければnull
+	 */
 	private IDeviceController internalGetController(final String name) {
 		IDeviceController result = null;
 		if (mControllers.containsKey(name)) {
@@ -392,7 +400,7 @@ public class ManagerFragment extends Fragment {
 	}
 
 	/**
-	 * IDeviceControllerを生成する (FIXME JumpingSumoは未対応)
+	 * IDeviceControllerを生成する (FIXME JumpingSumoとハイドロフォイルは未対応)
 	 * @param device
 	 * @return
 	 */
@@ -428,12 +436,17 @@ public class ManagerFragment extends Fragment {
 				}
 			}
 		} else {
-			Log.w(TAG, "deviceがnullやん");
+			Log.w(TAG, "deviceがnullやんか");
 		}
 		if (DEBUG) Log.i(TAG, "createController:終了,result=" + result);
 		return result;
 	}
 
+	/**
+	 * 機体との接続を開始する
+	 * @param controller
+	 * @param listener
+	 */
 	public void startController(final IDeviceController controller, final StartControllerListener listener) {
 		if (DEBUG) Log.i(TAG, "startController:" + controller);
 
@@ -558,6 +571,10 @@ public class ManagerFragment extends Fragment {
 		}
 	}
 
+	/***
+	 * ARSDKの機体探索サービスに接続する
+	 * #startDiscoveryの実際の処理
+	 */
 	private void bindServices() {
 		if (DEBUG) Log.d(TAG, "bindServices ...:binder=" + discoveryServiceBinder);
 		if (discoveryServiceBinder == null) {
@@ -572,6 +589,10 @@ public class ManagerFragment extends Fragment {
 		}
 	}
 
+	/**
+	 * ARSDKの機体探索サービスから切断する
+	 * #stopDiscoveryの実際の処理
+	 */
 	private void unbindServices() {
 		if (DEBUG) Log.d(TAG, "unbindServices ...");
 
@@ -596,6 +617,7 @@ public class ManagerFragment extends Fragment {
 		}
 	}
 
+	/** 機体探索サービスとの接続/切断イベント処理用コールバック */
 	private final ServiceConnection ardiscoveryServiceConnection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(final ComponentName name, final IBinder service) {
@@ -612,7 +634,9 @@ public class ManagerFragment extends Fragment {
 		}
 	};
 
+	/** ネットワークへの接続状態監視用BroadcastReceiverのインスタンス */
 	private NetworkChangedReceiver mNetworkChangedReceiver;
+	/** ネットワークへの接続状態監視用BroadcastReceiverを登録する  */
 	private void registerReceivers() {
 		if (DEBUG) Log.v(TAG, "registerReceivers:mRegistered=" + mRegistered);
 		if (!mRegistered) {
@@ -627,6 +651,7 @@ public class ManagerFragment extends Fragment {
 		}
 	}
 
+	/** ネットワークへの接続状態監視用BroadcastReceiverを登録解除する */
 	private void unregisterReceivers() {
 		if (DEBUG) Log.v(TAG, "unregisterReceivers:mRegistered=" + mRegistered);
 		mRegistered = false;
@@ -639,9 +664,27 @@ public class ManagerFragment extends Fragment {
 		}
 	}
 
+	/** ネットワークへの接続状態が変化した時のコールバックリスナー */
+	private final NetworkChangedReceiver.OnNetworkChangedListener mOnNetworkChangedListener
+		= new NetworkChangedReceiver.OnNetworkChangedListener() {
+		@Override
+		public void onNetworkChanged(final int isConnectedOrConnecting, final int isConnected, final int activeNetworkFlag) {
+			if (mRegistered && (ardiscoveryService != null)) {
+				if (NetworkChangedReceiver.isWifiNetworkReachable()) {
+					if (DEBUG) Log.v(TAG, "startWifiDiscovering");
+					ardiscoveryService.startWifiDiscovering();
+				} else {
+					if (DEBUG) Log.v(TAG, "stopWifiDiscovering");
+					ardiscoveryService.stopWifiDiscovering();
+				}
+			}
+		}
+	};
+
+	/** 検出した機体一覧が変更された時の機体検出サービスからのコールバックリスナー */
 	private final ARDiscoveryServicesDevicesListUpdatedReceiverDelegate
 		mDeviceListUpdatedReceiverDelegate
-		= new ARDiscoveryServicesDevicesListUpdatedReceiverDelegate() {
+			= new ARDiscoveryServicesDevicesListUpdatedReceiverDelegate() {
 		@Override
 		public void onServicesDevicesListUpdated() {
 			if (DEBUG) Log.d(TAG, "onServicesDevicesListUpdated ...");
@@ -663,6 +706,7 @@ public class ManagerFragment extends Fragment {
 	private final BroadcastReceiver mDevicesListUpdatedReceiver
 		= new ARDiscoveryServicesDevicesListUpdatedReceiver(mDeviceListUpdatedReceiverDelegate);
 
+	/** ManagerFragmentに登録されている検出機体一覧変更コールバックを呼び出すためのヘルパーメソッド */
 	private void callOnServicesDevicesListUpdated() {
 		synchronized (mDevices) {
 			for (final ManagerCallback cb: mCallbacks) {
@@ -675,6 +719,10 @@ public class ManagerFragment extends Fragment {
 		}
 	}
 
+	/**
+	 * UIスレッド上で指定したRunnableを実行するためのヘルパーメソッド
+	 * @param task
+	 */
 	protected void runOnUiThread(final Runnable task) {
 		if (task != null) {
 			try {
@@ -689,6 +737,10 @@ public class ManagerFragment extends Fragment {
 		}
 	}
 
+	/**
+	 * ワーカースレッド上で指定したRunnableを実行するためのヘルパーメソッド
+	 * @param task
+	 */
 	protected void queueEvent(final Runnable task) {
 		synchronized (mSync) {
 			if (mAsyncHandler != null) {
@@ -699,6 +751,11 @@ public class ManagerFragment extends Fragment {
 		}
 	}
 
+	/**
+	 * ワーカースレッド上で指定したRunnableを実行するためのヘルパーメソッド
+	 * @param task
+	 * @param delay 遅延時間[ミリ秒]
+	 */
 	protected void queueEvent(final Runnable task, final long delay) {
 		synchronized (mSync) {
 			if (mAsyncHandler != null) {
@@ -713,6 +770,10 @@ public class ManagerFragment extends Fragment {
 		}
 	}
 
+	/**
+	 * 指定したIDeviceControllerを接続解除する
+	 * @param controller
+	 */
 	protected void stopController(final IDeviceController controller) {
 		if (DEBUG) Log.v(TAG, "stopController:" + controller);
 		runOnUiThread(new Runnable() {
@@ -751,6 +812,7 @@ public class ManagerFragment extends Fragment {
 		});
 	}
 
+	/**　IDeviceControllerからのコールバックリスナー　*/
 	private final DeviceConnectionListener mConnectionListener
 		= new DeviceConnectionListener() {
 		@Override
@@ -777,24 +839,15 @@ public class ManagerFragment extends Fragment {
 		}
 	};
 
-	private final NetworkChangedReceiver.OnNetworkChangedListener mOnNetworkChangedListener
-		= new NetworkChangedReceiver.OnNetworkChangedListener() {
-		@Override
-		public void onNetworkChanged(final int isConnectedOrConnecting, final int isConnected, final int activeNetworkFlag) {
-			if (mRegistered && (ardiscoveryService != null)) {
-				if (NetworkChangedReceiver.isWifiNetworkReachable()) {
-					if (DEBUG) Log.v(TAG, "startWifiDiscovering");
-					ardiscoveryService.startWifiDiscovering();
-				} else {
-					if (DEBUG) Log.v(TAG, "stopWifiDiscovering");
-					ardiscoveryService.stopWifiDiscovering();
-				}
-			}
-		}
-	};
-
+	/** 接続・切断時のプログレスダイアログ */
 	private ProgressDialog mProgress;
 
+	/**
+	 * プログレスダイアログを表示する
+	 * @param title_resID
+	 * @param cancelable
+	 * @param cancel_listener
+	 */
 	private synchronized void showProgress(final int title_resID, final boolean cancelable,
 		final DialogInterface.OnCancelListener cancel_listener) {
 
@@ -810,6 +863,9 @@ public class ManagerFragment extends Fragment {
 		}
 	}
 
+	/**
+	 * プログレスダイアログを非表示にして破棄する
+	 */
 	private synchronized void hideProgress() {
 		runOnUiThread(new Runnable() {
 			@Override

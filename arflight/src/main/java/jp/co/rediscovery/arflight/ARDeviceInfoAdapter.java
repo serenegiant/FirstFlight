@@ -14,11 +14,17 @@ import com.parrot.arsdk.ardiscovery.ARDiscoveryService;
 
 import java.util.ArrayList;
 
+/** スカイコントローラー経由での機体探索画面で検出した機体一覧を表示するためのAdapterクラス */
 public class ARDeviceInfoAdapter extends ArrayAdapter<DeviceInfo> {
 
 	private final LayoutInflater mInflater;
 	private final int mLayoutId;
 
+	/**
+	 * コンストラクタ
+	 * @param context
+	 * @param resource 機体表示用のレイアウトリソースID, 表示できる項目のidはtitle(TextView), state(TextView), thumbnail(ImageView)
+	 */
 	public ARDeviceInfoAdapter(final Context context, final int resource) {
 		super(context, resource, new ArrayList<DeviceInfo>());
 		mInflater = LayoutInflater.from(context);
@@ -43,37 +49,40 @@ public class ARDeviceInfoAdapter extends ArrayAdapter<DeviceInfo> {
 			holder.title.setText(info.name());
 		}
 		if (holder.state != null) {
-			// FIXME 接続状態の更新処理
+			// 接続状態の更新処理
 			if (rootView instanceof Checkable) {
 				holder.state.setText(((Checkable)rootView).isChecked() ? "選択中" : "---");
 			}
 		}
 		if (holder.thumbnail != null) {
-			// FIXME 機体アイコンの更新処理。今はアプリのアイコンと同じまま
+			// 機体アイコンの更新処理。今は変更なし
 			final ARDISCOVERY_PRODUCT_ENUM product = ARDiscoveryService.getProductFromProductID(info.productId());
 			switch (product) {
 			case ARDISCOVERY_PRODUCT_ARDRONE:	// Bebop
 			case ARDISCOVERY_PRODUCT_BEBOP_2:	// Bebop2
-//				holder.thumbnail.setImageResource(R.drawable.ic_ardrone);
-				break;
 			case ARDISCOVERY_PRODUCT_MINIDRONE:	// RollingSpider
 			case ARDISCOVERY_PRODUCT_MINIDRONE_EVO_LIGHT:
 			case ARDISCOVERY_PRODUCT_MINIDRONE_EVO_BRICK:
-//			case ARDISCOVERY_PRODUCT_MINIDRONE_EVO_HYDROFOIL: // ハイドロフォイルもいる?
-//				holder.thumbnail.setImageResource(R.drawable.ic_minidrone);
-				break;
+			case ARDISCOVERY_PRODUCT_MINIDRONE_EVO_HYDROFOIL: // ハイドロフォイルもいる?
 			case ARDISCOVERY_PRODUCT_SKYCONTROLLER:	// SkyController
+//				holder.thumbnail.setImageResource(機体アイコンリソースID);
 				break;
 			}
 		}
 		return rootView;
 	}
 
+	/**
+	 * 指定した位置の検出機体名を取得
+	 * @param position
+	 * @return
+	 */
 	public String getItemName(final int position) {
 		final DeviceInfo info = getItem(position);
 		return info != null ? info.name() : null;
 	}
 
+	/** 生成した各項目用のViewの再利用をするためのholderクラス　*/
 	private static final class ViewHolder {
 		TextView title;
 		TextView state;

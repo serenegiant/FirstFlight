@@ -2,6 +2,7 @@ package jp.co.rediscovery.arflight;
 
 import java.util.List;
 
+/** スカイコントローラー用の追加メソッドを定義するためのインターフェース */
 public interface ISkyController extends IDeviceController {
 
 	/**
@@ -155,13 +156,22 @@ public interface ISkyController extends IDeviceController {
 	 */
 	public boolean setMagnetoCalibrationQualityUpdates(final boolean enable);
 	/**
-	 * なんじゃらほい?
+	 * なんじゃ?
 	 * 何のコールバックも返ってこない
 	 * FIXME スカイコントローラー自体のアプリ用なのかも
 	 * @return
 	 */
 	public boolean requestButtonEventsSettings();
 
+	/**
+	 * スカイコントローラー自体のGPS座標が特定されたかどうか
+	 * @return
+	 */
 	public boolean isGPSFixedSkyController();
+
+	/**
+	 * スカイコントローラー自体のバッテリー残量を取得
+	 * @return
+	 */
 	public int getBatterySkyController();
 }

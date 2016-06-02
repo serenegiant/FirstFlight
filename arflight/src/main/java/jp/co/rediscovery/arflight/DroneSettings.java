@@ -4,7 +4,9 @@ import jp.co.rediscovery.arflight.attribute.AttributeCamera;
 import jp.co.rediscovery.arflight.attribute.AttributeFloat;
 import jp.co.rediscovery.arflight.attribute.AttributeTimeLapse;
 
+/** 機体の設定値保持用のクラス */
 public class DroneSettings {
+	/** 国コード */
 	protected String mCountryCode;
 	public void setCountryCode(final String code) {
 		mCountryCode = code;

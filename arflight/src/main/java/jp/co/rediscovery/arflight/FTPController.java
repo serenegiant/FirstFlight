@@ -34,6 +34,7 @@ import java.util.List;
 
 import com.serenegiant.utils.ThreadPool;
 
+/** 機体へFTPで接続して機体内の静止画・動画の操作をするためのクラス */
 public abstract class FTPController {
 	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること
 	private static final String TAG = "FTPController:";
@@ -127,7 +128,7 @@ public abstract class FTPController {
 		// 場所は気に入らないけど純正アプリと同じ場所に保存する
 		final String productName = controller.getProductName(); // .replace(" ", "_");
 		final File path = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), productName);
-		path.mkdirs();	// バカだからここで作っといてあげないとだめ
+		path.mkdirs();
 		mExternalDirectory = path.getAbsolutePath();
 	}
 

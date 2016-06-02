@@ -32,6 +32,7 @@ import jp.co.rediscovery.dialog.ConfirmDialog;
 import jp.co.rediscovery.dialog.OnDialogResultIntListener;
 import jp.co.rediscovery.dialog.TransferProgressDialogFragment;
 
+/** 機体内の動画・静止画の一覧取得・操作を行うための画面 */
 public class MediaFragment extends BaseFlightControllerFragment
 	implements TransferProgressDialogFragment.TransferProgressDialogListener, OnDialogResultIntListener {
 	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること

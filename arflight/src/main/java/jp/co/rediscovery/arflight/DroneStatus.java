@@ -7,7 +7,7 @@ import jp.co.rediscovery.arflight.attribute.AttributeMassStorage;
 import jp.co.rediscovery.arflight.attribute.AttributeMotor;
 import com.serenegiant.math.Vector;
 
-
+/** スカイコントローラー以外の機体のステータスクラス */
 public class DroneStatus extends CommonStatus {
 	public static final int STATE_FLYING_LANDED = 0x0000;	// FlyingState=0
 	public static final int STATE_FLYING_TAKEOFF = 0x0100;	// FlyingState=1
@@ -24,7 +24,9 @@ public class DroneStatus extends CommonStatus {
 	public static final int MEDIA_READY = 0;
 	/** 動画/静止画撮影中 */
 	public static final int MEDIA_BUSY = 1;
+	/** 撮影成功 */
 	public static final int MEDIA_SUCCESS = 2;
+	/** 撮影エラー */
 	public static final int MEDIA_ERROR = 9;
 //	MEDIA_READY => MEDIA_BUSY => MEDIA_SUCCESS => MEDIA_READY
 //	MEDIA_READY => MEDIA_BUSY => MEDIA_ERROR => MEDIA_READY
@@ -252,7 +254,7 @@ public class DroneStatus extends CommonStatus {
 		}
 	}
 
-	/** 静止画撮影ステータス */
+	/** 静止画撮影ステータスをセット */
 	public boolean setStillCaptureState(final int state) {
 		synchronized (mStateSync) {
 			final boolean result = mStillCaptureState != state;
@@ -261,7 +263,10 @@ public class DroneStatus extends CommonStatus {
 		}
 	}
 
-	/** 静止画撮影ステータス */
+	/**
+	 * 静止画撮影状態を取得
+	 * @return　DroneStatus#MEDIA_XXX
+	 */
 	public int getStillCaptureState() {
 		synchronized (mStateSync) {
 			return mStillCaptureState;

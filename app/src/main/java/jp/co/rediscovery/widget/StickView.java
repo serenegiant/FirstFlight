@@ -15,6 +15,7 @@ import android.widget.ImageView;
 
 import jp.co.rediscovery.firstflight.R;
 
+/** 操縦画面の操縦スティック表示用View */
 public class StickView extends FrameLayout {
 	private static final String TAG = StickView.class.getSimpleName();
 

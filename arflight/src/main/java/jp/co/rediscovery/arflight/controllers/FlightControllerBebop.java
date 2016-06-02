@@ -47,7 +47,7 @@ import jp.co.rediscovery.arflight.CameraControllerListener;
 import jp.co.rediscovery.arflight.DroneSettings;
 import jp.co.rediscovery.arflight.DroneStatus;
 import jp.co.rediscovery.arflight.ICameraController;
-import jp.co.rediscovery.arflight.IVideoStream;
+import jp.co.rediscovery.arflight.VideoStream;
 import jp.co.rediscovery.arflight.IWiFiController;
 import jp.co.rediscovery.arflight.WiFiStatus;
 import jp.co.rediscovery.arflight.attribute.AttributeDevice;
@@ -61,7 +61,7 @@ public class FlightControllerBebop extends FlightController implements ICameraCo
 	private final String TAG = "FlightControllerBebop:" + getClass().getSimpleName();
 
 	private final Object mVideoSync = new Object();
-	private IVideoStream mVideoStream;
+	private VideoStream mVideoStream;
 	/**
 	 * 写真撮影のフォーマット<br>
 	 * 0: Take raw image<br>
@@ -71,6 +71,11 @@ public class FlightControllerBebop extends FlightController implements ICameraCo
 	private int mPictureFormat;
 	private String mMotorSoftwareVersion;
 
+	/**
+	 * コンストラクタ
+	 * @param context
+	 * @param service
+	 */
 	public FlightControllerBebop(final Context context, final ARDiscoveryDeviceService service) {
 		super(context, service);
 		if (DEBUG) Log.v (TAG, "コンストラクタ:");
@@ -114,18 +119,20 @@ public class FlightControllerBebop extends FlightController implements ICameraCo
 		super.onBeforeStop();
 	}
 
-//	@Override
-//	protected void onConnect() {
-//		super.onConnect();
-//		enableVideoStreaming(true);
-//	}
-
-//	protected void onDisconnect() {
-//		enableVideoStreaming(false);
-//		super.onDisconnect();
-//	}
-
+	/**
+	 * ライブ映像処理用のコールバックリスナー
+	 * 直接FlightControllerBebopへARDeviceControllerListenerインターフェースを実装してもいいんだけど、
+	 * このコールバックを呼び出してええのはこのクラスインスタンスが保持しとるARDeviceControllerインスタンスだけやのに
+	 * Javaだとインターフェースの実装は常にpublicになってしまって外部の任意のクラス/コードから呼び出されてしまう危険があるので
+	 * ARDeviceControllerListenerの場合と同じように 一旦privateな匿名クラスインスタンスとして定義してprotectedなクラスメンバメソッドへdelegateする。
+	 */
 	private final ARDeviceControllerStreamListener mStreamListener = new ARDeviceControllerStreamListener() {
+		/**
+		 * ライブ映像のデコード用の初期化用データ受信時
+		 * @param deviceController
+		 * @param codec
+		 * @return
+		 */
 		@Override
 		public ARCONTROLLER_ERROR_ENUM configureDecoder(final ARDeviceController deviceController, final ARControllerCodec codec) {
 			try {
@@ -136,6 +143,12 @@ public class FlightControllerBebop extends FlightController implements ICameraCo
 			return ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK;
 		}
 
+		/**
+		 * ライブ映像のフレームデータ受信時
+		 * @param deviceController
+		 * @param frame
+		 * @return
+		 */
 		@Override
 		public ARCONTROLLER_ERROR_ENUM onFrameReceived(final ARDeviceController deviceController, final ARFrame frame) {
 			try {
@@ -146,6 +159,10 @@ public class FlightControllerBebop extends FlightController implements ICameraCo
 			return ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK;
 		}
 
+		/**
+		 * ライブ映像のフレーム受信タイムアウト時
+		 * @param deviceController
+		 */
 		@Override
 		public void onFrameTimeout(final ARDeviceController deviceController) {
 			try {
@@ -156,7 +173,13 @@ public class FlightControllerBebop extends FlightController implements ICameraCo
 		}
 	};
 
+	/**
+	 * ライブ映像のデコード用の初期化用データ受信時
+	 * @param deviceController
+	 * @param codec
+	 */
 	protected void configureDecoder(final ARDeviceController deviceController, final ARControllerCodec codec) {
+		// さらにVideoStreamで委譲
 		synchronized (mVideoSync) {
 			if (mVideoStream != null) {
 				mVideoStream.configureDecoder(codec);
@@ -164,7 +187,13 @@ public class FlightControllerBebop extends FlightController implements ICameraCo
 		}
 	}
 
+	/**
+	 * ライブ映像のフレーム受信時
+	 * @param deviceController
+	 * @param frame
+	 */
 	protected void onFrameReceived(final ARDeviceController deviceController, final ARFrame frame) {
+		// さらにVideoStreamで委譲
 		synchronized (mVideoSync) {
 			if (mVideoStream != null) {
 				mVideoStream.onReceiveFrame(frame);
@@ -172,7 +201,12 @@ public class FlightControllerBebop extends FlightController implements ICameraCo
 		}
 	}
 
+	/**
+	 * ライブ映像受信タイムアウト時
+	 * @param deviceController
+	 */
 	protected void onFrameTimeout(final ARDeviceController deviceController) {
+		// さらにVideoStreamで委譲
 		synchronized (mVideoSync) {
 			if (mVideoStream != null) {
 				mVideoStream.onFrameTimeout();
@@ -180,6 +214,9 @@ public class FlightControllerBebop extends FlightController implements ICameraCo
 		}
 	}
 
+	/**
+	 * 機体からのデータ受信時の処理
+	 */
 	@Override
 	protected void onCommandReceived(final ARDeviceController deviceController,
 		final ARCONTROLLER_DICTIONARY_KEY_ENUM commandKey,
@@ -850,11 +887,6 @@ public class FlightControllerBebop extends FlightController implements ICameraCo
 		mCameraControllerListener = listener;
 	}
 
-	/**
-	 * 静止画撮影時の映像フォーマットを設定
-	 * @param pictureFormat 0: Take raw image, 1: Take a 4:3 jpeg photo, 2: Take a 16:9 snapshot from camera, 3:take jpeg fisheye image only
-	 * @return
-	 */
 	@Override
 	public boolean sendPictureFormat(final int pictureFormat) {
 		if (DEBUG) Log.v (TAG, "sendPictureFormat:");
@@ -1063,12 +1095,10 @@ public class FlightControllerBebop extends FlightController implements ICameraCo
 // IVideoStreamControllerのメソッド
 //--------------------------------------------------------------------------------
 	@Override
-	public void setVideoStream(final IVideoStream video_stream) {
+	public void setVideoStream(final VideoStream video_stream) {
 		if (DEBUG) Log.v(TAG, "setVideoStream:" + video_stream);
-		if (video_stream instanceof IVideoStream) {
-			synchronized (mVideoSync) {
-				mVideoStream = (IVideoStream)video_stream;
-			}
+		synchronized (mVideoSync) {
+			mVideoStream = video_stream;
 		}
 	}
 
@@ -1210,6 +1240,11 @@ public class FlightControllerBebop extends FlightController implements ICameraCo
 		return false;
 	}
 
+	/**
+	 * 自動離陸モードを設定
+	 * @param enable
+	 * @return
+	 */
 	@Override
 	public boolean sendAutoTakeOffMode(final boolean enable) {
 		if (DEBUG) Log.v (TAG, "sendAutoTakeOffMode:");
@@ -1233,6 +1268,7 @@ public class FlightControllerBebop extends FlightController implements ICameraCo
 		if (result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK) {
 			Log.e(TAG, "#setHasGuard failed:" + result);
 		}
+		// FIXME DeviceController#sendAccessoryConfigも一緒に設定したほうがええんかもしれん
 		return result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK;
 	}
 

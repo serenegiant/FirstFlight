@@ -37,17 +37,6 @@ public abstract class FlightController extends DeviceController implements IFlig
 		if (DEBUG) Log.v (TAG, "コンストラクタ:");
 	}
 
-//	protected void onCommandReceived(final ARDeviceController deviceController,
-//		final ARCONTROLLER_DICTIONARY_KEY_ENUM commandKey,
-//		final ARControllerArgumentDictionary<Object> args,
-//		final ARControllerDictionary elementDictionary) {
-//
-//		super.onCommandReceived(deviceController, commandKey, args, elementDictionary);
-//
-//		switch (commandKey) {
-//		}
-//	}
-
 	@Override
 	protected void onStarted() {
 		if (DEBUG) Log.v (TAG, "onStarted:");
@@ -94,6 +83,10 @@ public abstract class FlightController extends DeviceController implements IFlig
 		}
 	}
 
+	/**
+	 * 飛行中かどうかを取得
+	 * @return
+	 */
 	public boolean isFlying() {
 		return ((DroneStatus)mStatus).isFlying();
 	}
@@ -160,7 +153,7 @@ public abstract class FlightController extends DeviceController implements IFlig
 	}
 
 	/**
-	 * 最大高度設定値を返す
+	 * 最大高度設定値[m]を返す
 	 * @return
 	 */
 	@Override
@@ -168,32 +161,54 @@ public abstract class FlightController extends DeviceController implements IFlig
 		return mSettings.maxAltitude();
 	}
 
+	/**
+	 * 最大傾斜角[度]を取得する
+	 * @return
+	 */
 	@Override
 	public AttributeFloat getMaxTilt() {
 		return mSettings.maxTilt();
 	}
 
+	/**
+	 * 最大上昇/下降速度[m/秒]を取得する
+	 * @return
+	 */
 	@Override
 	public AttributeFloat getMaxVerticalSpeed() {
 		return mSettings.maxVerticalSpeed();
 	}
 
+	/**
+	 * 最大回転速度[度/秒]を取得する
+	 * @return
+	 */
 	@Override
 	public AttributeFloat getMaxRotationSpeed() {
 		return mSettings.maxRotationSpeed();
 	}
 
+	/**
+	 * 機体姿勢を取得する(ラジアン)
+	 * zが高度ではなくyawなので注意
+	 * @return Vector(x=roll, y=pitch, z=yaw)
+	 */
 	@Override
 	public Vector getAttitude(){
 		return ((DroneStatus)mStatus).attitude();
 	}
 
+	/**
+	 * 高度[m]を取得
+	 * @return
+	 */
 	public float getAltitude() {
 		return (float)mStatus.altitude();
 	}
 
 	/**
 	 * モーターの自動カット機能が有効かどうかを取得する
+	 * 安全のためには自動カット機能を有効にしといたほうがええと思う
 	 * @return
 	 */
 	@Override

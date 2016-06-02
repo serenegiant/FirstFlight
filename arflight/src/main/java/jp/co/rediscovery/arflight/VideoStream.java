@@ -18,6 +18,7 @@ import com.parrot.arsdk.arstream2.ARSTREAM2_H264_FILTER_AU_SYNC_TYPE_ENUM;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import com.parrot.arsdk.arstream2.ARStream2ReceiverListener;
 import com.serenegiant.glutils.EGLBase;
 import com.serenegiant.glutils.EglTask;
 import com.serenegiant.glutils.FullFrameRect;
@@ -25,7 +26,7 @@ import com.serenegiant.glutils.GLHelper;
 import com.serenegiant.glutils.Texture2dProgram;
 import com.serenegiant.utils.FpsCounter;
 
-public class VideoStream implements IVideoStream {
+public class VideoStream implements ARStream2ReceiverListener {
 	private static final boolean DEBUG = false; // FIXME 実働時はfalseにすること
 	private static final String TAG = "VideoStream";
 
@@ -95,14 +96,12 @@ public class VideoStream implements IVideoStream {
 		mRendererTask.removeSurface(id);
 	}
 
-	@Override
 	public void onReceiveFrame(final ARFrame frame) {
 		// 映像フレームデータを受信した時の処理
 		// デコーダーへキューイングする
 		mDecodeTask.queueFrame(frame, frame.isIFrame());
 	}
 
-	@Override
 	public void onFrameTimeout() {
 		// 一定時間内に映像フレームデータを受信できなかった時の処理
 		// 今のところLogCatにメッセージを出すだけで特に何もしない
@@ -111,7 +110,6 @@ public class VideoStream implements IVideoStream {
 
 //--------------------------------------------------------------------------------
 // NewAPIを使う時
-	@Override
 	public void configureDecoder(final ARControllerCodec codec) {
 		if (DEBUG) Log.v(TAG, "configureDecoder:" + codec);
 		ByteBuffer sps = null, pps = null;
@@ -131,7 +129,6 @@ public class VideoStream implements IVideoStream {
 		}
 	}
 
-	@Override
 	public void onReceiveFrame(final com.parrot.arsdk.arcontroller.ARFrame frame) {
 		// 映像フレームデータを受信した時の処理
 		// デコーダーへキューイングする
@@ -139,18 +136,15 @@ public class VideoStream implements IVideoStream {
 	}
 
 //--------------------------------------------------------------------------------
-	@Override
 	public VideoStream updateFps() {
 		mFps.update();
 		return this;
 	}
 
-	@Override
 	public float getFps() {
 		return mFps.getFps();
 	}
 
-	@Override
 	public float getTotalFps() {
 		return mFps.getTotalFps();
 	}

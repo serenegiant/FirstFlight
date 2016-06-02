@@ -17,9 +17,18 @@ public interface IDeviceController {
 //		ARCONTROLLER_DEVICE_STATE_PAUSED (3, "device controller is paused"),
 //		ARCONTROLLER_DEVICE_STATE_STOPPING (4, "device controller is stopping"),
 
-	/** コントローラーに関連付けられているARDiscoveryDeviceServiceを取得 */
+	/**
+	 * コントローラーに関連付けられているARDiscoveryDeviceServiceを取得
+	 * 機体探索サービスから取得したARDiscoveryDeviceServiceを返す
+	 * 変更しちゃダメ
+	 * @return
+	 */
 	public ARDiscoveryDeviceService getDeviceService();
 
+	/**
+	 * 関係するリソースを破棄する
+	 * 再利用は出来ない
+	 */
 	public void release();
 
 	/**
@@ -37,32 +46,33 @@ public interface IDeviceController {
 	public int getProductId();
 
 	/**
-	 * 機体のソフトウエアバージョンを取得
+	 * 接続している機体のソフトウエアバージョンを取得
 	 * @return
 	 */
 	public String getSoftwareVersion();
 
 	/**
-	 * 機体のハードウエアバージョンを取得
+	 * 接続している機体のハードウエアバージョンを取得
 	 * @return
 	 */
 	public String getHardwareVersion();
 
 	/**
-	 * 機体のシリアル番号を取得
+	 * 接続している機体のシリアル番号を取得
 	 * @return
 	 */
 	public String getSerial();
 
 	/**
-	 * 異常コードを取得
+	 * 機体の異常状態を取得
 	 * @return
 	 */
 	public int getAlarm();
 
 	/**
-	 * バッテリーの残量を取得
-	 * @return バッテリー残量[%]
+	 * バッテリー残量を取得
+	 * バッテリー保護のために30%ぐらいになったら飛ばすのを止めるべき
+	 * @return バッテリー残量[0,100][%]
 	 */
 	public int getBattery();
 
@@ -90,6 +100,10 @@ public interface IDeviceController {
 	 */
 	public int getState();
 
+	/**
+	 * 接続開始
+	 * @return
+	 */
 	public boolean start();
 
 	/**
@@ -98,20 +112,29 @@ public interface IDeviceController {
 	public void cancelStart();
 
 	/**
-	 * 切断処理
+	 * 切断処理。子クラスで追加処理が必要であれば#internal_stopをOverrideすること
 	 */
 	public void stop();
 
-	public boolean isStarted();
 	/**
 	 * 機体と接続しているかどうか
+	 * スカイコントローラー経由の場合はスカイコントローラーとの接続状態
+	 * @return
+	 */
+	public boolean isStarted();
+
+	/***
+	 * 機体と接続しているかどうか
 	 * 直接接続の時は#isStartedと同じ
+ 	 * スカイコントローラー経由の場合はスカイコントローラーを経由して機体と接続しているかどうか
 	 * @return
 	 */
 	public boolean isConnected();
 
 	/**
 	 * 日付を送信
+	 * 従来のAPIやと接続開始時に必ず送らなあかんかったけど、新しいAPIはどうなんやろ？
+	 * 今のところは送らんでも問題なさそうやねんけど。中で勝手に送っとるのかもしれん
 	 * @param currentDate
 	 * @return
 	 */
@@ -119,19 +142,21 @@ public interface IDeviceController {
 
 	/**
 	 * 時刻を送信
-	 * @param currentDate
+	 * 従来のAPIやと接続開始時に必ず送らなあかんかったけど、新しいAPIはどうなんやろ？
+	 * 今のところは送らんでも問題なさそうやねんけど。中で勝手に送っとるのかもしれん
+	 * @param currentTime
 	 * @return
 	 */
-	public boolean sendTime(Date currentDate);
+	public boolean sendTime(Date currentTime);
 
 	/**
-	 * 全ての設定要求?
+	 * 機体の設定を全て送るように要求する
 	 * @return
 	 */
 	public boolean requestAllSettings();
 
 	/**
-	 * すべての状態を要求?
+	 * 機体のステータスを全て送るように要求する
 	 * @return
 	 */
 	public boolean requestAllStates();

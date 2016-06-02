@@ -1,12 +1,14 @@
 package jp.co.rediscovery.widget;
 
 import android.content.Context;
-import android.graphics.SurfaceTexture;
 import android.util.AttributeSet;
+import android.view.TextureView;
 
-import com.serenegiant.glutils.GLTextureView;
-
-public class VideoView extends GLTextureView {
+/**
+ * 背景・機体モデル表示用View
+ * 今はライブ映像が取得できる場合にそれを表示するのに使うだけで機体モデル・背景の描画は未実装
+ * */
+public class VideoView extends TextureView {
 	public VideoView(final Context context) {
 		this(context, null, 0);
 	}
@@ -17,11 +19,6 @@ public class VideoView extends GLTextureView {
 
 	public VideoView(final Context context, final AttributeSet attrs, final int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
-	}
-
-	public SurfaceTexture getTexture() {
-		// FIXME 未実装
-		return null;
 	}
 
 	public void setEnableVideo(final boolean enable) {
@@ -44,15 +41,16 @@ public class VideoView extends GLTextureView {
 	}
 
 	public void setAxis(final int axis) {
+		// 表示中の機体モデルの回転方向を変える
 		// FIXME 未実装
 	}
 
 	public void startEngine() {
-		// FIXME 未実装
+		// FIXME 未実装 機体モデルの表示で羽根を回転させる
 	}
 
 	public void stopEngine() {
-		// FIXME 未実装
+		// FIXME 未実装 機体モデルの表示で羽根の回転を停止させる
 	}
 
 }

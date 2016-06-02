@@ -13,6 +13,7 @@ import android.widget.GridView;
 import com.serenegiant.media.MediaStoreAdapter;
 import com.serenegiant.media.MediaStoreHelper;
 
+/** 端末内の静止画・動画一覧を表示するためのFragment */
 public class GalleyFragment extends BaseFragment {
 	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること
 	private static String TAG = GalleyFragment.class.getSimpleName();
@@ -71,7 +72,7 @@ public class GalleyFragment extends BaseFragment {
 			break;
 		case MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO:
 			// 動画を選択した時
-			fragment = PlayerFragment.newInstance(info.data);	// こっちはVideoView+MediaControllerを使うタイプ
+			fragment = PlayerFragment.newInstance(info.data);
 			break;
 		default:
 			fragment = null;

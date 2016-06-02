@@ -1,8 +1,12 @@
 package jp.co.rediscovery.arflight;
 
-/**
- * Created by saki on 16/02/07.
- */
+/** カメラを操作可能な機体用のControllerメソッド定義(実質Bebop/Bebop2用) */
 public interface CameraControllerListener {
+	/**
+	 * カメラの方向が変化した
+	 * @param controller
+	 * @param pan
+	 * @param tilt
+	 */
 	public void onCameraOrientationChanged(final IDeviceController controller, final int pan, final int tilt);
 }

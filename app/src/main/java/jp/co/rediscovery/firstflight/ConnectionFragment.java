@@ -11,6 +11,7 @@ import com.parrot.arsdk.ardiscovery.ARDiscoveryService;
 import jp.co.rediscovery.arflight.ARDeviceServiceAdapter;
 import jp.co.rediscovery.arflight.ManagerFragment;
 
+/** 機体探索画面用Fragment */
 public class ConnectionFragment extends BaseConnectionFragment {
 
 	public static ConnectionFragment newInstance() {

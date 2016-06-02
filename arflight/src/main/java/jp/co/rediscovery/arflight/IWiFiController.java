@@ -1,5 +1,6 @@
 package jp.co.rediscovery.arflight;
 
+/** WiFi経由で接続する機体用の追加メソッド */
 public interface IWiFiController {
 	/**
 	 * 室外モードか室内モードかを設定

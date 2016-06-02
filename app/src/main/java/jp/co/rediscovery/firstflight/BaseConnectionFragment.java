@@ -21,12 +21,17 @@ import java.util.List;
 import jp.co.rediscovery.arflight.ARDeviceServiceAdapter;
 import jp.co.rediscovery.arflight.ManagerFragment;
 
+/***
+ * 機体探索画面の基本クラス
+ * 元々は従来のAPI用と新しいAPI用の共通部分を実装していたので基本クラスと実際の接続画面に分けてるけど
+ * このプロジェクトでは新しいAPIしか対応していないのであえて分ける必要は無く1つにまとめてもOK
+ * */
 public abstract class BaseConnectionFragment extends BaseFragment {
 	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること
 	private static String TAG = BaseConnectionFragment.class.getSimpleName();
 
+	/*** 操縦画面等へ遷移するためのアイコン */
 	protected ImageButton mDownloadBtn, mPilotBtn, mGalleyBrn, mAutoBtn;
-	private MediaPlayer mMediaPlayer;
 	protected ListView mDeviceListView;
 
 	public BaseConnectionFragment() {
@@ -51,9 +56,6 @@ public abstract class BaseConnectionFragment extends BaseFragment {
 		manager.startDiscovery();
 		manager.addCallback(mManagerCallback);
 		updateButtons(false);
-		if (mMediaPlayer != null && !mMediaPlayer.isPlaying()) {
-			mMediaPlayer.start();
-		}
 	}
 
 	@Override
@@ -61,27 +63,12 @@ public abstract class BaseConnectionFragment extends BaseFragment {
 		if (DEBUG) Log.d(TAG, "onPause:");
 
 		updateButtons(false);
-		if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
-			mMediaPlayer.stop();
-		}
 		final ManagerFragment manager = ManagerFragment.getInstance(getActivity());
 		if (manager != null) {
 			manager.removeCallback(mManagerCallback);
 			manager.stopDiscovery();
 		}
 		super.onPause();
-	}
-
-	@Override
-	public void onDestroy() {
-		if (mMediaPlayer != null) {
-			if (mMediaPlayer.isPlaying()) {
-				mMediaPlayer.stop();
-			}
-			mMediaPlayer.release();
-			mMediaPlayer = null;
-		}
-		super.onDestroy();
 	}
 
 	/**

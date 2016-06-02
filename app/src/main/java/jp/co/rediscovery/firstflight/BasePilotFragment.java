@@ -1,18 +1,12 @@
 package jp.co.rediscovery.firstflight;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.SurfaceTexture;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.TextureView;
@@ -23,15 +17,12 @@ import android.widget.Toast;
 import com.serenegiant.gamepad.GamePadConst;
 import com.serenegiant.gamepad.Joystick;
 
-import java.util.List;
-
 import jp.co.rediscovery.arflight.DroneStatus;
 import jp.co.rediscovery.arflight.ICameraController;
 import jp.co.rediscovery.arflight.IDeviceController;
 import jp.co.rediscovery.arflight.IFlightController;
 import jp.co.rediscovery.arflight.IVideoStreamController;
 import jp.co.rediscovery.arflight.VideoStream;
-import jp.co.rediscovery.arflight.controllers.FlightControllerMiniDrone;
 import jp.co.rediscovery.widget.VideoView;
 
 import com.serenegiant.math.Vector;
@@ -60,7 +51,7 @@ public abstract class BasePilotFragment extends BaseFlightControllerFragment {
 
 	// 操縦用
 	protected int mOperationType;			// 操縦スティックのモード
-	protected double mMaxControlValue = DEFAULT_AUTOPILOT_MAX_CONTROL_VALUE;
+	protected double mMaxControlValue = APP_CONFIG_DEFAULT_MAX_CONTROL_VALUE;
 	protected double mScaleX, mScaleY, mScaleZ, mScaleR;
 	protected float mGamepadSensitivity = 1.0f;
 	protected float mGamepadScaleX, mGamepadScaleY, mGamepadScaleZ, mGamepadScaleR;
@@ -70,17 +61,17 @@ public abstract class BasePilotFragment extends BaseFlightControllerFragment {
 		if (DEBUG) Log.v(TAG, "onCreateView:");
 		onBeforeCreateView();
 		final SharedPreferences pref = getActivity().getPreferences(0);
-		mOperationType = pref.getInt(KEY_OPERATION_TYPE, 0);
-		mMaxControlValue = pref.getFloat(KEY_AUTOPILOT_MAX_CONTROL_VALUE, DEFAULT_AUTOPILOT_MAX_CONTROL_VALUE);
-		mScaleX = pref.getFloat(KEY_AUTOPILOT_SCALE_X, DEFAULT_AUTOPILOT_SCALE_X);
-		mScaleY = pref.getFloat(KEY_AUTOPILOT_SCALE_Y, DEFAULT_AUTOPILOT_SCALE_Y);
-		mScaleZ = pref.getFloat(KEY_AUTOPILOT_SCALE_Z, DEFAULT_AUTOPILOT_SCALE_Z);
-		mScaleR = pref.getFloat(KEY_AUTOPILOT_SCALE_R, DEFAULT_AUTOPILOT_SCALE_R);
-		mGamepadSensitivity = pref.getFloat(KEY_GAMEPAD_SENSITIVITY, 1.0f);
-		mGamepadScaleX = pref.getFloat(KEY_GAMEPAD_SCALE_X, 1.0f);
-		mGamepadScaleY = pref.getFloat(KEY_GAMEPAD_SCALE_Y, 1.0f);
-		mGamepadScaleZ = pref.getFloat(KEY_GAMEPAD_SCALE_Z, 1.0f);
-		mGamepadScaleR = pref.getFloat(KEY_GAMEPAD_SCALE_R, 1.0f);
+		mOperationType = pref.getInt(APP_CONFIG_KEY_OPERATION_TYPE, 0);
+		mMaxControlValue = pref.getFloat(APP_CONFIG_KEY_MAX_CONTROL_VALUE, APP_CONFIG_DEFAULT_MAX_CONTROL_VALUE);
+		mScaleX = pref.getFloat(APP_CONFIG_KEY_SCALE_X, APP_CONFIG_DEFAULT_SCALE_X);
+		mScaleY = pref.getFloat(APP_CONFIG_KEY_SCALE_Y, APP_CONFIG_DEFAULT_SCALE_Y);
+		mScaleZ = pref.getFloat(APP_CONFIG_KEY_SCALE_Z, APP_CONFIG_DEFAULT_SCALE_Z);
+		mScaleR = pref.getFloat(APP_CONFIG_KEY_SCALE_R, APP_CONFIG_DEFAULT_SCALE_R);
+		mGamepadSensitivity = pref.getFloat(APP_CONFIG_KEY_GAMEPAD_SENSITIVITY, 1.0f);
+		mGamepadScaleX = pref.getFloat(APP_CONFIG_KEY_GAMEPAD_SCALE_X, 1.0f);
+		mGamepadScaleY = pref.getFloat(APP_CONFIG_KEY_GAMEPAD_SCALE_Y, 1.0f);
+		mGamepadScaleZ = pref.getFloat(APP_CONFIG_KEY_GAMEPAD_SCALE_Z, 1.0f);
+		mGamepadScaleR = pref.getFloat(APP_CONFIG_KEY_GAMEPAD_SCALE_R, 1.0f);
 		int layout_id;
 		switch (mOperationType) {
 		case 1:
@@ -108,7 +99,6 @@ public abstract class BasePilotFragment extends BaseFlightControllerFragment {
 			if ((mFlightController != null) && isStarted()) {
 				mVideoView.hasGuard(mFlightController.hasGuard());
 			}
-			mVideoView.onResume();
 		}
 	}
 
@@ -116,9 +106,6 @@ public abstract class BasePilotFragment extends BaseFlightControllerFragment {
 	public void onPause() {
 //		if (DEBUG) Log.v(TAG, "onPause:");
 		mJoystick = null;
-		if (mVideoView != null) {
-			mVideoView.onPause();
-		}
 		if (mController instanceof ICameraController) {
 			((ICameraController)mController).sendVideoRecording(false);
 		}
@@ -145,16 +132,20 @@ public abstract class BasePilotFragment extends BaseFlightControllerFragment {
 						Log.w(TAG, "mVideoStreamが破棄されてる");
 						return;
 					}
-					try {
-						final SurfaceTexture surface = mVideoView.getTexture();
-						if ((surface != null) && (mSurfaceId == 0)) {
-							final Surface _surface = new Surface(surface);
-							mSurfaceId = _surface.hashCode();
-							mVideoStream.addSurface(mSurfaceId, _surface);
-							mVideoView.setEnableVideo(true);
+					final SurfaceTexture surface = mVideoView.getSurfaceTexture();
+					if (surface != null) {
+						try {
+							if (mSurfaceId == 0) {
+								final Surface _surface = new Surface(surface);
+								mSurfaceId = _surface.hashCode();
+								mVideoStream.addSurface(mSurfaceId, _surface);
+								mVideoView.setEnableVideo(true);
+							}
+						} catch (final Exception e) {
+							Log.w(TAG, e);
 						}
-					} catch (final Exception e) {
-						Log.w(TAG, e);
+					} else {
+						queueEvent(this, 500);
 					}
 				}
 			}, 100);

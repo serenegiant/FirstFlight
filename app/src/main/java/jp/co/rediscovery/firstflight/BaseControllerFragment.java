@@ -14,8 +14,11 @@ import jp.co.rediscovery.arflight.IFlightController;
 import jp.co.rediscovery.arflight.ISkyController;
 import jp.co.rediscovery.arflight.ManagerFragment;
 
-import static jp.co.rediscovery.arflight.ARFlightConst.*;
+import static jp.co.rediscovery.firstflight.AppConst.*;
 
+/**
+ * 機体との通信を行う画面用Fragmentの基本クラス
+ */
 public abstract class BaseControllerFragment extends BaseFragment {
 	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること
 	private final String TAG = "BaseControllerFragment:" + getClass().getSimpleName();
@@ -42,8 +45,8 @@ public abstract class BaseControllerFragment extends BaseFragment {
 			args = getArguments();
 		}
 		if (args != null) {
-			mDevice = args.getParcelable(ARFLIGHT_EXTRA_DEVICE_SERVICE);
-			mDeviceInfo = args.getParcelable(ARFLIGHT_EXTRA_DEVICE_INFO);
+			mDevice = args.getParcelable(APP_EXTRA_DEVICE_SERVICE);
+			mDeviceInfo = args.getParcelable(APP_EXTRA_DEVICE_INFO);
 			getController();
 		}
 		if (DEBUG) Log.v(TAG, "onCreate:mController=" + mController);
@@ -95,8 +98,8 @@ public abstract class BaseControllerFragment extends BaseFragment {
 		if (args == null) {
 			args = new Bundle();
 		}
-		args.putParcelable(ARFLIGHT_EXTRA_DEVICE_SERVICE, device);
-		args.remove(ARFLIGHT_EXTRA_DEVICE_INFO);
+		args.putParcelable(APP_EXTRA_DEVICE_SERVICE, device);
+		args.remove(APP_EXTRA_DEVICE_INFO);
 		setArguments(args);
 		return args;
 	}
@@ -108,11 +111,11 @@ public abstract class BaseControllerFragment extends BaseFragment {
 		if (args == null) {
 			args = new Bundle();
 		}
-		args.putParcelable(ARFLIGHT_EXTRA_DEVICE_SERVICE, bridge);
+		args.putParcelable(APP_EXTRA_DEVICE_SERVICE, bridge);
 		if (info != null) {
-			args.putParcelable(ARFLIGHT_EXTRA_DEVICE_INFO, info);
+			args.putParcelable(APP_EXTRA_DEVICE_INFO, info);
 		} else {
-			args.remove(ARFLIGHT_EXTRA_DEVICE_INFO);
+			args.remove(APP_EXTRA_DEVICE_INFO);
 		}
 		setArguments(args);
 		return args;

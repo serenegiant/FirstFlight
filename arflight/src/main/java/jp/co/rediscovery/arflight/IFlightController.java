@@ -46,7 +46,6 @@ public interface IFlightController extends IDeviceController {
 	public static final int STATE_MASK_FLYING = 0xff00;
 
 
-	public int getAlarm();
 	public boolean isFlying();
 	public boolean needCalibration();
 	public int getStillCaptureState();

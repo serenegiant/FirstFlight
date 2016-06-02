@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.serenegiant.media.MediaStoreImageAdapter;
 
+/** 端末内の静止画を表示するためのFragment */
 public class PhotoFragment extends BaseFragment {
 	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること
 	private static final String TAG = PhotoFragment.class.getSimpleName();

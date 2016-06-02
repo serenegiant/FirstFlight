@@ -38,7 +38,6 @@ public abstract class BaseBridgeFragment extends BaseControllerFragment {
 
 	protected ListView mDeviceListView;
 	protected ImageButton mDownloadBtn, mPilotBtn, mGalleyBrn;
-	private MediaPlayer mMediaPlayer;
 	protected boolean mIsConnectToDevice;
 	protected boolean mNeedRequestDeviceList;
 
@@ -76,9 +75,6 @@ public abstract class BaseBridgeFragment extends BaseControllerFragment {
 		super.onResume();
 		if (DEBUG) Log.d(TAG, "onResume:");
 		mIsConnectToDevice = false;
-		if (mMediaPlayer != null && !mMediaPlayer.isPlaying()) {
-			mMediaPlayer.start();
-		}
 		if (mController instanceof ISkyController) {
 			mController.addListener(mSkyControllerListener);
 		}
@@ -95,9 +91,6 @@ public abstract class BaseBridgeFragment extends BaseControllerFragment {
 		if (DEBUG) Log.d(TAG, "onPause:");
 
 		updateButtons(false);
-		if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
-			mMediaPlayer.stop();
-		}
 		if (mController != null) {
 			final ISkyController bridge = (ISkyController)mController;
 			bridge.setCoPilotingSource(0);
@@ -114,19 +107,6 @@ public abstract class BaseBridgeFragment extends BaseControllerFragment {
 			+ ",isRemoving=" + isRemoving() + ",isResumed=" + isResumed()
 			+ ",isVisible=" + isVisible() + ",mIsConnectToDevice=" + mIsConnectToDevice);
 		super.onPause();
-	}
-
-	@Override
-	public void onDestroy() {
-		if (DEBUG) Log.d(TAG, "onDestroy:");
-		if (mMediaPlayer != null) {
-			if (mMediaPlayer.isPlaying()) {
-				mMediaPlayer.stop();
-			}
-			mMediaPlayer.release();
-			mMediaPlayer = null;
-		}
-		super.onDestroy();
 	}
 
 	@Override
@@ -287,7 +267,7 @@ public abstract class BaseBridgeFragment extends BaseControllerFragment {
 						if (bridge.isConnected() && (info != null) && (numDevices == 1)) {
 							if (DEBUG) Log.v(TAG, "既に1機だけ検出&接続されていたら操縦画面へ");
 							// XXX 検出している機体が1機でそれに接続している時は操縦画面へ
-							// XXX ただし今はトレースモードに移行できるようにしているので自動では遷移しない
+							// XXX ただし今はトレースモードにも移行できるようにしているので自動では遷移しない
 //							replace(PilotFragment.newInstance(controller.getDeviceService(), info));
 						}
 					} catch (final Exception e) {

@@ -2,6 +2,8 @@ package jp.co.rediscovery.arflight;
 
 import com.parrot.arsdk.arsal.ARNativeData;
 
+import java.util.Locale;
+
 public class ARFrame extends ARNativeData {
 
 	public static final int ARFRAME_DEFAULT_CAPACITY = 60000;
@@ -51,6 +53,6 @@ public class ARFrame extends ARNativeData {
 
 	@Override
 	public String toString() {
-		return String.format("ARFrame(I-Frame=%b,missed=%d,capacity=%d)", mIsIFrame, mMissed, capacity);
+		return String.format(Locale.US, "ARFrame(I-Frame=%b,missed=%d,capacity=%d)", mIsIFrame, mMissed, capacity);
 	}
 }

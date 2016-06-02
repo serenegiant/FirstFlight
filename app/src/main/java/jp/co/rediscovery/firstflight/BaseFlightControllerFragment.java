@@ -12,7 +12,7 @@ import jp.co.rediscovery.arflight.IFlightController;
 import jp.co.rediscovery.arflight.IVideoStreamController;
 import jp.co.rediscovery.arflight.SkyControllerListener;
 
-
+/** 機体操作画面の基本クラス */
 public abstract class BaseFlightControllerFragment extends BaseControllerFragment {
 	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること
 	private final String TAG = "BaseFlightControllerFragment:" + getClass().getSimpleName();
@@ -22,12 +22,6 @@ public abstract class BaseFlightControllerFragment extends BaseControllerFragmen
 	public BaseFlightControllerFragment() {
 		super();
 		// デフォルトコンストラクタが必要
-	}
-
-	@Override
-	public synchronized void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		if (DEBUG) Log.v(TAG, "onCreate:" + savedInstanceState);
 	}
 
 	@Override
@@ -87,6 +81,7 @@ public abstract class BaseFlightControllerFragment extends BaseControllerFragmen
 		super.releaseDeviceController(disconnected);
 	}
 
+	/** ライブストリーム開始要求, IVideoStreamControllerの時のみ有効 */
 	protected void startVideoStreaming() {
 		if (DEBUG) Log.v(TAG, "startVideoStreaming:");
 		if (mController instanceof IVideoStreamController) {
@@ -94,6 +89,7 @@ public abstract class BaseFlightControllerFragment extends BaseControllerFragmen
 		}
 	}
 
+	/** ライブストリーム停止要求,  IVideoStreamControllerの時のみ有効 */
 	protected void stopVideoStreaming() {
 		if (DEBUG) Log.v(TAG, "stopVideoStreaming:");
 		if (mController instanceof IVideoStreamController) {
@@ -101,9 +97,7 @@ public abstract class BaseFlightControllerFragment extends BaseControllerFragmen
 		}
 	}
 
-	/**
-	 * 移動停止
-	 */
+	/** 移動停止 */
 	protected void stopMove() {
 		if (DEBUG) Log.v(TAG, "stopMove:");
 		if (mController instanceof IFlightController) {
@@ -111,9 +105,7 @@ public abstract class BaseFlightControllerFragment extends BaseControllerFragmen
 		}
 	}
 
-	/**
-	 * 非常停止指示
-	 */
+	/** 非常停止指示 */
 	protected void emergencyStop() {
 		stopMove();
 		if (mController instanceof IFlightController) {

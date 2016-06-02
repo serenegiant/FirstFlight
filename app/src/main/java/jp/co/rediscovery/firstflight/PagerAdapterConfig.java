@@ -1,5 +1,6 @@
 package jp.co.rediscovery.firstflight;
 
+/** 設定画面の各ページの情報を保持するためのクラス */
 public class PagerAdapterConfig {
 	public final int title_id;
 	public final int layout_id;

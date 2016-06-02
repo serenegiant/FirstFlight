@@ -48,6 +48,7 @@ import com.serenegiant.utils.CpuMonitor;
 import static jp.co.rediscovery.firstflight.AppConst.*;
 import static jp.co.rediscovery.firstflight.AutoPilotConst.*;
 
+/** 画像解析により飛行するための操縦画面Fragmentの基本クラス */
 public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 	private static final boolean DEBUG = false; // FIXME 実働時はfalseにすること
 	private final String TAG = "BaseAutoPilotFragment:" + getClass().getSimpleName();
@@ -1513,23 +1514,23 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 				updateMaxRotationSpeed(rotation);
 				break;
 			case R.id.max_control_value_seekbar:	// -500〜+500
-				final float max_control_value = progress - SCALE_OFFSET;
+				final float max_control_value = progress - APP_SCALE_OFFSET;
 				updateAutopilotMaxControlValue(max_control_value);
 				break;
 			case R.id.scale_seekbar_x:
-				final float scale_x = (progress - SCALE_OFFSET) / SCALE_FACTOR;
+				final float scale_x = (progress - APP_SCALE_OFFSET) / APP_SCALE_FACTOR;
 				updateAutopilotScaleX(scale_x);
 				break;
 			case R.id.scale_seekbar_y:
-				final float scale_y = (progress - SCALE_OFFSET) / SCALE_FACTOR;
+				final float scale_y = (progress - APP_SCALE_OFFSET) / APP_SCALE_FACTOR;
 				updateAutopilotScaleY(scale_y);
 				break;
 			case R.id.scale_seekbar_z:
-				final float scale_z = (progress - SCALE_OFFSET) / SCALE_FACTOR;
+				final float scale_z = (progress - APP_SCALE_OFFSET) / APP_SCALE_FACTOR;
 				updateAutopilotScaleZ(scale_z);
 				break;
 			case R.id.scale_seekbar_r:
-				final float scale_r = (progress - SCALE_OFFSET) / SCALE_FACTOR;
+				final float scale_r = (progress - APP_SCALE_OFFSET) / APP_SCALE_FACTOR;
 				updateAutopilotScaleR(scale_r);
 				break;
 			case R.id.trace_flight_attitude_yaw_seekbar:
@@ -1683,53 +1684,53 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 				break;
 			// 自動操縦
 			case R.id.max_control_value_seekbar:
-				final float max_control_value = seekBar.getProgress() - SCALE_OFFSET;
+				final float max_control_value = seekBar.getProgress() - APP_SCALE_OFFSET;
 				if (max_control_value != mMaxControlValue) {
 					synchronized (mParamSync) {
 						mReqUpdateParams = true;
 						mMaxControlValue = max_control_value;
 					}
-					mPref.edit().putFloat(KEY_AUTOPILOT_MAX_CONTROL_VALUE, max_control_value).apply();
+					mPref.edit().putFloat(APP_CONFIG_KEY_MAX_CONTROL_VALUE, max_control_value).apply();
 				}
 				break;
 			case R.id.scale_seekbar_x:
-				final float scale_x = (seekBar.getProgress() - SCALE_OFFSET) / SCALE_FACTOR;
+				final float scale_x = (seekBar.getProgress() - APP_SCALE_OFFSET) / APP_SCALE_FACTOR;
 				if (scale_x != mScaleX) {
 					synchronized (mParamSync) {
 						mReqUpdateParams = true;
 						mScaleX = scale_x;
 					}
-					mPref.edit().putFloat(KEY_AUTOPILOT_SCALE_X, scale_x).apply();
+					mPref.edit().putFloat(APP_CONFIG_KEY_SCALE_X, scale_x).apply();
 				}
 				break;
 			case R.id.scale_seekbar_y:
-				final float scale_y = (seekBar.getProgress() - SCALE_OFFSET) / SCALE_FACTOR;
+				final float scale_y = (seekBar.getProgress() - APP_SCALE_OFFSET) / APP_SCALE_FACTOR;
 				if (scale_y != mScaleY) {
 					synchronized (mParamSync) {
 						mReqUpdateParams = true;
 						mScaleY = scale_y;
 					}
-					mPref.edit().putFloat(KEY_AUTOPILOT_SCALE_Y, scale_y).apply();
+					mPref.edit().putFloat(APP_CONFIG_KEY_SCALE_Y, scale_y).apply();
 				}
 				break;
 			case R.id.scale_seekbar_z:
-				final float scale_z = (seekBar.getProgress() - SCALE_OFFSET) / SCALE_FACTOR;
+				final float scale_z = (seekBar.getProgress() - APP_SCALE_OFFSET) / APP_SCALE_FACTOR;
 				if (scale_z != mScaleZ) {
 					synchronized (mParamSync) {
 						mReqUpdateParams = true;
 						mScaleZ = scale_z;
 					}
-					mPref.edit().putFloat(KEY_AUTOPILOT_SCALE_Z, scale_z).apply();
+					mPref.edit().putFloat(APP_CONFIG_KEY_SCALE_Z, scale_z).apply();
 				}
 				break;
 			case R.id.scale_seekbar_r:
-				final float scale_r = (seekBar.getProgress() - SCALE_OFFSET) / SCALE_FACTOR;
+				final float scale_r = (seekBar.getProgress() - APP_SCALE_OFFSET) / APP_SCALE_FACTOR;
 				if (scale_r != mScaleR) {
 					synchronized (mParamSync) {
 						mReqUpdateParams = true;
 						mScaleR = scale_r;
 					}
-					mPref.edit().putFloat(KEY_AUTOPILOT_SCALE_R, scale_r).apply();
+					mPref.edit().putFloat(APP_CONFIG_KEY_SCALE_R, scale_r).apply();
 				}
 				break;
 			case R.id.trace_flight_attitude_yaw_seekbar:
@@ -2752,11 +2753,11 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		SeekBar seekbar = (SeekBar)root.findViewById(R.id.max_control_value_seekbar);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
-		mMaxControlValue = mPref.getFloat(KEY_AUTOPILOT_MAX_CONTROL_VALUE, DEFAULT_AUTOPILOT_MAX_CONTROL_VALUE);
+		mMaxControlValue = mPref.getFloat(APP_CONFIG_KEY_MAX_CONTROL_VALUE, APP_CONFIG_DEFAULT_MAX_CONTROL_VALUE);
 		try {
-			seekbar.setProgress((int) (mMaxControlValue + SCALE_OFFSET));
+			seekbar.setProgress((int) (mMaxControlValue + APP_SCALE_OFFSET));
 		} catch (final Exception e) {
-			seekbar.setProgress(SCALE_OFFSET);
+			seekbar.setProgress(APP_SCALE_OFFSET);
 		}
 		seekbar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateAutopilotMaxControlValue(mMaxControlValue);
@@ -2765,11 +2766,11 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		seekbar = (SeekBar)root.findViewById(R.id.scale_seekbar_x);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
-		mScaleX = mPref.getFloat(KEY_AUTOPILOT_SCALE_X, DEFAULT_AUTOPILOT_SCALE_X);
+		mScaleX = mPref.getFloat(APP_CONFIG_KEY_SCALE_X, APP_CONFIG_DEFAULT_SCALE_X);
 		try {
-			seekbar.setProgress((int) (mScaleX * SCALE_FACTOR + SCALE_OFFSET));
+			seekbar.setProgress((int) (mScaleX * APP_SCALE_FACTOR + APP_SCALE_OFFSET));
 		} catch (final Exception e) {
-			seekbar.setProgress(SCALE_OFFSET);
+			seekbar.setProgress(APP_SCALE_OFFSET);
 		}
 		seekbar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateAutopilotScaleX(mScaleX);
@@ -2778,11 +2779,11 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		seekbar = (SeekBar)root.findViewById(R.id.scale_seekbar_y);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
-		mScaleY = mPref.getFloat(KEY_AUTOPILOT_SCALE_Y, DEFAULT_AUTOPILOT_SCALE_Y);
+		mScaleY = mPref.getFloat(APP_CONFIG_KEY_SCALE_Y, APP_CONFIG_DEFAULT_SCALE_Y);
 		try {
-			seekbar.setProgress((int) (mScaleY * SCALE_FACTOR + SCALE_OFFSET));
+			seekbar.setProgress((int) (mScaleY * APP_SCALE_FACTOR + APP_SCALE_OFFSET));
 		} catch (final Exception e) {
-			seekbar.setProgress(SCALE_OFFSET);
+			seekbar.setProgress(APP_SCALE_OFFSET);
 		}
 		seekbar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateAutopilotScaleY(mScaleY);
@@ -2791,11 +2792,11 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		seekbar = (SeekBar)root.findViewById(R.id.scale_seekbar_z);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
-		mScaleZ = mPref.getFloat(KEY_AUTOPILOT_SCALE_Z, DEFAULT_AUTOPILOT_SCALE_Z);
+		mScaleZ = mPref.getFloat(APP_CONFIG_KEY_SCALE_Z, APP_CONFIG_DEFAULT_SCALE_Z);
 		try {
-			seekbar.setProgress((int) (mScaleZ * SCALE_FACTOR + SCALE_OFFSET));
+			seekbar.setProgress((int) (mScaleZ * APP_SCALE_FACTOR + APP_SCALE_OFFSET));
 		} catch (final Exception e) {
-			seekbar.setProgress(SCALE_OFFSET);
+			seekbar.setProgress(APP_SCALE_OFFSET);
 		}
 		seekbar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateAutopilotScaleZ(mScaleZ);
@@ -2804,11 +2805,11 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		seekbar = (SeekBar)root.findViewById(R.id.scale_seekbar_r);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
-		mScaleR = mPref.getFloat(KEY_AUTOPILOT_SCALE_R, DEFAULT_AUTOPILOT_SCALE_R);
+		mScaleR = mPref.getFloat(APP_CONFIG_KEY_SCALE_R, APP_CONFIG_DEFAULT_SCALE_R);
 		try {
-			seekbar.setProgress((int) (mScaleR * SCALE_FACTOR + SCALE_OFFSET));
+			seekbar.setProgress((int) (mScaleR * APP_SCALE_FACTOR + APP_SCALE_OFFSET));
 		} catch (final Exception e) {
-			seekbar.setProgress(SCALE_OFFSET);
+			seekbar.setProgress(APP_SCALE_OFFSET);
 		}
 		seekbar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateAutopilotScaleR(mScaleR);

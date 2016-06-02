@@ -8,7 +8,7 @@ import com.parrot.arsdk.ardiscovery.ARDISCOVERY_PRODUCT_ENUM;
 import com.parrot.arsdk.ardiscovery.ARDiscoveryDeviceService;
 import com.parrot.arsdk.ardiscovery.ARDiscoveryService;
 
-import jp.co.rediscovery.arflight.ARDeviceServiceAdapter;
+import jp.co.rediscovery.arflight.ARDeviceInfoAdapter;
 import jp.co.rediscovery.arflight.ManagerFragment;
 
 /**
@@ -46,7 +46,7 @@ public class BridgeFragment extends BaseBridgeFragment {
 		case R.id.auto_button:
 		{
 			final ManagerFragment manager = ManagerFragment.getInstance(getActivity());
-			final ARDeviceServiceAdapter adapter = (ARDeviceServiceAdapter)mDeviceListView.getAdapter();
+			final ARDeviceInfoAdapter adapter = (ARDeviceInfoAdapter)mDeviceListView.getAdapter();
 			final String itemValue = adapter.getItemName(position);
 			final ARDiscoveryDeviceService device = manager.getDevice(itemValue);
 			if (device != null) {

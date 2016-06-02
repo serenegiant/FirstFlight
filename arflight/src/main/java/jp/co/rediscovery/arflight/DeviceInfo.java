@@ -3,6 +3,8 @@ package jp.co.rediscovery.arflight;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Locale;
+
 import static com.parrot.arsdk.arcommands.ARCOMMANDS_SKYCONTROLLER_DEVICESTATE_CONNEXIONCHANGED_STATUS_ENUM.ARCOMMANDS_SKYCONTROLLER_DEVICESTATE_CONNEXIONCHANGED_STATUS_CONNECTED;
 import static com.parrot.arsdk.arcommands.ARCOMMANDS_SKYCONTROLLER_DEVICESTATE_CONNEXIONCHANGED_STATUS_ENUM.ARCOMMANDS_SKYCONTROLLER_DEVICESTATE_CONNEXIONCHANGED_STATUS_CONNECTING;
 import static com.parrot.arsdk.arcommands.ARCOMMANDS_SKYCONTROLLER_DEVICESTATE_CONNEXIONCHANGED_STATUS_ENUM.ARCOMMANDS_SKYCONTROLLER_DEVICESTATE_CONNEXIONCHANGED_STATUS_DISCONNECTING;
@@ -95,7 +97,7 @@ public class DeviceInfo implements Parcelable {
 
 	@Override
 	public String toString() {
-		return String.format("DeviceInfo(%s,id=%d,state=%d)", mName, mProductId, connectionState);
+		return String.format(Locale.US, "DeviceInfo(%s,id=%d,state=%d)", mName, mProductId, connectionState);
 	}
 
 	@Override

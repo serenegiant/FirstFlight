@@ -15,6 +15,7 @@ import com.parrot.arsdk.ardiscovery.ARDiscoveryService;
 
 import java.util.ArrayList;
 
+/**WiFiおよびBluetooth経由での直接機体探索画面で検出した機体一覧を表示するためのAdapterクラス　*/
 public class ARDeviceServiceAdapter extends ArrayAdapter<ARDiscoveryDeviceService> {
 
 	private final LayoutInflater mInflater;
@@ -44,32 +45,34 @@ public class ARDeviceServiceAdapter extends ArrayAdapter<ARDiscoveryDeviceServic
 			holder.title.setText(device.getName());
 		}
 		if (holder.state != null) {
-			// FIXME 接続状態の更新処理
+			// 接続状態の更新処理
 			if (rootView instanceof Checkable) {
 				holder.state.setText(((Checkable)rootView).isChecked() ? "選択中" : "---");
 			}
 		}
 		if (holder.thumbnail != null) {
-			// FIXME 機体アイコンの更新処理。今はアプリのアイコンと同じまま
+			// 機体アイコンの更新処理。今は変更なし
 			final ARDISCOVERY_PRODUCT_ENUM product = ARDiscoveryService.getProductFromProductID(device.getProductID());
 			switch (product) {
 			case ARDISCOVERY_PRODUCT_ARDRONE:	// Bebop
 			case ARDISCOVERY_PRODUCT_BEBOP_2:	// Bebop2
-//				holder.thumbnail.setImageResource(R.drawable.ic_ardrone);
-				break;
 			case ARDISCOVERY_PRODUCT_MINIDRONE:	// RollingSpider
 			case ARDISCOVERY_PRODUCT_MINIDRONE_EVO_LIGHT:
 			case ARDISCOVERY_PRODUCT_MINIDRONE_EVO_BRICK:
-//			case ARDISCOVERY_PRODUCT_MINIDRONE_EVO_HYDROFOIL: // ハイドロフォイルもいる?
-//				holder.thumbnail.setImageResource(R.drawable.ic_minidrone);
-				break;
+			case ARDISCOVERY_PRODUCT_MINIDRONE_EVO_HYDROFOIL: // ハイドロフォイルもいる?
 			case ARDISCOVERY_PRODUCT_SKYCONTROLLER:	// SkyController
+//				holder.thumbnail.setImageResource(機体アイコンリソースID);
 				break;
 			}
 		}
 		return rootView;
 	}
 
+	/**
+	 * 指定した位置の検出機体名を取得
+	 * @param position
+	 * @return
+	 */
 	public String getItemName(final int position) {
 		ARDiscoveryDeviceService device = null;
 		try {
@@ -79,6 +82,7 @@ public class ARDeviceServiceAdapter extends ArrayAdapter<ARDiscoveryDeviceServic
 		return device != null ? device.getName() : null;
 	}
 
+	/** 生成した各項目用のViewの再利用をするためのholderクラス　*/
 	private static final class ViewHolder {
 		TextView title;
 		TextView state;
