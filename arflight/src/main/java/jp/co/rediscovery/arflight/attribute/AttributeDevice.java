@@ -1,21 +1,26 @@
 package jp.co.rediscovery.arflight.attribute;
 
-/** 機体情報の保持クラス */
+/** デバイス情報の保持クラス */
 public class AttributeDevice {
-	/** 機体製品名 */
+	/** デバイス製品名 */
 	private String mProductName;
+
+	/**
+	 * デバイス製品名をセット
+	 * @param name
+	 */
 	public void setProductName(final String name) {
 		mProductName = name;
 	}
 
-	/** 機体製品名を取得 */
+	/** デバイス製品名を取得 */
 	public String productName() {
 		return mProductName;
 	}
 
-	/** 機体のソフトウエアバージョン */
+	/** デバイスのソフトウエアバージョン */
 	private String mProductSoftware;
-	/** 機体のハードプエあバージョン */
+	/** デバイスのハードプエあバージョン */
 	private String mProductHardware;
 
 	/**

@@ -5,8 +5,8 @@ import android.util.AttributeSet;
 import android.view.TextureView;
 
 /**
- * 背景・機体モデル表示用View
- * 今はライブ映像が取得できる場合にそれを表示するのに使うだけで機体モデル・背景の描画は未実装
+ * 背景・デバイス3Dモデル表示用View
+ * 今はライブ映像が取得できる場合にそれを表示するのに使うだけでデバイス3Dモデル・背景の描画は未実装
  * */
 public class VideoView extends TextureView {
 	public VideoView(final Context context) {
@@ -30,7 +30,7 @@ public class VideoView extends TextureView {
 	}
 
 	/**
-	 * 機体姿勢をセット
+	 * デバイス姿勢をセット
 	 * @param roll  左右の傾き[-100,100] => 今は[-30,+30][度]に対応
 	 * @param pitch 前後の傾き(機種の上げ下げ)[-100,100] => 今は[-30,+30][度]に対応
 	 * @param yaw 水平回転[-180,+180][度], 0は進行方向と一致
@@ -41,16 +41,16 @@ public class VideoView extends TextureView {
 	}
 
 	public void setAxis(final int axis) {
-		// 表示中の機体モデルの回転方向を変える
+		// 表示中のデバイス3Dモデルの回転方向を変える
 		// FIXME 未実装
 	}
 
 	public void startEngine() {
-		// FIXME 未実装 機体モデルの表示で羽根を回転させる
+		// FIXME 未実装 デバイス3Dモデルの表示で羽根を回転させる
 	}
 
 	public void stopEngine() {
-		// FIXME 未実装 機体モデルの表示で羽根の回転を停止させる
+		// FIXME 未実装 デバイス3Dモデルの表示で羽根の回転を停止させる
 	}
 
 }

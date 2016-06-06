@@ -1,7 +1,7 @@
 package jp.co.rediscovery.arflight;
 
 /**
- * カメラコントロール可能な機体の場合の追加メソッド定義
+ * カメラコントロール可能なデバイスの場合の追加メソッド定義
  */
 public interface ICameraController extends IVideoStreamController {
 
@@ -43,7 +43,7 @@ public interface ICameraController extends IVideoStreamController {
 	 * と言っても実際にカメラの物理的な向きが変わるわけではなく、
 	 * 広角の魚眼レンズのどの領域を切り出すかを指定するだけ
 	 * コールバックの返り値から推測すると設定可能なのは[-100;100]<br>
-	 * ただし機体の種類によって設定可能な値が異なり可動範囲外だと飽和する
+	 * ただしデバイスの種類によって設定可能な値が異なり可動範囲外だと飽和する
 	 * (特に上方向は可動範囲が狭い)
 	 * Tilt and pan value is saturated by the drone.<br>
 	 * Saturation value is sent by the drone through CameraSettingsChanged command.
@@ -68,7 +68,7 @@ public interface ICameraController extends IVideoStreamController {
 	/**
 	 * オートホワイトバランス設定
 	 * @param auto_white_balance<br>
-	 * -1: 手動(これは従来のAPIを使う時だけ有効, 新しいAPIではオートホワイトバランスを無効にできなくなったのでとりあえずフラッシュにしている)
+	 * -1: 手動(これは従来のAPIを使う時だけ有効, 新しいAPIではオートホワイトバランスを無効にできなくなったのでとりあえずフラッシュ(4)にしている)
 	 * 0: 自動 Auto guess of best white balance params<br>
 	 * 1: 電球色 Tungsten white balance<br>
 	 * 2: 晴天 Daylight white balance<br>

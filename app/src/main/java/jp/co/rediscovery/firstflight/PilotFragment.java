@@ -201,9 +201,6 @@ public class PilotFragment extends BasePilotFragment {
 		}
 
 		final ARDISCOVERY_PRODUCT_ENUM product = ARDiscoveryService.getProductFromProductID(getProductId());
-		// 機体モデル表示
-		final int model;
-		final int ctrl;
 		if (mController instanceof ICameraController) {
 			((ICameraController)mController).setCameraControllerListener(mCameraControllerListener);
 			((ICameraController)mController).sendCameraOrientation(0, 0);

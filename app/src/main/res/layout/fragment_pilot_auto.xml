@@ -56,7 +56,7 @@
 				android:layout_height="0dp"
 				android:layout_weight="1"
 				android:background="@null" >
-				<!-- 機体からのライブ映像表示用 -->
+				<!-- デバイスからのライブ映像表示用 -->
 				<jp.co.rediscovery.widget.VideoView
 					android:id="@+id/drone_view"
 					android:layout_width="match_parent"

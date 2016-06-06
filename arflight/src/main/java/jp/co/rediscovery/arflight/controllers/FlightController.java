@@ -83,10 +83,6 @@ public abstract class FlightController extends DeviceController implements IFlig
 		}
 	}
 
-	/**
-	 * 飛行中かどうかを取得
-	 * @return
-	 */
 	public boolean isFlying() {
 		return ((DroneStatus)mStatus).isFlying();
 	}
@@ -152,74 +148,40 @@ public abstract class FlightController extends DeviceController implements IFlig
 		if (DEBUG) Log.v (TAG, "stopVideoThread:");
 	}
 
-	/**
-	 * 最大高度設定値[m]を返す
-	 * @return
-	 */
 	@Override
 	public AttributeFloat getMaxAltitude() {
 		return mSettings.maxAltitude();
 	}
 
-	/**
-	 * 最大傾斜角[度]を取得する
-	 * @return
-	 */
 	@Override
 	public AttributeFloat getMaxTilt() {
 		return mSettings.maxTilt();
 	}
 
-	/**
-	 * 最大上昇/下降速度[m/秒]を取得する
-	 * @return
-	 */
 	@Override
 	public AttributeFloat getMaxVerticalSpeed() {
 		return mSettings.maxVerticalSpeed();
 	}
 
-	/**
-	 * 最大回転速度[度/秒]を取得する
-	 * @return
-	 */
 	@Override
 	public AttributeFloat getMaxRotationSpeed() {
 		return mSettings.maxRotationSpeed();
 	}
 
-	/**
-	 * 機体姿勢を取得する(ラジアン)
-	 * zが高度ではなくyawなので注意
-	 * @return Vector(x=roll, y=pitch, z=yaw)
-	 */
 	@Override
 	public Vector getAttitude(){
 		return ((DroneStatus)mStatus).attitude();
 	}
 
-	/**
-	 * 高度[m]を取得
-	 * @return
-	 */
 	public float getAltitude() {
 		return (float)mStatus.altitude();
 	}
 
-	/**
-	 * モーターの自動カット機能が有効かどうかを取得する
-	 * 安全のためには自動カット機能を有効にしといたほうがええと思う
-	 * @return
-	 */
 	@Override
 	public boolean isCutoffMode() {
 		return mSettings.cutOffMode();
 	}
 
-	/**
-	 * 自動離陸モードが有効かどうかを取得する
-	 * @return
-	 */
 	@Override
 	public boolean isAutoTakeOffModeEnabled() {
 		return mSettings.autoTakeOffMode();
@@ -230,10 +192,6 @@ public abstract class FlightController extends DeviceController implements IFlig
 		return mSettings.hasGuard();
 	}
 
-	/**
-	 * モーターの個数を返す
-	 * @return
-	 */
 	@Override
 	public int getMotorNums() {
 		return 4;
@@ -244,14 +202,9 @@ public abstract class FlightController extends DeviceController implements IFlig
 		return ((DroneStatus)mStatus).getMotor(index);
 	}
 
-
 //================================================================================
 // コールバック関係
 //================================================================================
-	/**
-	 * コールバックリスナーを設定
-	 * @param listener
-	 */
 	@Override
 	public void addListener(final DeviceConnectionListener listener) {
 		if (DEBUG) Log.v (TAG, "addListener:");
@@ -264,10 +217,6 @@ public abstract class FlightController extends DeviceController implements IFlig
 		}
 	}
 
-	/**
-	 * 指定したコールバックリスナーを取り除く
-	 * @param listener
-	 */
 	@Override
 	public void removeListener(final DeviceConnectionListener listener) {
 		if (DEBUG) Log.v (TAG, "removeListener:");
@@ -280,7 +229,7 @@ public abstract class FlightController extends DeviceController implements IFlig
 	}
 
 	/**
-	 * 飛行ステータス変更コールバックを呼び出す
+	 * 飛行ステータス変更コールバック呼び出し用のヘルパーメソッド
 	 * @param state
 	 */
 	protected void callOnFlyingStateChangedUpdate(final int state) {
@@ -299,7 +248,7 @@ public abstract class FlightController extends DeviceController implements IFlig
 	}
 
 	/**
-	 * フラットトリム実行完了時のコールバックを呼び出す
+	 * フラットトリム実行完了時のコールバック呼び出し用のヘルパーメソッド
 	 */
 	protected void callOnFlatTrimChanged() {
 		if (DEBUG) Log.v (TAG, "callOnFlatTrimChanged:");
@@ -316,10 +265,6 @@ public abstract class FlightController extends DeviceController implements IFlig
 		}
 	}
 
-	/**
-	 * キャリブレーション状態が変更された時のコールバックを呼び出す
-	 * @param need_calibration
-	 */
 	@Override
 	protected void callOnCalibrationRequiredChanged(final boolean need_calibration) {
 		synchronized (mListeners) {
@@ -335,10 +280,6 @@ public abstract class FlightController extends DeviceController implements IFlig
 		}
 	}
 
-	/**
-	 * キャリブレーションを開始/終了した時のコールバックを呼び出す
-	 * @param is_start
-	 */
 	@Override
 	protected void callOnCalibrationStartStop(final boolean is_start) {
 		if (DEBUG) Log.v (TAG, "callOnCalibrationStartStop:");
@@ -355,10 +296,6 @@ public abstract class FlightController extends DeviceController implements IFlig
 		}
 	}
 
-	/**
-	 * キャリブレーション中の軸が変更された時のコールバックを呼び出す
-	 * @param axis 0:x, 1:y, z:2, 3:none
-	 */
 	@Override
 	protected void callOnCalibrationAxisChanged(final int axis) {
 		if (DEBUG) Log.v (TAG, "callOnCalibrationAxisChanged:");
@@ -375,10 +312,7 @@ public abstract class FlightController extends DeviceController implements IFlig
 		}
 	}
 
-	/**
-	 * 静止画撮影ステータスが変化した時のコールバックを呼び出す
-	 * @param state
-	 */
+	@Override
 	protected void callOnStillCaptureStateChanged(final int state) {
 		if (DEBUG) Log.v (TAG, "callOnStillCaptureStateChanged:");
 		final boolean changed = ((DroneStatus)mStatus).setStillCaptureState(state);
@@ -397,10 +331,7 @@ public abstract class FlightController extends DeviceController implements IFlig
 		}
 	}
 
-	/**
-	 * 動画撮影ステータスが変化した時のコールバックを呼び出す
-	 * @param state
-	 */
+	@Override
 	protected void callOnVideoRecordingStateChanged(final int state) {
 		if (DEBUG) Log.v (TAG, "callOnVideoRecordingStateChanged:");
 		final boolean changed = ((DroneStatus)mStatus).setVideoRecordingState(state);
@@ -419,15 +350,6 @@ public abstract class FlightController extends DeviceController implements IFlig
 		}
 	}
 
-	/**
-	 * 機体のストレージ状態が変化した時のコールバックを呼び出す
-	 * @param mass_storage_id
-	 * @param size
-	 * @param used_size
-	 * @param plugged
-	 * @param full
-	 * @param internal
-	 */
 	@Override
 	protected void callOnUpdateStorageState(final int mass_storage_id, final int size, final int used_size, final boolean plugged, final boolean full, final boolean internal) {
 		if (DEBUG) Log.v (TAG, "callOnUpdateStorageState:");
@@ -450,10 +372,6 @@ public abstract class FlightController extends DeviceController implements IFlig
 //********************************************************************************
 // 操縦関係
 //********************************************************************************
-	/**
-	 * roll/pitch変更時が移動かどうか
-	 * @param flag 1:移動
-	 */
 	@Override
 	public void setFlag(final int flag) {
 		synchronized (mDataPCMD) {
@@ -463,10 +381,6 @@ public abstract class FlightController extends DeviceController implements IFlig
 		}
 	}
 
-	/**
-	 * 機体の高度を上下させる
-	 * @param gaz 負:下降, 正:上昇
-	 */
 	@Override
 	public void setGaz(final float gaz) {
 		synchronized (mDataPCMD) {
@@ -476,10 +390,6 @@ public abstract class FlightController extends DeviceController implements IFlig
 		}
 	}
 
-	/**
-	 * 機体を左右に傾ける。flag=1:左右に移動する
-	 * @param roll 負:左, 正:右
-	 */
 	@Override
 	public void setRoll(final float roll) {
 		synchronized (mDataPCMD) {
@@ -489,11 +399,6 @@ public abstract class FlightController extends DeviceController implements IFlig
 		}
 	}
 
-	/**
-	 * 機体を左右に傾ける
-	 * @param roll 負:左, 正:右, -100〜+100
-	 * @param move, true:移動
-	 */
 	@Override
 	public void setRoll(final float roll, final boolean move) {
 		synchronized (mDataPCMD) {
@@ -504,10 +409,6 @@ public abstract class FlightController extends DeviceController implements IFlig
 		}
 	}
 
-	/**
-	 * 機体の機首を上げ下げする。flag=1:前後に移動する
-	 * @param pitch
-	 */
 	@Override
 	public void setPitch(final float pitch) {
 		synchronized (mDataPCMD) {
@@ -517,11 +418,6 @@ public abstract class FlightController extends DeviceController implements IFlig
 		}
 	}
 
-	/**
-	 * 機首を上げ下げする
-	 * @param pitch 負:??? 正:???, -100〜+100
-	 * @param move, true:移動
-	 */
 	@Override
 	public void setPitch(final float pitch, final boolean move) {
 		synchronized (mDataPCMD) {
@@ -532,10 +428,6 @@ public abstract class FlightController extends DeviceController implements IFlig
 		}
 	}
 
-	/**
-	 * 機体の機首を左右に動かす=水平方向に回転する
-	 * @param yaw 負:左回転, 正:右回転
-	 */
 	@Override
 	public void setYaw(final float yaw) {
 		synchronized (mDataPCMD) {
@@ -545,10 +437,6 @@ public abstract class FlightController extends DeviceController implements IFlig
 		}
 	}
 
-	/**
-	 * 北磁極に対する角度を設定・・・機体側で実装されてない
-	 * @param heading
-	 */
 	@Override
 	public void setHeading(final float heading) {
 		synchronized (mDataPCMD) {
@@ -558,11 +446,6 @@ public abstract class FlightController extends DeviceController implements IFlig
 		}
 	}
 
-	/**
-	 * 移動量(傾き)をセット
-	 * @param roll 負:左, 正:右, -100〜+100
-	 * @param pitch 負:??? 正:???, -100〜+100
-	 */
 	@Override
 	public void setMove(final float roll, final float pitch) {
 		synchronized (mDataPCMD) {
@@ -574,12 +457,6 @@ public abstract class FlightController extends DeviceController implements IFlig
 		}
 	}
 
-	/**
-	 * 移動量(傾き)をセット
-	 * @param roll 負:左, 正:右, -100〜+100
-	 * @param pitch 負:??? 正:???, -100〜+100
-	 * @param gaz 負:下降, 正:上昇, -100〜+100
-	 */
 	@Override
 	public void setMove(final float roll, final float pitch, final float gaz) {
 		synchronized (mDataPCMD) {
@@ -592,13 +469,6 @@ public abstract class FlightController extends DeviceController implements IFlig
 		}
 	}
 
-	/**
-	 * 移動量(傾き)をセット
-	 * @param roll 負:左, 正:右, -100〜+100
-	 * @param pitch 負:??? 正:???, -100〜+100
-	 * @param gaz 負:下降, 正:上昇, -100〜+100
-	 * @param yaw 負:左回転, 正:右回転, -100〜+100
-	 */
 	@Override
 	public void setMove(final float roll, final float pitch, final float gaz, final float yaw) {
 		synchronized (mDataPCMD) {
@@ -612,14 +482,6 @@ public abstract class FlightController extends DeviceController implements IFlig
 		}
 	}
 
-	/**
-	 * 移動量(傾き)をセット
-	 * @param roll 負:左, 正:右, -100〜+100
-	 * @param pitch 負:??? 正:???, -100〜+100
-	 * @param gaz 負:下降, 正:上昇, -100〜+100
-	 * @param yaw 負:左回転, 正:右回転, -100〜+100
-	 * @param flag roll/pitchが移動を意味する時1
-	 */
 	@Override
 	public void setMove(final float roll, final float pitch, final float gaz, final float yaw, int flag) {
 		synchronized (mDataPCMD) {
@@ -701,27 +563,4 @@ public abstract class FlightController extends DeviceController implements IFlig
 		}
 	}
 
-/*	protected class FlightCMDThread extends LooperThread {
-		private final long intervals_ms;
-		public FlightCMDThread(final long _intervals_ms) {
-			intervals_ms = _intervals_ms;
-		}
-
-		@Override
-		public void onLoop() {
-			final long lastTime = SystemClock.elapsedRealtime();
-
-			if (isConnected()) {
-				sendCmdInControlLoop();
-			}
-			// 次の送信予定時間までの休止時間を計算[ミリ秒]
-			final long sleepTime = (SystemClock.elapsedRealtime() + intervals_ms) - lastTime;
-
-			try {
-				sleep(sleepTime);
-			} catch (final InterruptedException e) {
-				// ignore
-			}
-		}
-	} */
 }

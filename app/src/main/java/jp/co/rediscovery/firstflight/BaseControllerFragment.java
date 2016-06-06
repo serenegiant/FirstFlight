@@ -17,7 +17,7 @@ import jp.co.rediscovery.arflight.ManagerFragment;
 import static jp.co.rediscovery.firstflight.AppConst.*;
 
 /**
- * 機体との通信を行う画面用Fragmentの基本クラス
+ * デバイスとの通信を行う画面用Fragmentの基本クラス
  */
 public abstract class BaseControllerFragment extends BaseFragment {
 	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること
@@ -177,7 +177,7 @@ public abstract class BaseControllerFragment extends BaseFragment {
 				}
 			}
 
-			// 直接機体に接続している時かブリッジ接続できなかった時
+			// 直接デバイスに接続している時かブリッジ接続できなかった時
 			if (mController == null) {
 				mController = controller;
 			}
@@ -222,7 +222,9 @@ public abstract class BaseControllerFragment extends BaseFragment {
 		return result;
 	}
 
-	/** デバイスとの接続解除&開放  */
+	/**
+	 * デバイスとの接続解除, 破棄する
+	 */
 	protected synchronized void releaseDeviceController(final boolean disconnected) {
 		if (DEBUG) Log.v(TAG, "releaseDeviceController:");
 		final int state = getState();

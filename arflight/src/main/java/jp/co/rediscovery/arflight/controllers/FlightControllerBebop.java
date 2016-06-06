@@ -214,9 +214,6 @@ public class FlightControllerBebop extends FlightController implements ICameraCo
 		}
 	}
 
-	/**
-	 * 機体からのデータ受信時の処理
-	 */
 	@Override
 	protected void onCommandReceived(final ARDeviceController deviceController,
 		final ARCONTROLLER_DICTIONARY_KEY_ENUM commandKey,
@@ -363,7 +360,7 @@ public class FlightControllerBebop extends FlightController implements ICameraCo
 			break;
 		}
 		case ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSTATE_ALERTSTATECHANGED:	// (9, "Key used to define the command <code>AlertStateChanged</code> of class <code>PilotingState</code> in project <code>ARDrone3</code>"),
-		{	// 機体からの異常通知時
+		{	// デバイスからの異常通知時
 			final int state = (Integer)args.get(ARFeatureARDrone3.ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSTATE_ALERTSTATECHANGED_STATE);
 			mStatus.setAlarm(state);
 			callOnAlarmStateChangedUpdate(getAlarm());
@@ -393,7 +390,7 @@ public class FlightControllerBebop extends FlightController implements ICameraCo
 			break;
 		}
 		case ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSTATE_POSITIONCHANGED:	// (11, "Key used to define the command <code>PositionChanged</code> of class <code>PilotingState</code> in project <code>ARDrone3</code>"),
-		{	// 機体位置(GPS座標)を受信した時
+		{	// デバイス位置(GPS座標)を受信した時
 			/** GPS緯度[度] (500.0: 不明) */
 			final double latitude = (Double)args.get(ARFeatureARDrone3.ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSTATE_POSITIONCHANGED_LATITUDE);
 			/** GPS経度[度] (500.0: 不明) */
@@ -404,7 +401,7 @@ public class FlightControllerBebop extends FlightController implements ICameraCo
 			break;
 		}
 		case ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSTATE_SPEEDCHANGED:	// (12, "Key used to define the command <code>SpeedChanged</code> of class <code>PilotingState</code> in project <code>ARDrone3</code>"),
-		{	// 機体の速度を受信した時
+		{	// デバイスの速度を受信した時
 			final float speedX = ((Double)args.get(ARFeatureARDrone3.ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSTATE_SPEEDCHANGED_SPEEDX)).floatValue();
 			final float speedY = ((Double)args.get(ARFeatureARDrone3.ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSTATE_SPEEDCHANGED_SPEEDY)).floatValue();
 			final float speedZ = ((Double)args.get(ARFeatureARDrone3.ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSTATE_SPEEDCHANGED_SPEEDZ)).floatValue();
@@ -412,7 +409,7 @@ public class FlightControllerBebop extends FlightController implements ICameraCo
 			break;
 		}
 		case ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSTATE_ATTITUDECHANGED:	// (13, "Key used to define the command <code>AttitudeChanged</code> of class <code>PilotingState</code> in project <code>ARDrone3</code>"),
-		{	// 機体姿勢を受信した時
+		{	// デバイス姿勢を受信した時
 			final float roll = ((Double)args.get(ARFeatureARDrone3.ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSTATE_ATTITUDECHANGED_ROLL)).floatValue();
 			final float pitch = ((Double)args.get(ARFeatureARDrone3.ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSTATE_ATTITUDECHANGED_PITCH)).floatValue();
 			final float yaw = ((Double)args.get(ARFeatureARDrone3.ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSTATE_ATTITUDECHANGED_YAW)).floatValue();
@@ -479,7 +476,7 @@ public class FlightControllerBebop extends FlightController implements ICameraCo
 			break;
 		}
 		case ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSETTINGSSTATE_ABSOLUTCONTROLCHANGED:	// (23, "Key used to define the command <code>AbsolutControlChanged</code> of class <code>PilotingSettingsState</code> in project <code>ARDrone3</code>"),
-		{	// AbsoluteControlChanged(ってなんやろ)を受信した時, 機体側で実装されてないみたい
+		{	// AbsoluteControlChanged(ってなんやろ)を受信した時, デバイス側で実装されてないみたい
 			final boolean absoluteControl = (Integer)args.get(ARFeatureARDrone3.ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSETTINGSSTATE_ABSOLUTCONTROLCHANGED_ON) != 0;
 			// FIXME 未実装
 			break;
@@ -1240,11 +1237,6 @@ public class FlightControllerBebop extends FlightController implements ICameraCo
 		return false;
 	}
 
-	/**
-	 * 自動離陸モードを設定
-	 * @param enable
-	 * @return
-	 */
 	@Override
 	public boolean sendAutoTakeOffMode(final boolean enable) {
 		if (DEBUG) Log.v (TAG, "sendAutoTakeOffMode:");
@@ -1328,11 +1320,6 @@ public class FlightControllerBebop extends FlightController implements ICameraCo
 		return result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK;
 	}
 
-	/**
-	 * 自動で指定した角度回転させる
-	 * @param degree -180〜180度
-	 * @return
-	 */
 	@Override
 	public boolean requestAnimationsCap(final int degree) {
 		if (DEBUG) Log.v (TAG, "requestAnimationsCap:");
@@ -1368,6 +1355,7 @@ public class FlightControllerBebop extends FlightController implements ICameraCo
 		return sentStatus;
 	}
 
+	@Override
 	public boolean requestAnimationsCap(final int degree, final Object sync) {
 		if (DEBUG) Log.v (TAG, "requestAnimationsCap:");
 

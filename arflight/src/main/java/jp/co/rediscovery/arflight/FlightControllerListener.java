@@ -56,7 +56,7 @@ public interface FlightControllerListener extends DeviceConnectionListener {
 	public void onVideoRecordingStateChanged(final IDeviceController controller, final int state);
 
 	/**
-	 * 機体のストレージ状態が変化した時にコールバック
+	 * デバイスのストレージ状態が変化した時にコールバック
 	 * ホントはこれは飛行状態と直接関係ないから別に分けたほうがええけど
 	 * @param controller
 	 * @param mass_storage_id

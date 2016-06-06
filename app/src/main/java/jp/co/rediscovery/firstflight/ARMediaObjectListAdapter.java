@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-/** 機体内の動画・静止画一覧表示するためのAdapter */
+/** デバイス内の動画・静止画一覧表示するためのAdapter */
 public class ARMediaObjectListAdapter extends ArrayAdapter<ARMediaObject> {
 	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること
 	private static final String TAG = ARMediaObjectListAdapter.class.getSimpleName();

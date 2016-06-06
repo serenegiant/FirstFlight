@@ -36,7 +36,7 @@ import jp.co.rediscovery.arflight.controllers.SkyController;
 import com.serenegiant.net.NetworkChangedReceiver;
 import com.serenegiant.utils.HandlerThreadHandler;
 
-/*** 検出・接続した機体を管理するための非UI Fragment */
+/*** 検出・接続したデバイスを管理するための非UI Fragment */
 public class ManagerFragment extends Fragment {
 	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること
 	private static final String TAG = "ManagerFragment";
@@ -246,7 +246,7 @@ public class ManagerFragment extends Fragment {
 		super.onDetach();
 	}
 
-	/** 機体探索開始 */
+	/** デバイス探索開始 */
 	public void startDiscovery() {
 		if (DEBUG) Log.v(TAG, "startDiscovery:");
 		mDeviceListUpdatedReceiverDelegate.onServicesDevicesListUpdated();
@@ -254,7 +254,7 @@ public class ManagerFragment extends Fragment {
 		registerReceivers();
 	}
 
-	/** 機体探索終了 */
+	/** デバイス探索終了 */
 	public void stopDiscovery() {
 		if (DEBUG) Log.v(TAG, "stopDiscovery:");
 		unregisterReceivers();
@@ -262,7 +262,7 @@ public class ManagerFragment extends Fragment {
 	}
 
 	/**
-	 * 検出した機体一覧が変更された時のコールバックを追加する
+	 * 検出したデバイス一覧が変更された時のコールバックを追加する
 	 * @param callback
 	 */
 	public void addCallback(final ManagerCallback callback) {
@@ -282,7 +282,7 @@ public class ManagerFragment extends Fragment {
 	}
 
 	/**
-	 * 検出した機体一覧が変更された時のコールバックを除去する
+	 * 検出したデバイス一覧が変更された時のコールバックを除去する
 	 * @param callback
 	 */
 	public void removeCallback(final ManagerCallback callback) {
@@ -443,7 +443,7 @@ public class ManagerFragment extends Fragment {
 	}
 
 	/**
-	 * 機体との接続を開始する
+	 * デバイスとの接続を開始する
 	 * @param controller
 	 * @param listener
 	 */
@@ -572,7 +572,7 @@ public class ManagerFragment extends Fragment {
 	}
 
 	/***
-	 * ARSDKの機体探索サービスに接続する
+	 * ARSDKのデバイス探索サービスに接続する
 	 * #startDiscoveryの実際の処理
 	 */
 	private void bindServices() {
@@ -590,7 +590,7 @@ public class ManagerFragment extends Fragment {
 	}
 
 	/**
-	 * ARSDKの機体探索サービスから切断する
+	 * ARSDKのデバイス探索サービスから切断する
 	 * #stopDiscoveryの実際の処理
 	 */
 	private void unbindServices() {
@@ -617,7 +617,7 @@ public class ManagerFragment extends Fragment {
 		}
 	}
 
-	/** 機体探索サービスとの接続/切断イベント処理用コールバック */
+	/** デバイス探索サービスとの接続/切断イベント処理用コールバック */
 	private final ServiceConnection ardiscoveryServiceConnection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(final ComponentName name, final IBinder service) {
@@ -681,7 +681,7 @@ public class ManagerFragment extends Fragment {
 		}
 	};
 
-	/** 検出した機体一覧が変更された時の機体検出サービスからのコールバックリスナー */
+	/** 検出したデバイス一覧が変更された時のデバイス検出サービスからのコールバックリスナー */
 	private final ARDiscoveryServicesDevicesListUpdatedReceiverDelegate
 		mDeviceListUpdatedReceiverDelegate
 			= new ARDiscoveryServicesDevicesListUpdatedReceiverDelegate() {
@@ -706,7 +706,7 @@ public class ManagerFragment extends Fragment {
 	private final BroadcastReceiver mDevicesListUpdatedReceiver
 		= new ARDiscoveryServicesDevicesListUpdatedReceiver(mDeviceListUpdatedReceiverDelegate);
 
-	/** ManagerFragmentに登録されている検出機体一覧変更コールバックを呼び出すためのヘルパーメソッド */
+	/** ManagerFragmentに登録されている検出デバイス一覧変更コールバックを呼び出すためのヘルパーメソッド */
 	private void callOnServicesDevicesListUpdated() {
 		synchronized (mDevices) {
 			for (final ManagerCallback cb: mCallbacks) {

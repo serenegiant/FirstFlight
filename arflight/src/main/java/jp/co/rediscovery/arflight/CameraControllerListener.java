@@ -1,6 +1,6 @@
 package jp.co.rediscovery.arflight;
 
-/** カメラを操作可能な機体用のControllerメソッド定義(実質Bebop/Bebop2用) */
+/** カメラを操作可能なデバイス用のControllerメソッド定義(実質Bebop/Bebop2用) */
 public interface CameraControllerListener {
 	/**
 	 * カメラの方向が変化した

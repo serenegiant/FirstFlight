@@ -126,13 +126,13 @@ public class AutoPilotFragment extends BaseAutoPilotFragment {
 			// ラインを検出出来た時
 			//--------------------------------------------------------------------------------
 			// 制御量を計算
-			// 機体からの角度はカメラ映像の真上が0で反時計回りが負、時計回りが正(Bebopのyaw軸回転角と同じ)
-			// 解析画像のラインに対する角度は機体が時計回りすれば正
-			// この時機体自体のラインに対する角度は符号反転
+			// デバイスからの角度はカメラ映像の真上が0で反時計回りが負、時計回りが正(Bebopのyaw軸回転角と同じ)
+			// 解析画像のラインに対する角度はデバイスが時計回りすれば正
+			// この時デバイス自体のラインに対する角度は符号反転
 			// mCurvatureがゼロでない時にmAngleが正ならラインは左へ曲がっている、mAngleが負なら右へ曲がっている
 			// Vectorクラスは反時計回りが正, 時計回りが負
 			//--------------------------------------------------------------------------------
-			// ライン角に機体の進行方向の傾きを補正
+			// ライン角にデバイスの進行方向の傾きを補正
 			final float theta = rec.angle - flightAngleYaw;
 			float line_angle = -theta;
 			if ((line_angle > 90.0f) || (line_angle < -90.0f)) {
@@ -164,10 +164,10 @@ public class AutoPilotFragment extends BaseAutoPilotFragment {
 			if (offset.y != 0.0f) { if (offset.y == work.y) { work.y = directionalReverseBias; } else { work.y = -directionalReverseBias; } } else { offset.y = 0.0f; }
 			if (offset.z != 0.0f) { if (offset.z == work.z) { work.z = directionalReverseBias; } else { work.z = -directionalReverseBias; } } else { offset.z = 0.0f; }
 			work.add(1.0f, 1.0f, 1.0f);	// この時点でworkの各成分は1.0f±directionalReverseBias
-			// 機体のオフセットと反対向き動かすので-1倍, ±1を±sensitivityに換算するのでsensitivity倍, 前進速度を加算
+			// デバイスのオフセットと反対向き動かすので-1倍, ±1を±sensitivityに換算するのでsensitivity倍, 前進速度を加算
 			// オフセットy(ピッチ, 前後方向)はラインの中心点が中央より前だと負、中央より後ろだと正なので符号反転はしない
 			calcValue.mult(work).mult(-sensitivity, sensitivity, sensitivity);
-			// 実際の機体の進行方向に合わせて回転, これで機体の実際の進行方向に対する制御量になる
+			// 実際のデバイスの進行方向に合わせて回転, これでデバイスの実際の進行方向に対する制御量になる
 			// でも角度の変えながらなのでとりあえず半分だけ回転させる
 			calcValue.rotateXY(line_angle / 2.0f);
 			// FIXME 高度に応じてスケールを変えないとだめかも
@@ -185,7 +185,7 @@ public class AutoPilotFragment extends BaseAutoPilotFragment {
 			// 最大最小値を制限
 			calcValue.limit(-100.0f, +100.0f);
 			//--------------------------------------------------------------------------------
-			// 機体のyaw角を計算
+			// デバイスのyaw角を計算
 			switch (rec.type) {
 			case 0: // TYPE_LINE
 			{

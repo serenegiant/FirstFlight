@@ -30,7 +30,7 @@ import static jp.co.rediscovery.arflight.ARFlightConst.*;
 
 /**
  * スカイコントローラーに接続してスカイコントローラーが
- * 検出している機体の一覧取得＆選択を行うためのFragment
+ * 検出しているデバイスの一覧取得＆選択を行うためのFragment
  */
 public abstract class BaseBridgeFragment extends BaseControllerFragment {
 	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること
@@ -141,6 +141,10 @@ public abstract class BaseBridgeFragment extends BaseControllerFragment {
 
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	protected synchronized boolean startDeviceController() {
 		final boolean already_connected = super.startDeviceController();
 		if (already_connected) {
@@ -149,6 +153,10 @@ public abstract class BaseBridgeFragment extends BaseControllerFragment {
 		return already_connected;
 	}
 
+	/**
+	 * デバイスから切断, DeviceControllerを破棄する
+	 * @param disconnected
+	 */
 	protected void releaseDeviceController(final boolean disconnected) {
 		mIsConnectToDevice = mNeedRequestDeviceList = false;
 		super.releaseDeviceController(disconnected);
@@ -266,7 +274,7 @@ public abstract class BaseBridgeFragment extends BaseControllerFragment {
 						final int numDevices = bridge.getDeviceNum();
 						if (bridge.isConnected() && (info != null) && (numDevices == 1)) {
 							if (DEBUG) Log.v(TAG, "既に1機だけ検出&接続されていたら操縦画面へ");
-							// XXX 検出している機体が1機でそれに接続している時は操縦画面へ
+							// XXX 検出しているデバイスが1機でそれに接続している時は操縦画面へ
 							// XXX ただし今はトレースモードにも移行できるようにしているので自動では遷移しない
 //							replace(PilotFragment.newInstance(controller.getDeviceService(), info));
 						}
@@ -337,7 +345,7 @@ public abstract class BaseBridgeFragment extends BaseControllerFragment {
 		}
 	};
 
-	/** 検出した機体をリストに登録する, Bridge接続はBebop/Bebop2のみ対応 */
+	/** 検出したデバイスをリストに登録する, Bridge接続はBebop/Bebop2のみ対応 */
 	private void updateDeviceList(final DeviceInfo[] info_array) {
 		if (DEBUG) Log.v(TAG, "updateDeviceList:" + info_array);
 		final ARDeviceInfoAdapter adapter = (ARDeviceInfoAdapter) mDeviceListView.getAdapter();
@@ -391,7 +399,7 @@ public abstract class BaseBridgeFragment extends BaseControllerFragment {
 	protected abstract void onClick(final View view, final int position);
 	protected abstract boolean onLongClick(final View view);
 
-	/** アイコンにタッチした時の処理の下請け, 選択している機体に対応するFragmentを生成する */
+	/** アイコンにタッチした時の処理の下請け, 選択しているデバイスに対応するFragmentを生成する */
 	protected Fragment getFragment(final int position, final boolean isPiloting) {
 		if (DEBUG) Log.v(TAG, "getFragment:");
 		final ManagerFragment manager = ManagerFragment.getInstance(getActivity());

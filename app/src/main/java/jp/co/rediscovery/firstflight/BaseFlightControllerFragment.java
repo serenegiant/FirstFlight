@@ -12,7 +12,7 @@ import jp.co.rediscovery.arflight.IFlightController;
 import jp.co.rediscovery.arflight.IVideoStreamController;
 import jp.co.rediscovery.arflight.SkyControllerListener;
 
-/** 機体操作画面の基本クラス */
+/** ドローン操作画面の基本クラス */
 public abstract class BaseFlightControllerFragment extends BaseControllerFragment {
 	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること
 	private final String TAG = "BaseFlightControllerFragment:" + getClass().getSimpleName();
@@ -204,7 +204,7 @@ public abstract class BaseFlightControllerFragment extends BaseControllerFragmen
 	}
 
 	/**
-	 * 機体のストレージ状態が変化した時のコールバック
+	 * デバイスのストレージ状態が変化した時のコールバック
 	 * @param mass_storage_id
 	 * @param size [MB]
 	 * @param used_size [MB]

@@ -330,7 +330,7 @@ public abstract class BasePilotFragment extends BaseFlightControllerFragment {
 		queueEvent(mUpdateStatusTask, 100);
 	}
 
-	// 機体姿勢と高度
+	// デバイス姿勢と高度
 	private float mCurrentRoll = 0;
 	private float mCurrentPitch = 0;
 	private float mCurrentYaw = 0;
@@ -343,7 +343,7 @@ public abstract class BasePilotFragment extends BaseFlightControllerFragment {
 		public void run() {
 			if (mFlightController != null) {
 				if (mFlightController.canGetAttitude()) {
-					// 機体姿勢を取得できる時
+					// デバイス姿勢を取得できる時
 					mAttitude.set(mFlightController.getAttitude());
 					mAttitude.toDegree();	// ラジアンを度に変換
 					final float altitude = mFlightController.getAltitude();

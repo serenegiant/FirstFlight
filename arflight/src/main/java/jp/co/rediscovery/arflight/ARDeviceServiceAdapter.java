@@ -15,7 +15,7 @@ import com.parrot.arsdk.ardiscovery.ARDiscoveryService;
 
 import java.util.ArrayList;
 
-/**WiFiおよびBluetooth経由での直接機体探索画面で検出した機体一覧を表示するためのAdapterクラス　*/
+/**WiFiおよびBluetooth経由での直接デバイス探索画面で検出したデバイス一覧を表示するためのAdapterクラス　*/
 public class ARDeviceServiceAdapter extends ArrayAdapter<ARDiscoveryDeviceService> {
 
 	private final LayoutInflater mInflater;
@@ -51,7 +51,7 @@ public class ARDeviceServiceAdapter extends ArrayAdapter<ARDiscoveryDeviceServic
 			}
 		}
 		if (holder.thumbnail != null) {
-			// 機体アイコンの更新処理。今は変更なし
+			// デバイスアイコンの更新処理。今は変更なし
 			final ARDISCOVERY_PRODUCT_ENUM product = ARDiscoveryService.getProductFromProductID(device.getProductID());
 			switch (product) {
 			case ARDISCOVERY_PRODUCT_ARDRONE:	// Bebop
@@ -61,7 +61,7 @@ public class ARDeviceServiceAdapter extends ArrayAdapter<ARDiscoveryDeviceServic
 			case ARDISCOVERY_PRODUCT_MINIDRONE_EVO_BRICK:
 			case ARDISCOVERY_PRODUCT_MINIDRONE_EVO_HYDROFOIL: // ハイドロフォイルもいる?
 			case ARDISCOVERY_PRODUCT_SKYCONTROLLER:	// SkyController
-//				holder.thumbnail.setImageResource(機体アイコンリソースID);
+//				holder.thumbnail.setImageResource(デバイスアイコンリソースID);
 				break;
 			}
 		}
@@ -69,7 +69,7 @@ public class ARDeviceServiceAdapter extends ArrayAdapter<ARDiscoveryDeviceServic
 	}
 
 	/**
-	 * 指定した位置の検出機体名を取得
+	 * 指定した位置の検出デバイス名を取得
 	 * @param position
 	 * @return
 	 */

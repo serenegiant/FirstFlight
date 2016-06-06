@@ -13,7 +13,7 @@ import jp.co.rediscovery.arflight.ManagerFragment;
 
 /**
  * スカイコントローラーに接続してスカイコントローラーが
- * 検出している機体の一覧取得＆選択を行うためのFragment
+ * 検出しているデバイスの一覧取得＆選択を行うためのFragment
  */
 public class BridgeFragment extends BaseBridgeFragment {
 	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること

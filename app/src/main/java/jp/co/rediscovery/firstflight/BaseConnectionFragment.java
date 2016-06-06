@@ -22,7 +22,7 @@ import jp.co.rediscovery.arflight.ARDeviceServiceAdapter;
 import jp.co.rediscovery.arflight.ManagerFragment;
 
 /***
- * 機体探索画面の基本クラス
+ * デバイス探索画面の基本クラス
  * 元々は従来のAPI用と新しいAPI用の共通部分を実装していたので基本クラスと実際の接続画面に分けてるけど
  * このプロジェクトでは新しいAPIしか対応していないのであえて分ける必要は無く1つにまとめてもOK
  * */

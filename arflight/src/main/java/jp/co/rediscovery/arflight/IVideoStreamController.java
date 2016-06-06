@@ -1,5 +1,8 @@
 package jp.co.rediscovery.arflight;
 
+/**
+ * ライブ映像に対応したコントローラー用のメソッド定義用のインターフェース
+ */
 public interface IVideoStreamController {
 	public static final int DEFAULT_VIDEO_FRAGMENT_SIZE = 1000;
 	public static final int DEFAULT_VIDEO_FRAGMENT_MAXIMUM_NUMBER = 128;

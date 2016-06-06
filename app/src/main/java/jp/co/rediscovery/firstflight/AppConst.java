@@ -11,7 +11,7 @@ public class AppConst {
 	public static final String APP_CONFIG_KEY_GAMEPAD_SCALE_Y = "APP_CONFIG_GAMEPAD_SCALE_Y";
 	public static final String APP_CONFIG_KEY_GAMEPAD_SCALE_Z = "APP_CONFIG_GAMEPAD_SCALE_Z";
 	public static final String APP_CONFIG_KEY_GAMEPAD_SCALE_R = "APP_CONFIG_GAMEPAD_SCALE_R";
-	// 機体制御
+	// デバイス制御
 	public static final String APP_CONFIG_KEY_MAX_CONTROL_VALUE = "APP_CONFIG_MAX_CONTROL_VALUE";
 	public static final float APP_CONFIG_DEFAULT_MAX_CONTROL_VALUE = 100.0f;
 	public static final String APP_CONFIG_KEY_SCALE_X = "APP_CONFIG_SCALE_X";

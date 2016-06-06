@@ -13,12 +13,10 @@ import android.view.Surface;
 import com.parrot.arsdk.arcontroller.ARCONTROLLER_STREAM_CODEC_TYPE_ENUM;
 import com.parrot.arsdk.arcontroller.ARControllerCodec;
 import com.parrot.arsdk.arsal.ARNativeData;
-import com.parrot.arsdk.arstream2.ARSTREAM2_H264_FILTER_AU_SYNC_TYPE_ENUM;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import com.parrot.arsdk.arstream2.ARStream2ReceiverListener;
 import com.serenegiant.glutils.EGLBase;
 import com.serenegiant.glutils.EglTask;
 import com.serenegiant.glutils.FullFrameRect;
@@ -26,7 +24,8 @@ import com.serenegiant.glutils.GLHelper;
 import com.serenegiant.glutils.Texture2dProgram;
 import com.serenegiant.utils.FpsCounter;
 
-public class VideoStream implements ARStream2ReceiverListener {
+/** ライブ映像処理用のヘルパークラス */
+public class VideoStream {
 	private static final boolean DEBUG = false; // FIXME 実働時はfalseにすること
 	private static final String TAG = "VideoStream";
 
@@ -77,6 +76,7 @@ public class VideoStream implements ARStream2ReceiverListener {
 		mRendererTask.release();
 	}
 
+//--------------------------------------------------------------------------------
 	/**
 	 * 映像書き込み用Surfaceを追加する
 	 * @param id
@@ -96,20 +96,11 @@ public class VideoStream implements ARStream2ReceiverListener {
 		mRendererTask.removeSurface(id);
 	}
 
-	public void onReceiveFrame(final ARFrame frame) {
-		// 映像フレームデータを受信した時の処理
-		// デコーダーへキューイングする
-		mDecodeTask.queueFrame(frame, frame.isIFrame());
-	}
-
-	public void onFrameTimeout() {
-		// 一定時間内に映像フレームデータを受信できなかった時の処理
-		// 今のところLogCatにメッセージを出すだけで特に何もしない
-		Log.w(TAG, "onFrameTimeout");
-	}
-
 //--------------------------------------------------------------------------------
-// NewAPIを使う時
+	/**
+	 * ライブ映像用のデコーダーの初期化用のデータが取得できた時
+	 * @param codec
+	 */
 	public void configureDecoder(final ARControllerCodec codec) {
 		if (DEBUG) Log.v(TAG, "configureDecoder:" + codec);
 		ByteBuffer sps = null, pps = null;
@@ -129,10 +120,28 @@ public class VideoStream implements ARStream2ReceiverListener {
 		}
 	}
 
+	/**
+	 * 映像フレームデータを受信した時の処理
+	 * @param frame
+	 */
 	public void onReceiveFrame(final com.parrot.arsdk.arcontroller.ARFrame frame) {
-		// 映像フレームデータを受信した時の処理
 		// デコーダーへキューイングする
 		mDecodeTask.queueFrame(frame, frame.isIFrame());
+	}
+
+	/**
+	 * 一定時間内に映像フレームデータを受信できなかった時
+	 */
+	public void onFrameTimeout() {
+		// 今のところLogCatにメッセージを出すだけで特に何もしない
+		Log.w(TAG, "onFrameTimeout");
+	}
+
+	protected ByteBuffer[] onSpsPpsReady(final ByteBuffer sps, final ByteBuffer pps) {
+		if (DEBUG) Log.v(TAG, "onSpsPpsReady:");
+		mDecodeTask.initMediaCodec();
+		mDecodeTask.configureMediaCodec(sps, pps, mRendererTask.getSurface());
+		return mDecodeTask.inputBuffers;
 	}
 
 //--------------------------------------------------------------------------------
@@ -148,32 +157,7 @@ public class VideoStream implements ARStream2ReceiverListener {
 	public float getTotalFps() {
 		return mFps.getTotalFps();
 	}
-//--------------------------------------------------------------------------------
-// ARStream2ReceiverListenerのメソッド
-// 受信したフレームをDecoderTaskでMediaCodecへ投入する代わりに直接MediaCodecを操作する
-//--------------------------------------------------------------------------------
-	@Override
-	public ByteBuffer[] onSpsPpsReady(final ByteBuffer sps, final ByteBuffer pps) {
-		if (DEBUG) Log.v(TAG, "onSpsPpsReady:");
-		mDecodeTask.initMediaCodec();
-		mDecodeTask.configureMediaCodec(sps, pps, mRendererTask.getSurface());
-		return mDecodeTask.inputBuffers;
-	}
 
-	@Override
-	public int getFreeBuffer() {
-		if (DEBUG) Log.v(TAG, "getFreeBuffer:");
-		return mDecodeTask.mediaCodec.dequeueInputBuffer(VIDEO_INPUT_TIMEOUT_US);
-	}
-
-	@Override
-	public void onBufferReady(final int bufferIdx, final long auTimestamp, final long auTimestampShifted, final ARSTREAM2_H264_FILTER_AU_SYNC_TYPE_ENUM auSyncType) {
-		if (DEBUG) Log.v(TAG, "onBufferReady:");
-		final int flag = (auSyncType == ARSTREAM2_H264_FILTER_AU_SYNC_TYPE_ENUM.ARSTREAM2_H264_FILTER_AU_SYNC_TYPE_IFRAME)
-			? 1/*MediaCodec.BUFFER_FLAG_KEY_FRAME*/ : 0;
-		final int sz = mDecodeTask.inputBuffers[bufferIdx].limit();
-		mDecodeTask.mediaCodec.queueInputBuffer(bufferIdx, 0, sz, auTimestampShifted, flag);
-	}
 //--------------------------------------------------------------------------------
 
 	/** 受信したh.264映像をデコードして描画タスクにキューイングするタスク */
@@ -190,6 +174,7 @@ public class VideoStream implements ARStream2ReceiverListener {
 			waitForIFrame = true;
 		}
 
+		@SuppressWarnings("deprecation")
 		public void queueFrame(final ARNativeData frame, final boolean isIFrame) {
 //			if (DEBUG) Log.v(TAG, "queueFrame:mediaCodec" + mediaCodec + ",isCodecConfigured=" + isCodecConfigured
 //				+ ",waitForIFrame=" + waitForIFrame + ",isIFrame=" + isIFrame);
@@ -224,7 +209,7 @@ public class VideoStream implements ARStream2ReceiverListener {
 							b.put(frame.getByteData(), 0, sz);
 							int flag = 0;
 							if (isIFrame) {
-								flag |= MediaCodec.BUFFER_FLAG_KEY_FRAME; //  | MediaCodec.BUFFER_FLAG_CODEC_CONFIG;
+								flag |= MediaCodec.BUFFER_FLAG_SYNC_FRAME; //  | MediaCodec.BUFFER_FLAG_CODEC_CONFIG;
 							}
 							mediaCodec.queueInputBuffer(index, 0, sz, 0, flag);
 						} catch (final IllegalStateException e) {
@@ -305,6 +290,7 @@ public class VideoStream implements ARStream2ReceiverListener {
 		 * @param csdBuffer
 		 * @param surface
 		 */
+		@SuppressWarnings("deprecation")
 		private void configureMediaCodec(final ByteBuffer csdBuffer, final Surface surface) {
 			if (DEBUG) Log.v(TAG, "configureMediaCodec:");
 			final MediaFormat format = MediaFormat.createVideoFormat(VIDEO_MIME_TYPE, VIDEO_WIDTH, VIDEO_HEIGHT);
@@ -317,6 +303,7 @@ public class VideoStream implements ARStream2ReceiverListener {
 			isCodecConfigured = true;
 		}
 
+		@SuppressWarnings("deprecation")
 		private void configureMediaCodec(final ByteBuffer sps, final ByteBuffer pps, final Surface surface) {
 			if (DEBUG) Log.v(TAG, "configureMediaCodec:");
 			final MediaFormat format = MediaFormat.createVideoFormat(VIDEO_MIME_TYPE, VIDEO_WIDTH, VIDEO_HEIGHT);
@@ -352,9 +339,9 @@ public class VideoStream implements ARStream2ReceiverListener {
 		private ByteBuffer getCSD(final ARNativeData frame, final boolean isIFrame) {
 			if (DEBUG) Log.v(TAG, "getCSD:" + frame);
 			if (isIFrame) {
-				int spsSize = -1;
 				final byte[] data = frame.getByteData();
-				int searchIndex = 0;
+				int spsSize;
+				int searchIndex;
 				// we'll need to search the "00 00 00 01" pattern to find each header size
 				// Search start at index 4 to avoid finding the SPS "00 00 00 01" tag
 				for (searchIndex = 4; searchIndex <= frame.getDataSize() - 4; searchIndex ++) {
@@ -389,7 +376,7 @@ public class VideoStream implements ARStream2ReceiverListener {
 			}
 			return null;
 		}
-	};
+	}
 
 	private static final int REQUEST_DRAW = 1;
 	private static final int REQUEST_UPDATE_SIZE = 2;

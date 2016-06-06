@@ -45,7 +45,7 @@ import jp.co.rediscovery.arflight.IFlightController;
 import jp.co.rediscovery.arflight.attribute.AttributeDevice;
 import com.serenegiant.utils.HandlerThreadHandler;
 
-/** Parrotの機体類との通信を処理するための基本クラス */
+/** Parrotのデバイスとの通信を処理するための基本クラス */
 public abstract class DeviceController implements IDeviceController {
 	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること
 	private String TAG = "DeviceController:" + getClass().getSimpleName();
@@ -75,7 +75,7 @@ public abstract class DeviceController implements IDeviceController {
 	/**
 	 * コンストラクタ
 	 * @param context
-	 * @param service 機体探索サービスから取得したARDiscoveryDeviceServiceインスタンス
+	 * @param service デバイス探索サービスから取得したARDiscoveryDeviceServiceインスタンス
 	 */
 	public DeviceController(final Context context, final ARDiscoveryDeviceService service) {
 		if (DEBUG) Log.v(TAG, "コンストラクタ:");
@@ -118,10 +118,6 @@ public abstract class DeviceController implements IDeviceController {
 //================================================================================
 // コールバック関係
 //================================================================================
-	/**
-	 * コールバックリスナーを設定
-	 * @param listener
-	 */
 	@Override
 	public void addListener(final DeviceConnectionListener listener) {
 		if (DEBUG) Log.v(TAG, "addListener:" + listener);
@@ -132,10 +128,6 @@ public abstract class DeviceController implements IDeviceController {
 		}
 	}
 
-	/**
-	 * 指定したコールバックリスナーを取り除く
-	 * @param listener
-	 */
 	@Override
 	public void removeListener(final DeviceConnectionListener listener) {
 		if (DEBUG) Log.v(TAG, "removeListener:" + listener);
@@ -238,7 +230,7 @@ public abstract class DeviceController implements IDeviceController {
 //================================================================================
 
 	/**
-	 * 機体名を取得, これは変更可能な値
+	 * デバイス名を取得, これは変更可能な値
 	 * @return
 	 */
 	@Override
@@ -296,7 +288,7 @@ public abstract class DeviceController implements IDeviceController {
 	}
 
 	/**
-	 * 機体の異常状態をセット
+	 * デバイスの異常状態をセット
 	 * @param alarm
 	 */
 	protected void setAlarm(final int alarm) {
@@ -503,9 +495,6 @@ public abstract class DeviceController implements IDeviceController {
 		if (DEBUG) Log.v(TAG, "onStarted:終了");
 	}
 
-	/**
-	 * 切断処理。子クラスで追加処理が必要であれば#internal_stopをOverrideすること
-	 */
 	@Override
 	public final synchronized void stop() {
 		if (DEBUG) Log.v(TAG, "stop:");
@@ -573,11 +562,6 @@ public abstract class DeviceController implements IDeviceController {
 		}
 	}
 
-	/**
-	 * 機体と接続しているかどうか
-	 * スカイコントローラー経由の場合はスカイコントローラーとの接続状態
-	 * @return
-	 */
 	@Override
 	public boolean isStarted() {
 		synchronized (mStateSync) {
@@ -587,12 +571,13 @@ public abstract class DeviceController implements IDeviceController {
 		}
 	}
 
+	@Override
 	public boolean isConnected() {
 		return isStarted();
 	}
 
 	/**
-	 * 機体との接続ステータスを列挙型として取得
+	 * デバイスとの接続ステータスを列挙型として取得
 	 * スカイコントローラー経由の場合はスカイコントローラーとの接続状態
 	 * @return
 	 */
@@ -603,7 +588,7 @@ public abstract class DeviceController implements IDeviceController {
 	}
 
 	/**
-	 * スカイコントローラー経由で接続している時に、スカイコントローラーと機体の接続状態を列挙型として取得
+	 * スカイコントローラー経由で接続している時に、スカイコントローラーとデバイスの接続状態を列挙型として取得
 	 * @return
 	 */
 	protected ARCONTROLLER_DEVICE_STATE_ENUM getExtensionDeviceState() {
@@ -613,7 +598,7 @@ public abstract class DeviceController implements IDeviceController {
 	}
 
 	/**
-	 * 機体との接続状態が変化した時およびデータを受け取った際のコールバックリスナー
+	 * デバイスとの接続状態が変化した時およびデータを受け取った際のコールバックリスナー
 	 * 直接DeviceControllerへARDeviceControllerListenerインターフェースを実装してもいいんだけど、
 	 * このコールバックを呼び出してええのはこのクラスインスタンスが保持しとるARDeviceControllerインスタンスだけやのに
 	 * Javaだとインターフェースの実装は常にpublicになってしまって外部の任意のクラス/コードから呼び出されてしまう危険があるので
@@ -621,7 +606,7 @@ public abstract class DeviceController implements IDeviceController {
 	 */
 	private final ARDeviceControllerListener mDeviceControllerListener = new ARDeviceControllerListener() {
 		/**
-		 * 機体との接続状態が変化した時
+		 * デバイスとの接続状態が変化した時
 		 * 実際の処理はDeviceController#onStateChangedへdelegate
 		 * @param deviceController
 		 * @param newState
@@ -639,7 +624,7 @@ public abstract class DeviceController implements IDeviceController {
         }
 
 		/**
-		 * スカイコントローラー経由で接続している際の、スカイコントローラーと機体の接続状態が変化した時
+		 * スカイコントローラー経由で接続している際の、スカイコントローラーとデバイスの接続状態が変化した時
 		 * 実際の処理はDeviceController#onExtensionStateChangedへdelegate
 		 * @param deviceController
 		 * @param newState
@@ -660,7 +645,7 @@ public abstract class DeviceController implements IDeviceController {
 		}
 
 		/**
-		 * 機体からデータを受け取った
+		 * デバイスからデータを受け取った
 		 * 実際の処理はDeviceController#onCommandReceivedへdelegate
 		 * @param deviceController
 		 * @param commandKey
@@ -716,7 +701,7 @@ public abstract class DeviceController implements IDeviceController {
 	}
 
 	/**
-	 * タブレット/スマホと機体(スカイコントローラーを含む)が接続した時
+	 * タブレット/スマホとデバイス(スカイコントローラーを含む)が接続した時
 	 * onStateChangedの下請け, 大元から見たら孫請けやな
 	 */
 	protected void onConnect() {
@@ -727,7 +712,7 @@ public abstract class DeviceController implements IDeviceController {
 	}
 
 	/**
-	 * タブレット/スマホと機体(スカイコントローラーを含む)が切断された時
+	 * タブレット/スマホとデバイス(スカイコントローラーを含む)が切断された時
 	 * onStateChangedの下請け, 大元から見たら孫請けやな
 	 */
 	protected void onDisconnect() {
@@ -780,7 +765,7 @@ public abstract class DeviceController implements IDeviceController {
 	}
 
 	/**
-	 * スカイコントローラーに機体が接続した時
+	 * スカイコントローラーにデバイスが接続した時
 	 * onExtensionStateChangedの下請け, 大元から見たら孫請けやな
 	 */
 	protected void onExtensionConnect() {
@@ -788,7 +773,7 @@ public abstract class DeviceController implements IDeviceController {
 	}
 
 	/**
-	 * スカイコントローラーから機体が切断された時
+	 * スカイコントローラーからデバイスが切断された時
 	 * onExtensionStateChangedの下請け, 大元から見たら孫請けやな
 	 */
 	protected void onExtensionDisconnect() {
@@ -796,7 +781,7 @@ public abstract class DeviceController implements IDeviceController {
 	}
 
 	/**
-	 * 機体からのデータ受信時の処理
+	 * デバイスからのデータ受信時の処理
 	 * mDeviceControllerListenerの下請け
 	 */
 	protected void onCommandReceived(final ARDeviceController deviceController,
@@ -872,7 +857,7 @@ public abstract class DeviceController implements IDeviceController {
 			break;
 		}
 		case ARCONTROLLER_DICTIONARY_KEY_COMMON_COMMONSTATE_MASSSTORAGESTATELISTCHANGED:	// (169, "Key used to define the command <code>MassStorageStateListChanged</code> of class <code>CommonState</code> in project <code>Common</code>"),
-		{	// 機体内のストレージ一覧が変化した時
+		{	// デバイス内のストレージ一覧が変化した時
 			for (final ARControllerArgumentDictionary<Object> element: elementDictionary.values()) {
 				final Object id_obj = element.get(ARFeatureCommon.ARCONTROLLER_DICTIONARY_KEY_COMMON_COMMONSTATE_MASSSTORAGESTATELISTCHANGED_MASS_STORAGE_ID);
 				final Object name_obj = element.get(ARFeatureCommon.ARCONTROLLER_DICTIONARY_KEY_COMMON_COMMONSTATE_MASSSTORAGESTATELISTCHANGED_NAME);
@@ -1183,12 +1168,24 @@ public abstract class DeviceController implements IDeviceController {
 
 	/**
 	 * 磁気センサーのキャリブレーション中の軸が変化した時のコールバック呼び出し用ヘルパーメソッド
-	 * @param axis
+	 * @param axis 0:x, 1:y, z:2, 3:none
 	 */
 	protected abstract void callOnCalibrationAxisChanged(final int axis);
 
 	/**
-	 * 機体内のストレージの状態が変化した時のコールバック呼び出し用ヘルパーメソッド
+	 * 静止画撮影ステータスが変化した時のコールバック呼び出し用のヘルパーメソッド
+	 * @param state
+	 */
+	protected abstract void callOnStillCaptureStateChanged(final int state);
+
+	/**
+	 * 動画撮影ステータスが変化した時のコールバック呼び出し用のヘルパーメソッド
+	 * @param state
+	 */
+	protected abstract void callOnVideoRecordingStateChanged(final int state);
+
+	/**
+	 * デバイス内のストレージの状態が変化した時のコールバック呼び出し用ヘルパーメソッド
 	 * @param mass_storage_id
 	 * @param size
 	 * @param used_size
@@ -1205,7 +1202,7 @@ public abstract class DeviceController implements IDeviceController {
 	protected abstract void onOutdoorSettingChanged(final boolean outdoor);
 
 	/**
-	 * 機体内のストレージ一覧が変化した時
+	 * デバイス内のストレージ一覧が変化した時
 	 * @param mass_storage_id
 	 * @param name
 	 */
@@ -1216,7 +1213,7 @@ public abstract class DeviceController implements IDeviceController {
 	}
 
 	/**
-	 * 機体内のストレージの状態が変化した時
+	 * デバイス内のストレージの状態が変化した時
 	 * @param mass_storage_id
 	 * @param size
 	 * @param used_size
@@ -1236,10 +1233,7 @@ public abstract class DeviceController implements IDeviceController {
 //********************************************************************************
 	private static final SimpleDateFormat formattedDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 	private static final SimpleDateFormat formattedTime = new SimpleDateFormat("'T'HHmmssZZZ", Locale.getDefault());
-	/**
-	 * ネットワーク切断要求
-	 * @return
-	 */
+
 	public boolean sendNetworkDisconnect() {
 		if (DEBUG) Log.v(TAG, "sendNetworkDisconnect:");
 		ARCONTROLLER_ERROR_ENUM result = ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_ERROR;
@@ -1304,10 +1298,7 @@ public abstract class DeviceController implements IDeviceController {
 		return result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK;
 	}
 
-	/**
-	 * 機体設定をリセットする
-	 * @return
-	 */
+	@Override
 	public boolean sendSettingsReset() {
 		if (DEBUG) Log.v(TAG, "sendSettingsReset:");
 		ARCONTROLLER_ERROR_ENUM result = ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_ERROR;
@@ -1320,62 +1311,7 @@ public abstract class DeviceController implements IDeviceController {
 		return result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK;
 	}
 
-	/**
-	 * 国コードを設定する
-	 * @param code
-	 * @return
-	 */
-	protected boolean sendCountryCode(final String code) {
-		if (DEBUG) Log.v(TAG, "sendCountryCode:");
-		ARCONTROLLER_ERROR_ENUM result = ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_ERROR;
-		if (isStarted()) {
-			result = mARDeviceController.getFeatureCommon().sendSettingsCountry(code);
-		}
-		if (result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK) {
-			Log.e(TAG, "#setCountryCode failed:" + result);
-		}
-		return result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK;
-	}
-
-	/**
-	 * 自動国選択モードを使うかどうかを設定する
-	 * @param auto
-	 * @return
-	 */
-	protected boolean sendAutomaticCountry(final boolean auto) {
-		if (DEBUG) Log.v(TAG, "sendAutomaticCountry:");
-		ARCONTROLLER_ERROR_ENUM result = ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_ERROR;
-		if (isStarted()) {
-			result = mARDeviceController.getFeatureCommon().sendSettingsAutoCountry(auto ? (byte)1 : (byte)0);
-		}
-		if (result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK) {
-			Log.e(TAG, "#setAutomaticCountry failed:" + result);
-		}
-		return result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK;
-	}
-
-	/**
-	 * 機体名をセットする
-	 * コマンド名は製品名となっとるけど実際には機体名(WiFi接続やとアクセスポイント名として見えるやつ)
-	 * @param name
-	 * @return
-	 */
-	public boolean sendSettingsProductName(final String name) {
-		if (DEBUG) Log.v(TAG, "sendSettingsProductName:");
-		ARCONTROLLER_ERROR_ENUM result = ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_ERROR;
-		if (isStarted()) {
-			result = mARDeviceController.getFeatureCommon().sendSettingsProductName(name);
-		}
-		if (result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK) {
-			Log.e(TAG, "#sendSettingsProductName failed:" + result);
-		}
-		return result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK;
-	}
-
-	/**
-	 * 機体を再起動させる
-	 * @return
-	 */
+	@Override
 	public boolean sendCommonReboot() {
 		if (DEBUG) Log.v(TAG, "sendCommonReboot:");
 		ARCONTROLLER_ERROR_ENUM result = ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_ERROR;
@@ -1388,10 +1324,19 @@ public abstract class DeviceController implements IDeviceController {
 		return result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK;
 	}
 
-	/**
-	 * 起こったことがないからよくわからんけど機体(多分マイコンとかESC)が過熱した時にその異常を解除するコマンドみたい
-	 * @return
-	 */
+	@Override
+	public boolean sendSettingsProductName(final String name) {
+		if (DEBUG) Log.v(TAG, "sendSettingsProductName:");
+		ARCONTROLLER_ERROR_ENUM result = ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_ERROR;
+		if (isStarted()) {
+			result = mARDeviceController.getFeatureCommon().sendSettingsProductName(name);
+		}
+		if (result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK) {
+			Log.e(TAG, "#sendSettingsProductName failed:" + result);
+		}
+		return result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK;
+	}
+
 	public boolean sendOverHeatSwitchOff() {
 		if (DEBUG) Log.v(TAG, "sendOverHeatSwitchOff:");
 		ARCONTROLLER_ERROR_ENUM result = ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_ERROR;
@@ -1404,10 +1349,6 @@ public abstract class DeviceController implements IDeviceController {
 		return result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK;
 	}
 
-	/**
-	 * 起こったことがないからよくわからんけど機体(多分マイコンとかESC)が過熱した時の冷却をさせるためのコマンドみたい
-	 * @return
-	 */
 	public boolean sendOverHeatVentilate() {
 		if (DEBUG) Log.v(TAG, "sendOverHeatVentilate:");
 		ARCONTROLLER_ERROR_ENUM result = ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_ERROR;
@@ -1420,12 +1361,6 @@ public abstract class DeviceController implements IDeviceController {
 		return result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK;
 	}
 
-	/**
-	 * 操縦モードかどうかをセット
-	 * スカイコントローラーの場合には更にsendCoPilotingSetPilotingSourceちゅうのもある
-	 * @param piloting
-	 * @return
-	 */
 	public boolean sendControllerIsPiloting(final boolean piloting) {
 		if (DEBUG) Log.v(TAG, "sendControllerIsPiloting:");
 		ARCONTROLLER_ERROR_ENUM result = ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_ERROR;
@@ -1438,14 +1373,30 @@ public abstract class DeviceController implements IDeviceController {
 		return result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK;
 	}
 
-	/**
-	 * 室内モードか屋外モードかをセット
-	 * 日本だと外で飛ばす時は屋外モードにして2.4GHz帯を使わんと電波法違反になるんやけど
-	 * 初期設定は5GHz帯を使うようになっとる場合があるから要注意や。
-	 * つまり外で飛ばすならまず室内で屋外モードにしてから外に持っていかなあかんちゅうことやで
-	 * @param outdoor
-	 * @return
-	 */
+	public boolean sendCountryCode(final String code) {
+		if (DEBUG) Log.v(TAG, "sendCountryCode:");
+		ARCONTROLLER_ERROR_ENUM result = ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_ERROR;
+		if (isStarted()) {
+			result = mARDeviceController.getFeatureCommon().sendSettingsCountry(code);
+		}
+		if (result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK) {
+			Log.e(TAG, "#setCountryCode failed:" + result);
+		}
+		return result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK;
+	}
+
+	public boolean sendAutomaticCountry(final boolean auto) {
+		if (DEBUG) Log.v(TAG, "sendAutomaticCountry:");
+		ARCONTROLLER_ERROR_ENUM result = ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_ERROR;
+		if (isStarted()) {
+			result = mARDeviceController.getFeatureCommon().sendSettingsAutoCountry(auto ? (byte)1 : (byte)0);
+		}
+		if (result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK) {
+			Log.e(TAG, "#setAutomaticCountry failed:" + result);
+		}
+		return result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK;
+	}
+
 	public boolean sendSettingsOutdoor(final boolean outdoor) {
 		if (DEBUG) Log.v(TAG, "sendSettingsOutdoor:");
 		ARCONTROLLER_ERROR_ENUM result = ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_ERROR;
@@ -1529,9 +1480,9 @@ public abstract class DeviceController implements IDeviceController {
 	}
 
 	/**
-	 * Bluetooth接続ではなくてかつGPSを持ってない機体(ぶっちゃけ今のところJumpingSumo)に対してコントローラーの現在位置を送信する
+	 * Bluetooth接続ではなくてかつGPSを持ってないデバイス(ぶっちゃけ今のところJumpingSumo)に対してコントローラーの現在位置を送信する
 	 * 静止画・動画撮影時のジオタグに使うらしい。
-	 * んーなんでBluetooth接続の機体(ミニドローン)に送っちゃいかんねん?ジオタグに使うんやったら一緒やん。
+	 * なんでBluetooth接続のデバイス(ミニドローン)に送っちゃいかんねん?ジオタグに使うんやったら一緒やん。
 	 * @param latitude
 	 * @param longitude
 	 * @return
@@ -1642,10 +1593,9 @@ public abstract class DeviceController implements IDeviceController {
 	}
 
 	/**
-	 * ハル(ガード)がどの種類かを設定する
+	 * ハル(ガード)の種類を設定する
 	 * ミニドローンの場合にはARFeatureMiniDrone#sendSpeedSettingsWheelsちゅう設定も別途あるし
 	 * Bebop/Bebop2の場合にはARFeatureARDrone3#sendSpeedSettingsHullProtectionちゅうのもあるから注意や
-	 * というか何で何でARFeatureCommonに入れんねんな
 	 * @param accessory 0:無し, 1:標準の車輪型, 2:外周を囲うタイプ, 3:ハル, 4:ハイドロフォイル
 	 * @return
 	 */

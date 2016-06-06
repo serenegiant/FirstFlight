@@ -3,7 +3,7 @@ package jp.co.rediscovery.arflight;
 import jp.co.rediscovery.arflight.attribute.AttributeCalibration;
 import jp.co.rediscovery.arflight.attribute.AttributePosition;
 
-/** 各機体/スカイコントローラー共通のステータスクラス */
+/** 各デバイス共通のステータスクラス */
 public class CommonStatus {
 	public static final int ALARM_NON = 0;
 	public static final int ALARM_USER_EMERGENCY = 1;
@@ -263,10 +263,11 @@ public class CommonStatus {
 		}
 	}
 
+	/** 磁気センサーのキャリブレーション状態 */
 	private AttributeCalibration mAttributeCalibration = new AttributeCalibration();
 
 	/**
-	 * 機器の磁気センサーのキャリブレーション状態を設定
+	 * デバイスの磁気センサーのキャリブレーション状態を設定
 	 * @param x
 	 * @param y
 	 * @param z
@@ -277,7 +278,7 @@ public class CommonStatus {
 	}
 
 	/**
-	 * 機体の磁気センサーのキャリブレーションが必要かどうかを設定
+	 * デバイスの磁気センサーのキャリブレーションが必要かどうかを設定
 	 * @param need_calibration
 	 */
 	public void needCalibration(final boolean need_calibration) {
@@ -285,7 +286,7 @@ public class CommonStatus {
 	}
 
 	/**
-	 * 機体のキャリブレーションが必要かどうかを取得
+	 * デバイスのキャリブレーションが必要かどうかを取得
 	 * @return
 	 */
 	public boolean needCalibration() {

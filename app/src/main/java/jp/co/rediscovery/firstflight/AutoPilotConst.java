@@ -2,7 +2,7 @@ package jp.co.rediscovery.firstflight;
 
 public class AutoPilotConst {
 // ライントレース
-	// 機体側のカメラ設定
+	// デバイス側のカメラ設定
 	public static final String KEY_CAMERA_WHITE_BLANCE = "KEY_CAMERA_WHITE_BLANCE";
 	public static final int DEFAULT_CAMERA_WHITE_BLANCE = 2;	// 晴天
 	public static final String KEY_CAMERA_EXPOSURE = "KEY_CAMERA_EXPOSURE";

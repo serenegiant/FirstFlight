@@ -10,6 +10,7 @@ import static com.parrot.arsdk.arcommands.ARCOMMANDS_SKYCONTROLLER_DEVICESTATE_C
 import static com.parrot.arsdk.arcommands.ARCOMMANDS_SKYCONTROLLER_DEVICESTATE_CONNEXIONCHANGED_STATUS_ENUM.ARCOMMANDS_SKYCONTROLLER_DEVICESTATE_CONNEXIONCHANGED_STATUS_DISCONNECTING;
 import static com.parrot.arsdk.arcommands.ARCOMMANDS_SKYCONTROLLER_DEVICESTATE_CONNEXIONCHANGED_STATUS_ENUM.ARCOMMANDS_SKYCONTROLLER_DEVICESTATE_CONNEXIONCHANGED_STATUS_NOTCONNECTED;
 
+/** デバイス状態の保持用 */
 public class DeviceInfo implements Parcelable {
 	public static final int CONNECT_STATE_DISCONNECT = ARCOMMANDS_SKYCONTROLLER_DEVICESTATE_CONNEXIONCHANGED_STATUS_NOTCONNECTED.getValue();	// 0
 	public static final int CONNECT_STATE_CONNECTING = ARCOMMANDS_SKYCONTROLLER_DEVICESTATE_CONNEXIONCHANGED_STATUS_CONNECTING.getValue();		// 1
@@ -33,12 +34,14 @@ public class DeviceInfo implements Parcelable {
 	private final int mProductId;
 	private int connectionState;
 
+	/** コンストラクタ */
 	public DeviceInfo(final String name, final int product_id) {
 		mName = name;
 		mProductId = product_id;
 		connectionState = CONNECT_STATE_DISCONNECT;
 	}
 
+	/** コピーコンストラクタ */
 	public DeviceInfo(final DeviceInfo other) {
 		mName = other.mName;
 		mProductId = other.mProductId;
@@ -47,20 +50,33 @@ public class DeviceInfo implements Parcelable {
 		}
 	}
 
+	/** Parcelからの生成用コンストラクタ */
 	protected DeviceInfo(final Parcel in) {
 		mName = in.readString();
 		mProductId = in.readInt();
 		connectionState = in.readInt();
 	}
 
+	/**
+	 * デバイス名を取得
+	 * @return
+	 */
 	public String name() {
 		return mName;
 	}
 
+	/**
+	 * 製品IDを取得
+	 * @return
+	 */
 	public int productId() {
 		return mProductId;
 	}
 
+	/**
+	 * 接続状態をセット
+	 * @param connection_state
+	 */
 	public void connectionState(final int connection_state) {
 		synchronized (mSync) {
 			if (connectionState != connection_state) {
@@ -69,12 +85,20 @@ public class DeviceInfo implements Parcelable {
 		}
 	}
 
+	/**
+	 * 接続状態を取得
+	 * @return
+	 */
 	public int connectionState() {
 		synchronized (mSync) {
 			return connectionState;
 		}
 	}
 
+	/**
+	 * デバイスと接続しているかどうか
+	 * @return
+	 */
 	public boolean isConnected() {
 		synchronized (mSync) {
 			return (connectionState == CONNECT_STATE_CONNECTING) || (connectionState == CONNECT_STATE_CONNECTED);

@@ -45,9 +45,9 @@ public class SkyController extends FlightControllerBebop implements ISkyControll
 	private static final boolean DEBUG = true;	// FIXME 実働時はfalseにすること
 	private static final String TAG = SkyController.class.getSimpleName();
 
-	/** 接続中の機体情報 */
+	/** 接続中のデバイス情報 */
 	private DeviceInfo mConnectDevice;
-	/** 機体接続待ちのためのセマフォ */
+	/** デバイス接続待ちのためのセマフォ */
 	private final Semaphore mConnectDeviceSent = new Semaphore(0);
 	protected volatile boolean mRequestConnectDevice;
 
@@ -60,6 +60,7 @@ public class SkyController extends FlightControllerBebop implements ISkyControll
 		if (DEBUG) Log.v(TAG, "コンストラクタ:");
 	}
 
+	@Override
 	public void cancelStart() {
 		if (mRequestConnectDevice) {
 			mConnectDeviceSent.release();
@@ -72,6 +73,7 @@ public class SkyController extends FlightControllerBebop implements ISkyControll
 //		super.onStarting();
 //	}
 
+	@Override
 	protected void onStopped() {
 		mConnectDeviceSent.release();
 		for ( ; mConnectDeviceSent.tryAcquire(); ) {}
@@ -92,18 +94,14 @@ public class SkyController extends FlightControllerBebop implements ISkyControll
 
 	@Override
 	protected void callOnConnect() {
-		// これは機体が接続した時(onExtensionConnect)に呼び出したいので無効にする
+		// これはデバイスが接続した時(onExtensionConnect)に呼び出したいので無効にする
 	}
 
 	@Override
 	protected void callOnDisconnect() {
-		// これは機体が切断された時(onExtensionDisconnect)に呼び出したいので無効にする
+		// これはデバイスが切断された時(onExtensionDisconnect)に呼び出したいので無効にする
 	}
 
-	/**
-	 * onExtensionStateChangedの下請け
-	 * スカイコントローラーが機体に接続した時に呼ばれる
-	 */
 	@Override
 	protected void onExtensionConnect() {
 		if (DEBUG) Log.d(TAG, "onExtensionConnect:");
@@ -114,10 +112,7 @@ public class SkyController extends FlightControllerBebop implements ISkyControll
 		super.callOnConnect();
 	}
 
-	/**
-	 * onExtensionStateChangedの下請け
-	 * スカイコントローラーが機体から切断された時に呼ばれる
-	 */
+	@Override
 	protected void onExtensionDisconnect() {
 		if (DEBUG) Log.d(TAG, "onExtensionDisconnect:");
 		if (mRequestConnectDevice) {
@@ -218,14 +213,14 @@ public class SkyController extends FlightControllerBebop implements ISkyControll
 			// requestAllStatesを呼ぶと来る
 			// FIXME ...ってどの信号強度なんだろ?
 			// FIXME スカイコントローラーが受信しているタブレット/スマホからの電波の信号強度なんかな?
-			// FIXME 機体と接続した時に送られてくるので機体からスカイコントローラーに届く信号強度かも
+			// FIXME デバイスと接続した時に送られてくるのでデバイスからスカイコントローラーに届く信号強度かも
 			final int level = (Integer)args.get(ARFeatureSkyController.ARCONTROLLER_DICTIONARY_KEY_SKYCONTROLLER_WIFISTATE_WIFISIGNALCHANGED_LEVEL);
 
 			if (DEBUG) Log.v(TAG, "onWifiSignalChangedUpdate:level=" + level);
 			break;
 		}
 		case ARCONTROLLER_DICTIONARY_KEY_SKYCONTROLLER_DEVICESTATE_DEVICELIST:	// (125, "Key used to define the command <code>DeviceList</code> of class <code>DeviceState</code> in project <code>SkyController</code>"),
-		{	// デバイスリスト(機体名?)を受信した時
+		{	// デバイスリスト(デバイス名?)を受信した時
 			final String name = (String)args.get(ARFeatureSkyController.ARCONTROLLER_DICTIONARY_KEY_SKYCONTROLLER_DEVICESTATE_DEVICELIST_NAME);
 
 			if (DEBUG) Log.e(TAG, "onDeviceListUpdate:name=" + name);
@@ -233,12 +228,12 @@ public class SkyController extends FlightControllerBebop implements ISkyControll
 			break;
 		}
 		case ARCONTROLLER_DICTIONARY_KEY_SKYCONTROLLER_DEVICESTATE_CONNEXIONCHANGED:	// (126, "Key used to define the command <code>ConnexionChanged</code> of class <code>DeviceState</code> in project <code>SkyController</code>"),
-		{	// スカイコントローラーと機体の接続状態が変化した時のコールバックリスナー
+		{	// スカイコントローラーとデバイスの接続状態が変化した時のコールバックリスナー
 			// requestAllStatesでも来る
 			// requestCurrentDeviceを呼ぶと来る...NewAPIだとこない?
 			// requestCurrentWiFiを呼んでも来る...NewAPIだとこない?
 			// AccessPointのSSIDやチャネル等を変更しても来る
-			// たぶん最初に見つかった機体には勝手に接続しに行きよる
+			// たぶん最初に見つかったデバイスには勝手に接続しに行きよる
 			// ARCommandSkyControllerWifiStateConnexionChangedListenerのコールバックメソッドよりも後に来る
 			// onAllSettingsUpdate/onAllStateUpdateよりも後に来る
  			final ARCOMMANDS_SKYCONTROLLER_DEVICESTATE_CONNEXIONCHANGED_STATUS_ENUM status
@@ -576,9 +571,9 @@ public class SkyController extends FlightControllerBebop implements ISkyControll
 	}
 
 //================================================================================
-// 機体との接続状態の管理
+// デバイスとの接続状態の管理
 //================================================================================
-	/** スカイコントローラーの認識している機体一覧 */
+	/** スカイコントローラーの認識しているデバイス一覧 */
 	private final Map<String, DeviceInfo> mDevices = new HashMap<String, DeviceInfo>();
 
 	private void updateConnectionState(
@@ -656,10 +651,6 @@ public class SkyController extends FlightControllerBebop implements ISkyControll
 //================================================================================
 // コールバック関係
 //================================================================================
-	/**
-	 * コールバックリスナーを設定
-	 * @param listener
-	 */
 	@Override
 	public void addListener(final DeviceConnectionListener listener) {
 		super.addListener(listener);
@@ -670,10 +661,6 @@ public class SkyController extends FlightControllerBebop implements ISkyControll
 		}
 	}
 
-	/**
-	 * 指定したコールバックリスナーを取り除く
-	 * @param listener
-	 */
 	@Override
 	public void removeListener(final DeviceConnectionListener listener) {
 		synchronized (mListeners) {
@@ -685,7 +672,7 @@ public class SkyController extends FlightControllerBebop implements ISkyControll
 	}
 
 	/**
-	 * 接続時のコールバックを呼び出す
+	 * 接続時のコールバック呼び出し用ヘルパーメソッド
 	 */
 	protected void callOnSkyControllerConnect() {
 		if (DEBUG) Log.v(TAG, "callOnSkyControllerConnect:");
@@ -703,7 +690,7 @@ public class SkyController extends FlightControllerBebop implements ISkyControll
 	}
 
 	/**
-	 * 切断時のコールバックを呼び出す
+	 * 切断時のコールバック呼び出し用ヘルパーメソッド
 	 */
 	protected void callOnSkyControllerDisconnect() {
 		if (DEBUG) Log.v(TAG, "callOnSkyControllerDisconnect:");
@@ -721,7 +708,7 @@ public class SkyController extends FlightControllerBebop implements ISkyControll
 	}
 
 	/**
-	 * 異常状態変更コールバックを呼び出す
+	 * 異常状態変更コールバック呼び出し用ヘルパーメソッド
 	 * @param state
 	 */
 	protected void callOnSkyControllerAlarmStateChangedUpdate(final int state) {
@@ -740,7 +727,7 @@ public class SkyController extends FlightControllerBebop implements ISkyControll
 	}
 
 	/**
-	 * バッテリー残量変更コールバックを呼び出す
+	 * バッテリー残量変更コールバック呼び出し用ヘルパーメソッド
 	 */
 	protected void callOnSkyControllerUpdateBattery(final int percent) {
 		if (DEBUG) Log.v(TAG, "callOnSkyControllerUpdateBattery:" + percent);
@@ -758,7 +745,7 @@ public class SkyController extends FlightControllerBebop implements ISkyControll
 	}
 
 	/**
-	 * キャリブレーションが必要かどうかが変更された時のコールバックを呼び出す
+	 * キャリブレーションが必要かどうかが変更された時のコールバック呼び出し用ヘルパーメソッド
 	 * @param need_calibration
 	 */
 	protected void callOnSkyControllerCalibrationRequiredChanged(final boolean need_calibration) {
@@ -777,7 +764,7 @@ public class SkyController extends FlightControllerBebop implements ISkyControll
 	}
 
 	/**
-	 * キャリブレーションを開始/終了した時のコールバックを呼び出す
+	 * キャリブレーションを開始/終了した時のコールバック呼び出し用ヘルパーメソッド
 	 * @param isStart
 	 */
 	protected void callOnSkyControllerCalibrationStartStop(final boolean isStart) {
@@ -796,7 +783,7 @@ public class SkyController extends FlightControllerBebop implements ISkyControll
 	}
 
 	/**
-	 * キャリブレーション中の軸が変更された
+	 * キャリブレーション中の軸が変更された時のコールバック呼び出し用ヘルパーメソッド
 	 * @param axis 0:x, 1:y, z:2, 3:none
 	 */
 	protected void callOnSkyControllerCalibrationAxisChanged(final int axis) {
@@ -813,6 +800,7 @@ public class SkyController extends FlightControllerBebop implements ISkyControll
 			}
 		}
 	}
+
 //================================================================================
 // IBridgeController
 //================================================================================
@@ -869,26 +857,9 @@ public class SkyController extends FlightControllerBebop implements ISkyControll
 	}
 
 //	public ARCONTROLLER_ERROR_ENUM sendAccessPointSettingsAccessPointChannel (byte _channel)
-
-	public boolean sendWifiWifiAuthChannel() {
-		if (DEBUG) Log.d(TAG, "sendWifiWifiAuthChannel:");
-		ARCONTROLLER_ERROR_ENUM result = ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_ERROR;
-		if (isStarted()) {
-			result = mARDeviceController.getFeatureSkyController().sendWifiWifiAuthChannel();
-		} else {
-			if (DEBUG) Log.v(TAG, "sendWifiWifiAuthChannel:not started");
-		}
-		if (result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK) {
-			Log.e(TAG, "#sendWifiWifiAuthChannel failed:" + result);
-		}
-		return result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK;
-	}
-
+//	public ARCONTROLLER_ERROR_ENUM sendWifiWifiAuthChannel()
 //	public ARCONTROLLER_ERROR_ENUM sendAccessPointSettingsWifiSelection (ARCOMMANDS_SKYCONTROLLER_ACCESSPOINTSETTINGS_WIFISELECTION_TYPE_ENUM _type, ARCOMMANDS_SKYCONTROLLER_ACCESSPOINTSETTINGS_WIFISELECTION_BAND_ENUM _band, byte _channel)
 
-	/**
-	 * @return
-	 */
 	@Override
 	public boolean requestWifiList() {
 		if (DEBUG) Log.d(TAG, "requestWifiList:");
@@ -949,15 +920,11 @@ public class SkyController extends FlightControllerBebop implements ISkyControll
 		return result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK;
 	}
 
-	/**
-	 * スカイコントローラーが検出している機体一覧を要求
-	 * @return
-	 */
 	@Override
 	public boolean requestDeviceList() {
 		if (DEBUG) Log.d(TAG, "requestDeviceList:");
 
-		// FIXME 送信前に機体一覧Listをクリアする...でもARSDK3.8.3のNewAPIだと結果が来ないので検出している機体リストに値があればそれをブロードキャストする
+		// FIXME 送信前にデバイス一覧Listをクリアする...でもARSDK3.8.3のNewAPIだと結果が来ないので検出しているデバイスリストに値があればそれをブロードキャストする
 		if (!broadcastConnectedDevices()) {
 			ARCONTROLLER_ERROR_ENUM result = ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_ERROR;
 			if (isStarted()) {
@@ -989,11 +956,6 @@ public class SkyController extends FlightControllerBebop implements ISkyControll
 		return result;
 	}
 
-	/**
-	 * スカイコントローラーが現在接続している機体との接続状態を要求する
-	 * XXX ARSDK3.8.3のNewAPIだと結果が返ってこない
-	 * @return
-	 */
 	@Override
 	public boolean requestCurrentDevice() {
 		if (DEBUG) Log.d(TAG, "requestCurrentDevice:");
@@ -1026,11 +988,7 @@ public class SkyController extends FlightControllerBebop implements ISkyControll
 		return connectToDevice(info.name());
 	}
 
-	/**
-	 * 指定したデバイス名を持つ機体へ接続する
-	 * @param deviceName
-	 * @return true 接続できなかった
-	 */
+	@Override
 	public boolean connectToDevice(final String deviceName) {
 		if (DEBUG) Log.v(TAG, "connectToDevice:deviceName=" + deviceName);
 		if (TextUtils.isEmpty(deviceName)) return true;

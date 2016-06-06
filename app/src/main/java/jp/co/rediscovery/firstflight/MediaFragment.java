@@ -32,7 +32,7 @@ import jp.co.rediscovery.dialog.ConfirmDialog;
 import jp.co.rediscovery.dialog.OnDialogResultIntListener;
 import jp.co.rediscovery.dialog.TransferProgressDialogFragment;
 
-/** 機体内の動画・静止画の一覧取得・操作を行うための画面 */
+/** デバイス内の動画・静止画の一覧取得・操作を行うための画面 */
 public class MediaFragment extends BaseFlightControllerFragment
 	implements TransferProgressDialogFragment.TransferProgressDialogListener, OnDialogResultIntListener {
 	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること
@@ -140,7 +140,7 @@ public class MediaFragment extends BaseFlightControllerFragment
 	}
 
 	/**
-	 * 接続後機体のストレージ状態を受信するまで待機するためのRunnable
+	 * 接続後デバイスのストレージ状態を受信するまで待機するためのRunnable
 	 */
 	private final Runnable mConnectCheckTask = new Runnable() {
 		@Override

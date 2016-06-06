@@ -7,7 +7,7 @@ import jp.co.rediscovery.arflight.attribute.AttributeMassStorage;
 import jp.co.rediscovery.arflight.attribute.AttributeMotor;
 import com.serenegiant.math.Vector;
 
-/** スカイコントローラー以外の機体のステータスクラス */
+/** スカイコントローラー以外のデバイスのステータスクラス */
 public class DroneStatus extends CommonStatus {
 	public static final int STATE_FLYING_LANDED = 0x0000;	// FlyingState=0
 	public static final int STATE_FLYING_TAKEOFF = 0x0100;	// FlyingState=1
@@ -61,7 +61,7 @@ public class DroneStatus extends CommonStatus {
 	private Vector mSpeed = new Vector();
 
 	/**
-	 * 機体の移動速度(ParrotのSDKから返ってくる値とxy順番、zの符号が違うので注意)<br>
+	 * デバイスの移動速度(ParrotのSDKから返ってくる値とxy順番、zの符号が違うので注意)<br>
 	 * GPS座標から計算しているみたいなのでGPSを受信してないと0しか返ってこない
 	 * @param x 左右方向の移動速度[m/s] (正:右)
 	 * @param y 前後方向の移動速度[m/s] (正:前進)
@@ -74,7 +74,7 @@ public class DroneStatus extends CommonStatus {
 	}
 
 	/**
-	 * 機体の移動速度設定(ParrotのSDKから返ってくる値とxyの順番、zの符号が違うので注意)<br>
+	 * デバイスの移動速度設定(ParrotのSDKから返ってくる値とxyの順番、zの符号が違うので注意)<br>
 	 * GPS座標から計算しているみたいなのでGPSを受信してないと0しか返ってこない
  	 * @return
 	 */
@@ -84,11 +84,11 @@ public class DroneStatus extends CommonStatus {
 		}
 	}
 
-	/** 機体姿勢[ラジアン] */
+	/** デバイス姿勢[ラジアン] */
 	private Vector mAttitude = new Vector();
 
 	/**
-	 * 機体姿勢をセット
+	 * デバイス姿勢をセット
 	 * @param roll ラジアン
 	 * @param pitch ラジアン
 	 * @param yaw ラジアン
@@ -100,7 +100,7 @@ public class DroneStatus extends CommonStatus {
 	}
 
 	/**
-	 * 機体姿勢を取得(ラジアン)
+	 * デバイス姿勢を取得(ラジアン)
 	 * @return Vector(x=roll, y=pitch, z=yaw)
 	 */
 	public Vector attitude() {

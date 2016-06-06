@@ -34,7 +34,7 @@ import java.util.List;
 
 import com.serenegiant.utils.ThreadPool;
 
-/** 機体へFTPで接続して機体内の静止画・動画の操作をするためのクラス */
+/** デバイスへFTPで接続してデバイス内の静止画・動画の操作をするためのクラス */
 public abstract class FTPController {
 	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること
 	private static final String TAG = "FTPController:";

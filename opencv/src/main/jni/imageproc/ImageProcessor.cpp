@@ -467,7 +467,7 @@ int ImageProcessor::callJavaCallback(JNIEnv *env, DetectRec_t &detect_result, cv
 		detected[3] = detect_result.width;
 		// ラインの方向(cv::RotatedRect#angle)
 		// カメラ映像の真上を0としてラインが右(1,2,3時方向)に傾いてれば負,左(11,10,9時方向)に傾いていれば正
-		// 機体の向きは逆
+		// デバイスの向きは逆
 		detected[4] = (detect_result.area_rect.size.width <= detect_result.area_rect.size.height ? 0.0f : -90.0f) - detect_result.area_rect.angle;
 		// 最小矩形面積に対する輪郭面積の比
 		detected[5] = detect_result.area_rate;

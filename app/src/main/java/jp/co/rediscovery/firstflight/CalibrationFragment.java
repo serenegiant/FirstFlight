@@ -13,7 +13,7 @@ import jp.co.rediscovery.arflight.IDeviceController;
 import jp.co.rediscovery.arflight.IFlightController;
 import jp.co.rediscovery.widget.VideoView;
 
-/** 機体およびスカイコントローラーの磁気センサーのキャリブレーション用クラス */
+/** ドローンおよびスカイコントローラーの磁気センサーのキャリブレーション用クラス */
 public class CalibrationFragment extends BaseFlightControllerFragment {
 	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること
 	private static final String TAG = CalibrationFragment.class.getSimpleName();
@@ -164,7 +164,7 @@ public class CalibrationFragment extends BaseFlightControllerFragment {
 		case STATE_AXIS_X:
 		case STATE_AXIS_Y:
 		case STATE_AXIS_Z:
-			// 表示中の機体モデルの回転方向を変える XXX VideoViewで機体の回転方向を示す表示を更新する必要がある
+			// 表示中のデバイス3Dモデルの回転方向を変える XXX VideoViewでデバイスの回転方向を示す表示を更新する必要がある
 			mVideoView.setAxis(axis);
 			break;
 		case STATE_AXIS_NONE:

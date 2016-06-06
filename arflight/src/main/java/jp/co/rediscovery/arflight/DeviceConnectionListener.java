@@ -2,7 +2,7 @@ package jp.co.rediscovery.arflight;
 
 /**
  * IDeviceControllerからのコールバックリスナー
- * 機体との接続状態等の通知用
+ * デバイスとの接続状態等の通知用
  */
 public interface DeviceConnectionListener {
 	/**
@@ -17,21 +17,20 @@ public interface DeviceConnectionListener {
 	/**
 	 * 電池残量が変化した時のコールバック
 	 * @param controller
-	 * @param percent
+	 * @param percent 電池残量[%]
 	 */
 	public void onUpdateBattery(final IDeviceController controller, final int percent);
 
 	/**
 	 * WiFi信号強度が変化した時のコールバック
 	 * @param controller
-	 * @param rssi
+	 * @param rssi [dbm]
 	 */
 	public void onUpdateWiFiSignal(final IDeviceController controller, final int rssi);
 	/**
 	 * 機器からの異常通知時のコールバック
 	 * @param controller
-	 * @param alarm_state
-	 * 0: No alert, 1:User emergency alert, 2:Cut out alert, 3:Critical battery alert, 4:Low battery alert
+	 * @param alarm_state 0: No alert, 1:User emergency alert, 2:Cut out alert, 3:Critical battery alert, 4:Low battery alert
 	 */
 	public void onAlarmStateChangedUpdate(final IDeviceController controller, final int alarm_state);
 }

@@ -19,7 +19,7 @@ public interface IDeviceController {
 
 	/**
 	 * コントローラーに関連付けられているARDiscoveryDeviceServiceを取得
-	 * 機体探索サービスから取得したARDiscoveryDeviceServiceを返す
+	 * デバイス探索サービスから取得したARDiscoveryDeviceServiceを返す
 	 * 変更しちゃダメ
 	 * @return
 	 */
@@ -32,7 +32,7 @@ public interface IDeviceController {
 	public void release();
 
 	/**
-	 * 機体名を取得, ローリングスパイダーだとrs_xxxxxって奴
+	 * デバイス名を取得, 例えばローリングスパイダーだと通常はrs_xxxxxって奴
 	 * @return
 	 */
 	public String getName();
@@ -46,25 +46,25 @@ public interface IDeviceController {
 	public int getProductId();
 
 	/**
-	 * 接続している機体のソフトウエアバージョンを取得
+	 * 接続しているデバイスのソフトウエアバージョンを取得
 	 * @return
 	 */
 	public String getSoftwareVersion();
 
 	/**
-	 * 接続している機体のハードウエアバージョンを取得
+	 * 接続しているデバイスのハードウエアバージョンを取得
 	 * @return
 	 */
 	public String getHardwareVersion();
 
 	/**
-	 * 接続している機体のシリアル番号を取得
+	 * 接続しているデバイスのシリアル番号を取得
 	 * @return
 	 */
 	public String getSerial();
 
 	/**
-	 * 機体の異常状態を取得
+	 * デバイスの異常状態を取得
 	 * @return
 	 */
 	public int getAlarm();
@@ -117,19 +117,25 @@ public interface IDeviceController {
 	public void stop();
 
 	/**
-	 * 機体と接続しているかどうか
+	 * デバイスと接続しているかどうか
 	 * スカイコントローラー経由の場合はスカイコントローラーとの接続状態
 	 * @return
 	 */
 	public boolean isStarted();
 
 	/***
-	 * 機体と接続しているかどうか
+	 * デバイスと接続しているかどうか
 	 * 直接接続の時は#isStartedと同じ
- 	 * スカイコントローラー経由の場合はスカイコントローラーを経由して機体と接続しているかどうか
+ 	 * スカイコントローラー経由の場合はスカイコントローラーを経由してデバイスと接続しているかどうか
 	 * @return
 	 */
 	public boolean isConnected();
+
+	/**
+	 * ネットワーク切断要求
+	 * @return
+	 */
+	public boolean sendNetworkDisconnect();
 
 	/**
 	 * 日付を送信
@@ -150,14 +156,36 @@ public interface IDeviceController {
 	public boolean sendTime(Date currentTime);
 
 	/**
-	 * 機体の設定を全て送るように要求する
+	 * デバイスの設定を全て送るように要求する
 	 * @return
 	 */
 	public boolean requestAllSettings();
 
 	/**
-	 * 機体のステータスを全て送るように要求する
+	 * デバイスのステータスを全て送るように要求する
 	 * @return
 	 */
 	public boolean requestAllStates();
+
+	/**
+	 * デバイス設定をリセットする
+	 * @return
+	 */
+	public boolean sendSettingsReset();
+
+	/**
+	 * デバイス名をセットする
+	 * コマンド名は製品名となっとるけど(ARSDKのメソッド名は'sendSettingsProductName')
+	 * 実際にはデバイス名(WiFi接続やとアクセスポイント名として見えるやつ)
+	 * @param name
+	 * @return
+	 */
+	public boolean sendSettingsProductName(final String name);
+
+	/**
+	 * デバイスを再起動させる
+	 * @return
+	 */
+	public boolean sendCommonReboot();
+
 }

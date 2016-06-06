@@ -71,7 +71,7 @@ public class FlightControllerMiniDrone extends FlightController {
 			break;
 		}
 		case ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_PILOTINGSTATE_ALERTSTATECHANGED:	// (103, "Key used to define the command <code>AlertStateChanged</code> of class <code>PilotingState</code> in project <code>MiniDrone</code>"),
-		{	// 機体からの異常通知時
+		{	// デバイスからの異常通知時
 			final int state = (Integer)args.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_PILOTINGSTATE_ALERTSTATECHANGED_STATE);
 			mStatus.setAlarm(state);
 			callOnAlarmStateChangedUpdate(getAlarm());

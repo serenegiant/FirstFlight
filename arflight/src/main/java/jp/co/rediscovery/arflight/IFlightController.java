@@ -5,6 +5,7 @@ import jp.co.rediscovery.arflight.attribute.AttributeFloat;
 import jp.co.rediscovery.arflight.attribute.AttributeMotor;
 import com.serenegiant.math.Vector;
 
+/** 飛行可能デバイス(ぶっちゃけドローン)用コントローラーの追加メソッド定義用のインターフェース */
 public interface IFlightController extends IDeviceController {
 	// フリップアクションの種類
 	public static final int FLIP_FRONT = 1;
@@ -46,13 +47,61 @@ public interface IFlightController extends IDeviceController {
 	public static final int STATE_MASK_FLYING = 0xff00;
 
 
+	/**
+	 * 飛行中かどうかを取得
+	 * @return
+	 */
 	public boolean isFlying();
+
+	/**
+	 * 磁気センサーのキャリブレーションが必要かどうか
+	 * @return
+	 */
 	public boolean needCalibration();
+
+	/**
+	 * 静止画撮影状態を取得
+	 * @return
+	 */
 	public int getStillCaptureState();
+
+	/**
+	 * 動画撮影状態を取得
+	 * @return
+	 */
 	public int getVideoRecordingState();
 
+	/**
+	 * 現在のマスストレージIDを取得
+	 * @return
+	 */
 	public int getMassStorageId();
+
+	/**
+	 * 現在のマスストレージ名を取得
+	 * @return
+	 */
 	public String getMassStorageName();
+
+	/**
+	 * 起こったことがないからよくわからんけどデバイス(多分マイコンとかESC)が過熱した時にその異常を解除するコマンドみたい
+	 * @return
+	 */
+	public boolean sendOverHeatSwitchOff();
+
+	/**
+	 * 起こったことがないからよくわからんけどデバイス(多分マイコンとかESC)が過熱した時の冷却をさせるためのコマンドみたい
+	 * @return
+	 */
+	public boolean sendOverHeatVentilate();
+
+	/**
+	 * 操縦モードかどうかをセット
+	 * スカイコントローラーの場合には更にsendCoPilotingSetPilotingSourceちゅうのもある
+	 * @param piloting
+	 * @return
+	 */
+	public boolean sendControllerIsPiloting(final boolean piloting);
 
 	/**
 	 * 離陸指示
@@ -91,6 +140,11 @@ public interface IFlightController extends IDeviceController {
 	 * @return
 	 */
 	public boolean setMaxAltitude(final float altitude);
+
+	/**
+	 * 最大高度設定値[m]を返す
+	 * @return
+	 */
 	public AttributeFloat getMaxAltitude();
 
 	/**
@@ -99,6 +153,11 @@ public interface IFlightController extends IDeviceController {
 	 * @return
 	 */
 	public boolean setMaxTilt(final float tilt);
+
+	/**
+	 * 最大傾斜角[度]を取得する
+	 * @return
+	 */
 	public AttributeFloat getMaxTilt();
 
 	/**
@@ -107,6 +166,11 @@ public interface IFlightController extends IDeviceController {
 	 * @return
 	 */
 	public boolean setMaxVerticalSpeed(final float speed);
+
+	/**
+	 * 最大上昇/下降速度[m/秒]を取得する
+	 * @return
+	 */
 	public AttributeFloat getMaxVerticalSpeed();
 
 	/**
@@ -115,22 +179,28 @@ public interface IFlightController extends IDeviceController {
 	 * @return
 	 */
 	public boolean setMaxRotationSpeed(final float speed);
+
+	/**
+	 * 最大回転速度[度/秒]を取得する
+	 * @return
+	 */
 	public AttributeFloat getMaxRotationSpeed();
 
 	/**
-	 * 機体姿勢を取得可能かどうか
+	 * デバイス姿勢を取得可能かどうか
 	 * @return
 	 */
 	public boolean canGetAttitude();
+
 	/**
-	 * 機体姿勢を取得(ラジアン)
-	 * x:roll, y:pitch, z:yaw
-	 * @return
+	 * デバイス姿勢を取得する(ラジアン)
+	 * zが高度ではなくyawなので注意
+	 * @return Vector(x=roll, y=pitch, z=yaw)
 	 */
 	public Vector getAttitude();
 
 	/**
-	 * 高度を取得
+	 * 高度[m]を取得
 	 * @return
 	 */
 	public float getAltitude();
@@ -139,56 +209,101 @@ public interface IFlightController extends IDeviceController {
 	 * @return
 	 */
 	public int getMotorNums();
+
+	/**
+	 * モーター設定を取得する
+	 * @param index
+	 * @return
+	 */
 	public AttributeMotor getMotor(final int index);
 
+	/**
+	 * モーターの自動カット機能が有効かどうかを取得する
+	 * 安全のためには自動カット機能を有効にしといたほうがええと思う
+	 * @return
+	 */
 	public boolean isCutoffMode();
+
+	/**
+	 * モーターの自動カット機能を有効にするかどうかを設定
+	 * 安全のためには自動カット機能を有効にしといたほうがええと思う
+	 * @param enabled
+	 * @return
+	 */
 	public boolean sendCutOutMode(final boolean enabled);
 
+	/**
+	 * 自動離陸モードが有効かどうかを取得する
+	 * @return
+	 */
 	public boolean isAutoTakeOffModeEnabled();
+
+	/**
+	 * 自動離陸モードを設定
+	 * @param enable
+	 * @return
+	 */
 	public boolean sendAutoTakeOffMode(final boolean enable);
 
-	public boolean hasGuard();
-	public boolean setHasGuard(final boolean has_guard);
 	/**
-	 * roll/pitch変更時が移動なのか機体姿勢変更なのかを指示
-	 * @param flag 1:移動, 0:機体姿勢変更
+	 * ガード(ハル)を装着しているかどうかを取得する
+	 * @return
+	 */
+	public boolean hasGuard();
+
+	/**
+	 * ガード(ハル)を装着しているかどうかを設定
+	 * @param has_guard
+	 * @return
+	 */
+	public boolean setHasGuard(final boolean has_guard);
+
+	/**
+	 * デバイスを移動させるかどうか
+	 * @param flag 1:移動, 0:セットのみ
 	 */
 	public void setFlag(final int flag);
+
 	/**
-	 * 機体の高度を上下させる
+	 * 高度を上下させる
 	 * @param gaz 負:下降, 正:上昇, -100〜+100
 	 */
 	public void setGaz(final float gaz);
+
 	/**
-	 * 機体を左右に傾ける。flag=1:左右に移動する, flag=0:機体姿勢変更のみ
+	 * 左右に傾ける。
 	 * @param roll 負:左, 正:右, -100〜+100
 	 */
 	public void setRoll(final float roll);
+
 	/**
-	 * 機体を左右に傾ける
+	 * 左右に傾ける
 	 * @param roll 負:左, 正:右, -100〜+100
-	 * @param move, true:移動, false:機体姿勢変更
+	 * @param move, true:移動, false:設定変更のみ
 	 */
 	public void setRoll(final float roll, boolean move);
-	/**
-	 * 機首を上げ下げする。flag=1:前後に移動する, flag=0:機体姿勢変更のみ
-	 * @param pitch 負:??? 正:???, -100〜+100
-	 */
-	public void setPitch(final float pitch);
+
 	/**
 	 * 機首を上げ下げする
 	 * @param pitch 負:??? 正:???, -100〜+100
-	 * @param move, true:移動, false:機体姿勢変更
+	 */
+	public void setPitch(final float pitch);
+
+	/**
+	 * 機首を上げ下げする
+	 * @param pitch 負:??? 正:???, -100〜+100
+	 * @param move, true:移動, false:設定変更のみ
 	 */
 	public void setPitch(final float pitch, boolean move);
 
 	/**
-	 * 機体の機首を左右に動かす=水平方向に回転する
+	 * 機首を左右に動かす=水平方向に回転する
 	 * @param yaw 負:左回転, 正:右回転, -100〜+100
 	 */
 	public void setYaw(final float yaw);
+
 	/**
-	 * 北磁極に対する角度を設定・・・でもローリングスパイダーでは動かない
+	 * 北磁極に対する角度を設定・・・デバイス側で実装されてない
 	 * @param heading -360〜360度
 	 */
 	public void setHeading(final float heading);
@@ -199,7 +314,7 @@ public interface IFlightController extends IDeviceController {
 	 * @param pitch 負:??? 正:???, -100〜+100
 	 * @param gaz 負:下降, 正:上昇, -100〜+100
 	 * @param yaw 負:左回転, 正:右回転, -100〜+100
-	 * @param flag roll/pitchが移動を意味する時1, 機体姿勢変更のみの時は0
+	 * @param flag roll/pitchが移動を意味する時1, 設定変更のみの時は0
 	 */
 	public void setMove(final float roll, final float pitch, final float gaz, final float yaw, final int flag);
 
@@ -236,12 +351,19 @@ public interface IFlightController extends IDeviceController {
 
 	/**
 	 * 自動で指定した角度回転させる
-	 * ローリングスパイダー(ミニドローン)は機体側で処理するので回転速度設定に関係なく同じ時間で処理できるが
-	 * Bebopは機体側に相当する処理がなくアプリ内で角度と回転速度設定から時間を計算して送信＆待機するので処理時間が変わる。
+	 * ローリングスパイダー(ミニドローン)はデバイス側で処理するので回転速度設定に関係なく同じ時間で処理できるが
+	 * Bebopはデバイス側に相当する処理がなくアプリ内で角度と回転速度設定から時間を計算して送信＆待機するので処理時間が変わる。
 	 * @param degree -180〜180度
 	 * @return
 	 */
 	public boolean requestAnimationsCap(final int degree);
+
+	/**
+	 * 自動で指定した角度回転させる。こっちは時間待ちの待機をsyncで指定したオブジェクトの#waitを使って行う
+	 * @param degree -180〜180度
+	 * @param sync
+	 * @return
+	 */
 	public boolean requestAnimationsCap(final int degree, final Object sync);
 
 	/**
@@ -250,6 +372,7 @@ public interface IFlightController extends IDeviceController {
 	 * @return
 	 */
 	public boolean requestTakePicture(final int mass_storage_id);
+
 	/**
 	 * 静止画撮影要求
 	 * @return
