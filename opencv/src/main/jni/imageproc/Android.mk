@@ -45,9 +45,10 @@ LOCAL_SRC_FILES := \
 	IPDetector.cpp \
 	IPDetectorLine.cpp \
 	IPDetectorCurve.cpp \
-	IPDetectorCorner.cpp \
 	ImageProcessor.cpp \
-	thinning.cpp \
+
+#	IPDetectorCorner.cpp \
+#	thinning.cpp \
 
 LOCAL_ARM_MODE := arm
 LOCAL_MODULE := imageproc

@@ -68,7 +68,7 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 	private String mBatteryFmt;
 
 	// 下パネル
-	private View mBottomPanel;
+//	private View mBottomPanel;
 	private ImageButton mEmergencyBtn;		// 非常停止ボタン
 	private ImageButton mTakeOnOffBtn;		// 離陸/着陸ボタン
 
@@ -147,8 +147,8 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 //		mPosterize = mPref.getFloat(KEY_POSTERIZE, DEFAULT_POSTERIZE);
 //		mEnablePosterize = mPref.getBoolean(KEY_ENABLE_POSTERIZE, false);
 		mBinarizeThreshold = mPref.getFloat(KEY_BINARIZE_THRESHOLD, DEFAULT_BINARIZE_THRESHOLD);
-		mTrapeziumRate = (float)Double.parseDouble(mPref.getString(KEY_TRAPEZIUM_RATE, "0.0"));
-		if (Math.abs(mTrapeziumRate) < 0.01f) mTrapeziumRate = 0.0f;
+//		mTrapeziumRate = (float)Double.parseDouble(mPref.getString(KEY_TRAPEZIUM_RATE, "0.0"));
+//		if (Math.abs(mTrapeziumRate) < 0.01f) mTrapeziumRate = 0.0f;
 		//
 		mExtractH = mPref.getFloat(KEY_EXTRACT_H, DEFAULT_EXTRACT_H);
 		mExtractRangeH = mPref.getFloat(KEY_EXTRACT_RANGE_H, DEFAULT_EXTRACT_RANGE_H);
@@ -160,11 +160,11 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		mEnableGLESExtraction = mPref.getBoolean(KEY_ENABLE_EXTRACTION, DEFAULT_ENABLE_EXTRACTION);
 //		mGLESSmoothType = getInt(mPref, KEY_SMOOTH_TYPE, DEFAULT_SMOOTH_TYPE);
 //		mEnableGLESCanny = mPref.getBoolean(KEY_ENABLE_EDGE_DETECTION, DEFAULT_ENABLE_EDGE_DETECTION);
-		mFillContour = mPref.getBoolean(KEY_FILL_INNER_CONTOUR, DEFAULT_FILL_INNER_CONTOUR);
+//		mFillContour = mPref.getBoolean(KEY_FILL_INNER_CONTOUR, DEFAULT_FILL_INNER_CONTOUR);
 //		mEnableNativeExtraction = mPref.getBoolean(KEY_ENABLE_NATIVE_EXTRACTION, false);
 //		mEnableNativeCanny = mPref.getBoolean(KEY_ENABLE_NATIVE_EDGE_DETECTION, DEFAULT_ENABLE_NATIVE_EDGE_DETECTION);
-		mNativeSmoothType = getInt(mPref, KEY_NATIVE_SMOOTH_TYPE, DEFAULT_NATIVE_SMOOTH_TYPE);
-		mMaxThinningLoop = getInt(mPref, KEY_NATIVE_MAX_THINNING_LOOP, DEFAULT_NATIVE_MAX_THINNING_LOOP);
+//		mNativeSmoothType = getInt(mPref, KEY_NATIVE_SMOOTH_TYPE, DEFAULT_NATIVE_SMOOTH_TYPE);
+//		mMaxThinningLoop = getInt(mPref, KEY_NATIVE_MAX_THINNING_LOOP, DEFAULT_NATIVE_MAX_THINNING_LOOP);
 		//
 		mAreaLimitMin = mPref.getFloat(KEY_AREA_LIMIT_MIN, DEFAULT_AREA_LIMIT_MIN);
 		mAspectLimitMin = mPref.getFloat(KEY_ASPECT_LIMIT_MIN, DEFAULT_ASPECT_LIMIT_MIN);
@@ -209,7 +209,7 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 
 // 下パネル
 		// 非常停止ボタン
-		mBottomPanel = rootView.findViewById(R.id.bottom_panel);
+//		mBottomPanel = rootView.findViewById(R.id.bottom_panel);
 		mEmergencyBtn = (ImageButton) rootView.findViewById(R.id.emergency_btn);
 		mEmergencyBtn.setOnClickListener(mOnClickListener);
 		// 離着陸指示ボタン
@@ -575,7 +575,7 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 			mConfigShowBtn.setColorFilter(can_flattrim ? 0 : DISABLE_COLOR);
 
 			// 下パネル
-			mBottomPanel.setEnabled(is_connected);
+//			mBottomPanel.setEnabled(is_connected);
 			mEmergencyBtn.setEnabled(is_connected);	// 非常停止
 			mCopilotBtn.setEnabled(is_connected);	// コパイロット
 			mCopilotBtn.setColorFilter(
@@ -1152,45 +1152,45 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		}
 	}
 
-	private static class SmoothTypeAdapter extends ArrayAdapter<String> {
-		private final String[] values;
-		public SmoothTypeAdapter(final Context context) {
-			super(context, android.R.layout.simple_dropdown_item_1line);
-			values = context.getResources().getStringArray(R.array.trace_smooth_value2);
-			final String[] entries = context.getResources().getStringArray(R.array.trace_smooth_entries);
-			addAll(entries);
-		}
-
-		@Override
-		public View getView(final int position, final View convertView, final ViewGroup parent) {
-			final View rootView = super.getView(position, convertView, parent);
-			changeColor(rootView, getContext().getResources().getColor(R.color.WHITE));
-			return rootView;
-		}
-
-		private void changeColor(final View view, final int cl) {
-			if (view instanceof TextView) {
-				((TextView)view).setTextColor(cl);
-			} else if (view instanceof ViewGroup) {
-				final ViewGroup parent = (ViewGroup)view;
-				final int n = parent.getChildCount();
-				for (int i = 0; i < n; i++) {
-					changeColor(parent.getChildAt(i), cl);
-				}
-			}
-		}
-	}
+//	private static class SmoothTypeAdapter extends ArrayAdapter<String> {
+//		private final String[] values;
+//		public SmoothTypeAdapter(final Context context) {
+//			super(context, android.R.layout.simple_dropdown_item_1line);
+//			values = context.getResources().getStringArray(R.array.trace_smooth_value2);
+//			final String[] entries = context.getResources().getStringArray(R.array.trace_smooth_entries);
+//			addAll(entries);
+//		}
+//
+//		@Override
+//		public View getView(final int position, final View convertView, final ViewGroup parent) {
+//			final View rootView = super.getView(position, convertView, parent);
+//			changeColor(rootView, getContext().getResources().getColor(R.color.WHITE));
+//			return rootView;
+//		}
+//
+//		private void changeColor(final View view, final int cl) {
+//			if (view instanceof TextView) {
+//				((TextView)view).setTextColor(cl);
+//			} else if (view instanceof ViewGroup) {
+//				final ViewGroup parent = (ViewGroup)view;
+//				final int n = parent.getChildCount();
+//				for (int i = 0; i < n; i++) {
+//					changeColor(parent.getChildAt(i), cl);
+//				}
+//			}
+//		}
+//	}
 
 	private final AdapterView.OnItemSelectedListener mOnItemSelectedListener
 		= new AdapterView.OnItemSelectedListener() {
 		@Override
 		public void onItemSelected(final AdapterView<?> parent, final View view, final int position, final long id) {
 			switch (parent.getId()) {
-			case R.id.use_native_smooth_spinner:
-				if (mImageProcessor != null) {
-					mImageProcessor.nativeSmoothType(position % 4);
-				}
-				break;
+//			case R.id.use_native_smooth_spinner:
+//				if (mImageProcessor != null) {
+//					mImageProcessor.nativeSmoothType(position % 4);
+//				}
+//				break;
 			case R.id.camera_white_blance_spinner:
 				final int white_blance = position - 1;
 				if (mCameraAutoWhiteBlance != white_blance) {
@@ -1209,11 +1209,11 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		@Override
 		public void onNothingSelected(final AdapterView<?> parent) {
 			switch (parent.getId()) {
-			case R.id.use_native_smooth_spinner:
-				if (mImageProcessor != null) {
-					mImageProcessor.nativeSmoothType(0);
-				}
-				break;
+//			case R.id.use_native_smooth_spinner:
+//				if (mImageProcessor != null) {
+//					mImageProcessor.nativeSmoothType(0);
+//				}
+//				break;
 			case R.id.camera_white_blance_spinner:
 				if (mController instanceof ICameraController) {
 					((ICameraController)mController).sendAutoWhiteBalance(0);
@@ -1264,14 +1264,14 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 //					mPref.edit().putBoolean(KEY_ENABLE_NATIVE_EXTRACTION, isChecked).apply();
 //				}
 //				break;
-			case R.id.use_fill_contour_sw:
-				if (mImageProcessor != null) {
-					mImageProcessor.setFillInnerContour(isChecked);
-				}
-				if (mPref != null) {
-					mPref.edit().putBoolean(KEY_FILL_INNER_CONTOUR, isChecked).apply();
-				}
-				break;
+//			case R.id.use_fill_contour_sw:
+//				if (mImageProcessor != null) {
+//					mImageProcessor.setFillInnerContour(isChecked);
+//				}
+//				if (mPref != null) {
+//					mPref.edit().putBoolean(KEY_FILL_INNER_CONTOUR, isChecked).apply();
+//				}
+//				break;
 //			case R.id.use_native_canny_sw:
 //				if (mImageProcessor != null) {
 //					mEnableNativeCanny = isChecked;
@@ -1408,25 +1408,25 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 					updateBinarizeThreshold(threshold);
 				}
 				break;
-			case R.id.trapezium_rate_seekbar:
-				final float trapezium_rate = progressToTrapeziumRate(progress);
-				if (mTrapeziumRate != trapezium_rate) {
-					mTrapeziumRate = trapezium_rate;
-					if (mImageProcessor != null) {
-						mImageProcessor.trapeziumRate(trapezium_rate);
-					}
-					updateTrapeziumRate(trapezium_rate);
-				}
-				break;
-			case R.id.max_thinning_loop_seekbar:
-				if (mMaxThinningLoop != progress) {
-					mMaxThinningLoop = progress;
-					if (mImageProcessor != null) {
-						mImageProcessor.setMaxThinningLoop(progress);
-					}
-					updateMaxThinningLoop(progress);
-				}
-				break;
+//			case R.id.trapezium_rate_seekbar:
+//				final float trapezium_rate = progressToTrapeziumRate(progress);
+//				if (mTrapeziumRate != trapezium_rate) {
+//					mTrapeziumRate = trapezium_rate;
+//					if (mImageProcessor != null) {
+//						mImageProcessor.trapeziumRate(trapezium_rate);
+//					}
+//					updateTrapeziumRate(trapezium_rate);
+//				}
+//				break;
+//			case R.id.max_thinning_loop_seekbar:
+//				if (mMaxThinningLoop != progress) {
+//					mMaxThinningLoop = progress;
+//					if (mImageProcessor != null) {
+//						mImageProcessor.setMaxThinningLoop(progress);
+//					}
+//					updateMaxThinningLoop(progress);
+//				}
+//				break;
 			case R.id.extract_range_h_seekbar:
 				final float range_h = progress / 100.0f;
 				if (mExtractRangeH != range_h) {
@@ -1613,16 +1613,16 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 					mPref.edit().putFloat(KEY_BINARIZE_THRESHOLD, mBinarizeThreshold).apply();
 				}
 				break;
-			case R.id.trapezium_rate_seekbar:
-				if (mPref != null) {
-					mPref.edit().putString(KEY_TRAPEZIUM_RATE, Double.toString(mTrapeziumRate)).apply();
-				}
-				break;
-			case R.id.max_thinning_loop_seekbar:
-				if (mPref != null) {
-					mPref.edit().putInt(KEY_NATIVE_MAX_THINNING_LOOP, mMaxThinningLoop).apply();
-				}
-				break;
+//			case R.id.trapezium_rate_seekbar:
+//				if (mPref != null) {
+//					mPref.edit().putString(KEY_TRAPEZIUM_RATE, Double.toString(mTrapeziumRate)).apply();
+//				}
+//				break;
+//			case R.id.max_thinning_loop_seekbar:
+//				if (mPref != null) {
+//					mPref.edit().putInt(KEY_NATIVE_MAX_THINNING_LOOP, mMaxThinningLoop).apply();
+//				}
+//				break;
 			case R.id.extract_range_h_seekbar:
 				if (mPref != null) {
 					mPref.edit().putFloat(KEY_EXTRACT_RANGE_H, mExtractRangeH).apply();
@@ -1925,13 +1925,13 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 	private String mBrightnessFormat;
 //	private String mPosterizeFormat;
 	private String mBinarizeThresholdFormat;
-	private String mTrapeziumRateFormat;
+//	private String mTrapeziumRateFormat;
 	private TextView mExposureLabel;
 	private TextView mSaturationLabel;
 	private TextView mBrightnessLabel;
 //	private TextView mPosterizeLabel;
 	private TextView mBinarizeThresholdLabel;
-	private TextView mTrapeziumRateLabel;
+//	private TextView mTrapeziumRateLabel;
 //	/** ホワイトバランス */
 //	protected boolean mAutoWhiteBlance;
 	/** 露出 */
@@ -1946,7 +1946,7 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 	/** 2値化閾値 */
 	protected float mBinarizeThreshold;
 	/** 台形補正係数 */
-	protected float mTrapeziumRate;
+//	protected float mTrapeziumRate;
 
 	private void initPreprocess(final View rootView) {
 		mExposureFormat = getString(R.string.trace_use_exposure);
@@ -1954,7 +1954,7 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		mBrightnessFormat = getString(R.string.trace_use_brightness);
 //		mPosterizeFormat = getString(R.string.trace_use_posterize);
 		mBinarizeThresholdFormat = getString(R.string.trace_binarize_threshold);
-		mTrapeziumRateFormat = getString(R.string.trace_trapezium_rate);
+//		mTrapeziumRateFormat = getString(R.string.trace_trapezium_rate);
 
 		Switch sw;
 		SeekBar sb;
@@ -2008,15 +2008,15 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		sb.setProgress((int)(mBinarizeThreshold * 100.0f));	// [0.0f, +1.0f] => [0, 100]
 		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateBinarizeThreshold(mBinarizeThreshold);
-		// 台形補正係数
-		mTrapeziumRate = (float)Double.parseDouble(mPref.getString(KEY_TRAPEZIUM_RATE, "0.0"));
-		if (Math.abs(mTrapeziumRate) < 0.01f) mTrapeziumRate = 0.0f;
-		mTrapeziumRateLabel = (TextView)rootView.findViewById(R.id.trapezium_rate_textview);
-		sb = (SeekBar)rootView.findViewById(R.id.trapezium_rate_seekbar);
-		sb.setMax(4000);
-		sb.setProgress(trapeziumRateToProgress(mTrapeziumRate));	// [-2.0f, +2.0f] => [0, 4000]
-		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
-		updateTrapeziumRate(mTrapeziumRate);
+//		// 台形補正係数
+//		mTrapeziumRate = (float)Double.parseDouble(mPref.getString(KEY_TRAPEZIUM_RATE, "0.0"));
+//		if (Math.abs(mTrapeziumRate) < 0.01f) mTrapeziumRate = 0.0f;
+//		mTrapeziumRateLabel = (TextView)rootView.findViewById(R.id.trapezium_rate_textview);
+//		sb = (SeekBar)rootView.findViewById(R.id.trapezium_rate_seekbar);
+//		sb.setMax(4000);
+//		sb.setProgress(trapeziumRateToProgress(mTrapeziumRate));	// [-2.0f, +2.0f] => [0, 4000]
+//		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
+//		updateTrapeziumRate(mTrapeziumRate);
 	}
 
 	private void releasePreprocess(final View rootView) {
@@ -2025,7 +2025,7 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		mBrightnessLabel = null;
 //		mPosterizeLabel = null;
 		mBinarizeThresholdLabel = null;
-		mTrapeziumRateLabel = null;
+//		mTrapeziumRateLabel = null;
 	}
 
 	private int exposureToProgress(final float exposure) {
@@ -2067,44 +2067,44 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		}
 	}
 
-	private int trapeziumRateToProgress(final double trapezium_rate) {
-		return (int)(trapezium_rate * 1000.0) + 2000;
-	}
-
-	private float progressToTrapeziumRate(final int progress) {
-		float trapezium_rate = (progress - 2000) / 1000.0f;
-		if (Math.abs(trapezium_rate) < 0.01f) trapezium_rate = 0.0f;
-		return trapezium_rate;
-	}
-
-	private void updateTrapeziumRate(final double trapezium_rate) {
-		if (mTrapeziumRateLabel != null) {
-			mTrapeziumRateLabel.setText(String.format(mTrapeziumRateFormat, trapezium_rate));
-		}
-	}
+//	private int trapeziumRateToProgress(final double trapezium_rate) {
+//		return (int)(trapezium_rate * 1000.0) + 2000;
+//	}
+//
+//	private float progressToTrapeziumRate(final int progress) {
+//		float trapezium_rate = (progress - 2000) / 1000.0f;
+//		if (Math.abs(trapezium_rate) < 0.01f) trapezium_rate = 0.0f;
+//		return trapezium_rate;
+//	}
+//
+//	private void updateTrapeziumRate(final double trapezium_rate) {
+//		if (mTrapeziumRateLabel != null) {
+//			mTrapeziumRateLabel.setText(String.format(mTrapeziumRateFormat, trapezium_rate));
+//		}
+//	}
 
 //--------------------------------------------------------------------------------
-	private String mMaxThinningLoopFormat;
-	private TextView mMaxThinningLoopLabel;
+//	private String mMaxThinningLoopFormat;
+//	private TextView mMaxThinningLoopLabel;
 //	/** OpenGL|ESでのエッジ検出前平滑化 */
 //	protected int mGLESSmoothType = 0;
-	/** OpenGL|ESでエッジ検出(Canny)を行うかどうか */
+//	/** OpenGL|ESでエッジ検出(Canny)を行うかどうか */
 //	protected boolean mEnableGLESCanny = false;
-	/** 輪郭内を塗り潰すかどうか */
-	protected boolean mFillContour = false;
-	/** native側のエッジ検出前平滑化 */
-	protected int mNativeSmoothType = 0;
+//	/** 輪郭内を塗り潰すかどうか */
+//	protected boolean mFillContour = false;
+//	/** native側のエッジ検出前平滑化 */
+//	protected int mNativeSmoothType = 0;
 //	/** native側のエッジ検出(Canny)を使うかどうか */
 //	protected boolean mEnableNativeCanny = true;
-	/** native側の細線化処理のループ回数(0なら無効) */
-	protected int mMaxThinningLoop;
+//	/** native側の細線化処理のループ回数(0なら無効) */
+//	protected int mMaxThinningLoop;
 
 	private void initPreprocess2(final View rootView) {
 		Switch sw;
 		Spinner spinner;
 		SeekBar sb;
 
-		mMaxThinningLoopFormat = getString(R.string.trace_max_thinning_loop);
+//		mMaxThinningLoopFormat = getString(R.string.trace_max_thinning_loop);
 		// OpenGL|ESのエッジ検出前平滑化
 //		mGLESSmoothType = getInt(mPref, KEY_SMOOTH_TYPE, DEFAULT_SMOOTH_TYPE);
 //		spinner = (Spinner)rootView.findViewById(R.id.use_smooth_spinner);
@@ -2115,40 +2115,40 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 //		sw = (Switch)rootView.findViewById(R.id.use_canny_sw);
 //		sw.setChecked(mEnableGLESCanny);
 //		sw.setOnCheckedChangeListener(mOnCheckedChangeListener);
-		// 輪郭内を塗りつぶすかどうか
-		mFillContour = mPref.getBoolean(KEY_FILL_INNER_CONTOUR, DEFAULT_FILL_INNER_CONTOUR);
-		sw = (Switch)rootView.findViewById(R.id.use_fill_contour_sw);
-		sw.setChecked(mFillContour);
-		sw.setOnCheckedChangeListener(mOnCheckedChangeListener);
+//		// 輪郭内を塗りつぶすかどうか
+//		mFillContour = mPref.getBoolean(KEY_FILL_INNER_CONTOUR, DEFAULT_FILL_INNER_CONTOUR);
+//		sw = (Switch)rootView.findViewById(R.id.use_fill_contour_sw);
+//		sw.setChecked(mFillContour);
+//		sw.setOnCheckedChangeListener(mOnCheckedChangeListener);
 //		// Native側のCannyを使うかどうか
 //		mEnableNativeCanny = mPref.getBoolean(KEY_ENABLE_NATIVE_EDGE_DETECTION, DEFAULT_ENABLE_NATIVE_EDGE_DETECTION);
 //		sw = (Switch)rootView.findViewById(R.id.use_native_canny_sw);
 //		sw.setChecked(mEnableNativeCanny);
 //		sw.setOnCheckedChangeListener(mOnCheckedChangeListener);
-		// native側のエッジ検出前フィルタ
-		mNativeSmoothType = getInt(mPref, KEY_NATIVE_SMOOTH_TYPE, DEFAULT_NATIVE_SMOOTH_TYPE);
-		spinner = (Spinner)rootView.findViewById(R.id.use_native_smooth_spinner);
-		spinner.setAdapter(new SmoothTypeAdapter(getActivity()));
-		spinner.setOnItemSelectedListener(mOnItemSelectedListener);
-		// native側の細線化処理
-		mMaxThinningLoop = getInt(mPref, KEY_NATIVE_MAX_THINNING_LOOP, DEFAULT_NATIVE_MAX_THINNING_LOOP);
-		mMaxThinningLoopLabel = (TextView)rootView.findViewById(R.id.max_thinning_loop_textview);
-		sb = (SeekBar)rootView.findViewById(R.id.max_thinning_loop_seekbar);
-		sb.setMax(20);
-		sb.setProgress(mMaxThinningLoop);
-		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
-		updateMaxThinningLoop(mMaxThinningLoop);
+//		// native側のエッジ検出前フィルタ
+//		mNativeSmoothType = getInt(mPref, KEY_NATIVE_SMOOTH_TYPE, DEFAULT_NATIVE_SMOOTH_TYPE);
+//		spinner = (Spinner)rootView.findViewById(R.id.use_native_smooth_spinner);
+//		spinner.setAdapter(new SmoothTypeAdapter(getActivity()));
+//		spinner.setOnItemSelectedListener(mOnItemSelectedListener);
+//		// native側の細線化処理
+//		mMaxThinningLoop = getInt(mPref, KEY_NATIVE_MAX_THINNING_LOOP, DEFAULT_NATIVE_MAX_THINNING_LOOP);
+//		mMaxThinningLoopLabel = (TextView)rootView.findViewById(R.id.max_thinning_loop_textview);
+//		sb = (SeekBar)rootView.findViewById(R.id.max_thinning_loop_seekbar);
+//		sb.setMax(20);
+//		sb.setProgress(mMaxThinningLoop);
+//		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
+//		updateMaxThinningLoop(mMaxThinningLoop);
 	}
 
 	private void releasePreprocess2(final View rootView) {
-		mMaxThinningLoopLabel = null;
+//		mMaxThinningLoopLabel = null;
 	}
 
-	private void updateMaxThinningLoop(final int max_loop) {
-		if (mMaxThinningLoopLabel != null) {
-			mMaxThinningLoopLabel.setText(String.format(mMaxThinningLoopFormat, max_loop));
-		}
-	}
+//	private void updateMaxThinningLoop(final int max_loop) {
+//		if (mMaxThinningLoopLabel != null) {
+//			mMaxThinningLoopLabel.setText(String.format(mMaxThinningLoopFormat, max_loop));
+//		}
+//	}
 
 //--------------------------------------------------------------------------------
 	private String mExtractRangeHFormat;

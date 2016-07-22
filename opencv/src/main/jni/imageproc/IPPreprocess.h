@@ -6,11 +6,11 @@
 #define FLIGHTDEMO_IPPREPROCESS_H
 
 #include "IPBase.h"
-#include "Thinning.h"
+//#include "Thinning.h"
 
 class IPPreprocess : virtual public IPBase {
 private:
-	Thinning mThinning;
+//	Thinning mThinning;
 protected:
 	IPPreprocess();
 	virtual ~IPPreprocess();

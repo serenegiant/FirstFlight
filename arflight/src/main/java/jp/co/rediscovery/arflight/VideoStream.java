@@ -26,8 +26,7 @@ import com.serenegiant.utils.FpsCounter;
 
 /** ライブ映像処理用のヘルパークラス */
 public class VideoStream {
-	private static final boolean DEBUG = false; // FIXME 実働時はfalseにすること
-	private static final String TAG = "VideoStream";
+	private static final String TAG = VideoStream.class.getSimpleName();
 
 	private static final String VIDEO_MIME_TYPE = "video/avc";
 	private static final int VIDEO_INPUT_TIMEOUT_US = 33000;
@@ -47,7 +46,6 @@ public class VideoStream {
 	private final FpsCounter mFps = new FpsCounter();
 
 	public VideoStream() {
-		if (DEBUG) Log.v(TAG, "VideoStream:コンストラクタ");
 		mDecodeTask = new DecodeTask();
 		new Thread(mDecodeTask, "VideoStream#decodeTask").start();
 		mRendererTask = new RendererTask(this);
@@ -68,7 +66,6 @@ public class VideoStream {
 	 * 関連するリソースをすべて破棄する
 	 */
 	public void release() {
-		if (DEBUG) Log.v(TAG, "release");
 		synchronized (mSync) {
 			isRendererRunning = isDecoderRunning = false;
 			mSync.notifyAll();
@@ -83,7 +80,6 @@ public class VideoStream {
 	 * @param surface
 	 */
 	public void addSurface(final int id, final Surface surface) {
-		if (DEBUG) Log.v(TAG, "addSurface");
 		mRendererTask.addSurface(id, surface);
 	}
 
@@ -92,7 +88,6 @@ public class VideoStream {
 	 * @param id
 	 */
 	public void removeSurface(final int id) {
-		if (DEBUG) Log.v(TAG, "removeSurface");
 		mRendererTask.removeSurface(id);
 	}
 
@@ -102,7 +97,6 @@ public class VideoStream {
 	 * @param codec
 	 */
 	public void configureDecoder(final ARControllerCodec codec) {
-		if (DEBUG) Log.v(TAG, "configureDecoder:" + codec);
 		ByteBuffer sps = null, pps = null;
 		if (codec.getType() == ARCONTROLLER_STREAM_CODEC_TYPE_ENUM.ARCONTROLLER_STREAM_CODEC_TYPE_H264) {
 			final ARControllerCodec.H264 codecH264 = codec.getAsH264();
@@ -138,22 +132,34 @@ public class VideoStream {
 	}
 
 	protected ByteBuffer[] onSpsPpsReady(final ByteBuffer sps, final ByteBuffer pps) {
-		if (DEBUG) Log.v(TAG, "onSpsPpsReady:");
 		mDecodeTask.initMediaCodec();
 		mDecodeTask.configureMediaCodec(sps, pps, mRendererTask.getSurface());
 		return mDecodeTask.inputBuffers;
 	}
 
 //--------------------------------------------------------------------------------
+
+	/**
+	 * フレームレートを更新
+	 * @return
+	 */
 	public VideoStream updateFps() {
 		mFps.update();
 		return this;
 	}
 
+	/**
+	 * 前回の#getFps呼び出しから現在までのフレームレートを取得
+	 * @return
+	 */
 	public float getFps() {
 		return mFps.getFps();
 	}
 
+	/**
+	 * 測定開始からのフレームレートを取得
+	 * @return
+	 */
 	public float getTotalFps() {
 		return mFps.getTotalFps();
 	}
@@ -174,10 +180,13 @@ public class VideoStream {
 			waitForIFrame = true;
 		}
 
+		/**
+		 * デバイスから受け取った映像データを非同期でデコードするためにキューに入れる
+		 * @param frame
+		 * @param isIFrame
+		 */
 		@SuppressWarnings("deprecation")
 		public void queueFrame(final ARNativeData frame, final boolean isIFrame) {
-//			if (DEBUG) Log.v(TAG, "queueFrame:mediaCodec" + mediaCodec + ",isCodecConfigured=" + isCodecConfigured
-//				+ ",waitForIFrame=" + waitForIFrame + ",isIFrame=" + isIFrame);
 			if ((mediaCodec != null)) {
 				if (!isCodecConfigured && isIFrame) {
 					final ByteBuffer csdBuffer = getCSD(frame, isIFrame);
@@ -200,7 +209,6 @@ public class VideoStream {
 							Log.e(TAG, "Error while dequeue input buffer");
 						}
 					}
-//					if (DEBUG) Log.v(TAG, "dequeueInputBuffer:index=" + index);
 					if (index >= 0) {
 						try {
 							final ByteBuffer b = inputBuffers[index];
@@ -216,7 +224,6 @@ public class VideoStream {
 							Log.w(TAG, "Error while queue input buffer");
 						}
 					} else if (isDecoderRunning) {
-						if (DEBUG) Log.v(TAG, "デコーダーの準備ができてない/入力キューが満杯");
 						waitForIFrame = true;
 					}
 				}
@@ -227,7 +234,6 @@ public class VideoStream {
 
 		@Override
 		public void run() {
-			if (DEBUG) Log.v(TAG, "DecodeTask#run");
 			// デコーダーを初期化
 			initMediaCodec();
 			synchronized (mSync) {
@@ -242,7 +248,6 @@ public class VideoStream {
 					break;
 				}
 			}
-			if (DEBUG) Log.v(TAG, "DecodeTask#run:isRendererRunning=" + isRendererRunning + ",isCodecConfigured=" + isCodecConfigured);
 			if (isDecoderRunning && isCodecConfigured) {
 				// 正常に初期化出来た時
 				final MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
@@ -251,8 +256,6 @@ public class VideoStream {
 					// MediaCodecでデコードした映像フレームを取り出してSurfaceへ反映させるためのループ
 					try {
 						outIndex = mediaCodec.dequeueOutputBuffer(info, VIDEO_OUTPUT_TIMEOUT_US);
-//						if (DEBUG) Log.v(TAG, "releaseOutputBuffer:" + outIndex);
-						// XXX 時間調整っていらんのかな?
 						if (outIndex >= 0) {
 							// これを呼び出すとSurfaceへの書き込み要求が発行される
 							mediaCodec.releaseOutputBuffer(outIndex, true);
@@ -268,14 +271,12 @@ public class VideoStream {
 			}
 			// デコーダーを破棄
 			releaseMediaCodec();
-			if (DEBUG) Log.v(TAG, "DecodeTask#run:終了");
 		}
 
 		/**
 		 * デコーダー用のMediaCodecを生成
 		 */
 		private void initMediaCodec() {
-			if (DEBUG) Log.v(TAG, "initMediaCodec:");
 			if (mediaCodec == null) {
 				try {
 					mediaCodec = MediaCodec.createDecoderByType(VIDEO_MIME_TYPE);
@@ -286,13 +287,12 @@ public class VideoStream {
 		}
 
 		/**
-		 * デコーダー用のMediaCodecを初期化
+		 * デコーダー用にMediaCodecを初期化
 		 * @param csdBuffer
 		 * @param surface
 		 */
 		@SuppressWarnings("deprecation")
 		private void configureMediaCodec(final ByteBuffer csdBuffer, final Surface surface) {
-			if (DEBUG) Log.v(TAG, "configureMediaCodec:");
 			final MediaFormat format = MediaFormat.createVideoFormat(VIDEO_MIME_TYPE, VIDEO_WIDTH, VIDEO_HEIGHT);
 			format.setByteBuffer("csd-0", csdBuffer);
 
@@ -303,9 +303,14 @@ public class VideoStream {
 			isCodecConfigured = true;
 		}
 
+		/**
+		 * デコーダー用にMediaCodecを初期化
+		 * @param sps
+		 * @param pps
+		 * @param surface
+		 */
 		@SuppressWarnings("deprecation")
 		private void configureMediaCodec(final ByteBuffer sps, final ByteBuffer pps, final Surface surface) {
-			if (DEBUG) Log.v(TAG, "configureMediaCodec:");
 			final MediaFormat format = MediaFormat.createVideoFormat(VIDEO_MIME_TYPE, VIDEO_WIDTH, VIDEO_HEIGHT);
 			format.setByteBuffer("csd-0", sps);
 			format.setByteBuffer("csd-1", pps);
@@ -321,7 +326,6 @@ public class VideoStream {
 		 * デコーダーを破棄
 		 */
 		private void releaseMediaCodec() {
-			if (DEBUG) Log.v(TAG, "releaseMediaCodec:");
 			if ((mediaCodec != null) && (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)) {
 				try {
 					if (isCodecConfigured) {
@@ -336,8 +340,13 @@ public class VideoStream {
 			}
 		}
 
+		/**
+		 * MediaCodecのh.264デコーダーの初期化用にSPS, PPSを映像データから取り出す
+		 * @param frame
+		 * @param isIFrame
+		 * @return
+		 */
 		private ByteBuffer getCSD(final ARNativeData frame, final boolean isIFrame) {
-			if (DEBUG) Log.v(TAG, "getCSD:" + frame);
 			if (isIFrame) {
 				final byte[] data = frame.getByteData();
 				int spsSize;
@@ -383,7 +392,7 @@ public class VideoStream {
 	private static final int REQUEST_ADD_SURFACE = 3;
 	private static final int REQUEST_REMOVE_SURFACE = 4;
 
-	/** デコードした映像をOpenGL|ESでSurface全面に表示するためのタスク */
+	/** デコードした映像をワーカースレッド上でOpenGL|ESでSurface全面に表示するためのタスク */
 	private static final class RendererTask extends EglTask {
 		/** 映像の分配描画先を保持&描画するためのホルダークラス */
 		private static final class RendererSurfaceRec {
@@ -412,7 +421,6 @@ public class VideoStream {
 		/** 分配描画先 */
 		private final SparseArray<RendererSurfaceRec> mClients = new SparseArray<RendererSurfaceRec>();
 
-//		private GLDrawer2D mDrawer;
 		private FullFrameRect mDrawer;
 		/** MediaCodecでデコードした映像を受け取るためのテクスチャのテクスチャ名(SurfaceTexture生成時/分配描画に使用) */
 		private int mTexId;
@@ -438,18 +446,8 @@ public class VideoStream {
 
 		@Override
 		protected void onStart() {
-			if (DEBUG) Log.v(TAG, "onStart:");
-//			mDrawer = new GLDrawer2D(true);
 			mDrawer = new FullFrameRect(new Texture2dProgram(Texture2dProgram.ProgramType.TEXTURE_EXT_FILT3x3));
 			mDrawer.getProgram().setTexSize(mVideoWidth, mVideoHeight);
-//			mDrawer.getProgram().setKernel(Texture2dProgram.KERNEL_EMBOSS, 0.5f);		// エンボス
-//			mDrawer.getProgram().setKernel(Texture2dProgram.KERNEL_SOBEL_H, 0.1f);		// ソーベル(エッジ検出, 1次微分)
-//			mDrawer.getProgram().setKernel(Texture2dProgram.KERNEL_SOBEL2_H, 0.1f);		// ソーベル(エッジ検出, 1次微分)
-//			mDrawer.getProgram().setKernel(Texture2dProgram.KERNEL_EDGE_DETECT, 0.0f);	// エッジ検出
-//			mDrawer.getProgram().setKernel(Texture2dProgram.KERNEL_SHARPNESS, 0.0f);	// シャープ
-//			mDrawer.getProgram().setKernel(Texture2dProgram.KERNEL_SMOOTH, 0.0f);		// 移動平均
-//			mDrawer.getProgram().setKernel(Texture2dProgram.KERNEL_GAUSSIAN, 0.0f);		// ガウシアン(平滑化,ノイズ除去)
-//			mDrawer.getProgram().setKernel(Texture2dProgram.KERNEL_LAPLACIAN, 0.0f);	// ラプラシアン(エッジ検出, 2次微分)
 
 			mTexId = GLHelper.initTex(GLHelper.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_NEAREST);
 			mMasterTexture = new SurfaceTexture(mTexId);
@@ -461,12 +459,10 @@ public class VideoStream {
 				mParent.mSync.notifyAll();
 			}
 			mParent.mFps.reset();
-			if (DEBUG) Log.v(TAG, "onStart:finished");
 		}
 
 		@Override
 		protected void onStop() {
-			if (DEBUG) Log.v(TAG, "onStop");
 			synchronized (mParent.mSync) {
 				mParent.isRendererRunning = false;
 				mParent.mSync.notifyAll();
@@ -482,7 +478,6 @@ public class VideoStream {
 				mMasterTexture.release();
 				mMasterTexture = null;
 			}
-			if (DEBUG) Log.v(TAG, "onStop:finished");
 		}
 
 		@Override
@@ -506,13 +501,11 @@ public class VideoStream {
 
 		/** 映像受け取り用Surfaceを取得 */
 		public Surface getSurface() {
-			if (DEBUG) Log.v(TAG, "getSurface:" + mMasterSurface);
 			return mMasterSurface;
 		}
 
 		/** 映像受け取り用SurfaceTextureを取得 */
 		public SurfaceTexture getSurfaceTexture() {
-			if (DEBUG) Log.v(TAG, "getSurfaceTexture:" + mMasterTexture);
 			return mMasterTexture;
 		}
 
@@ -566,7 +559,6 @@ public class VideoStream {
 		 * 実際の描画処理(ワーカースレッド上で実行)
 		 */
 		private void handleDraw() {
-//			if (DEBUG) Log.v(TAG, "handleDraw:");
 			mParent.mFps.count();
 			try {
 				makeCurrent();
@@ -592,7 +584,6 @@ public class VideoStream {
 			}
 			GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 			GLES20.glFlush();
-//			if (DEBUG) Log.v(TAG, "handleDraw:終了");
 		}
 
 		/**
@@ -601,7 +592,6 @@ public class VideoStream {
 		 * @param surface
 		 */
 		private void handleAddSurface(final int id, final Object surface) {
-			if (DEBUG) Log.v(TAG, "handleAddSurface:id=" + id);
 			checkSurface();
 			synchronized (mClientSync) {
 				RendererSurfaceRec client = mClients.get(id);
@@ -624,7 +614,6 @@ public class VideoStream {
 		 * @param id
 		 */
 		private void handleRemoveSurface(final int id) {
-			if (DEBUG) Log.v(TAG, "handleRemoveSurface:id=" + id);
 			synchronized (mClientSync) {
 				final RendererSurfaceRec client = mClients.get(id);
 				if (client != null) {
@@ -636,8 +625,10 @@ public class VideoStream {
 			}
 		}
 
+		/**
+		 * 分配描画用のSurfaceをすべて破棄する
+		 */
 		private void handleRemoveAll() {
-			if (DEBUG) Log.v(TAG, "handleRemoveAll:");
 			synchronized (mClientSync) {
 				final int n = mClients.size();
 				RendererSurfaceRec client;
@@ -650,11 +641,12 @@ public class VideoStream {
 				}
 				mClients.clear();
 			}
-			if (DEBUG) Log.v(TAG, "handleRemoveAll:finished");
 		}
 
+		/**
+		 * 保持している分配描画用Surfaceが有効かどうかを確認して無効なものを削除する
+		 */
 		private void checkSurface() {
-			if (DEBUG) Log.v(TAG, "checkSurface");
 			synchronized (mClientSync) {
 				final int n = mClients.size();
 				for (int i = 0; i < n; i++) {
@@ -662,14 +654,13 @@ public class VideoStream {
 					if (client != null && client.mSurface instanceof Surface) {
 						if (!((Surface)client.mSurface).isValid()) {
 							final int id = mClients.keyAt(i);
-							if (DEBUG) Log.i(TAG, "checkSurface:found invalid surface:id=" + id);
+							Log.i(TAG, "checkSurface:found invalid surface:id=" + id);
 							mClients.valueAt(i).release();
 							mClients.remove(id);
 						}
 					}
 				}
 			}
-			if (DEBUG) Log.v(TAG, "checkSurface:finished");
 		}
 
 		/**
@@ -678,7 +669,6 @@ public class VideoStream {
 		 * @param height
 		 */
 		private void handleResize(final int width, final int height) {
-			if (DEBUG) Log.v(TAG, String.format("handleResize:(%d,%d)", width, height));
 			mVideoWidth = width;
 			mVideoHeight = height;
 			mMasterTexture.setDefaultBufferSize(mVideoWidth, mVideoHeight);

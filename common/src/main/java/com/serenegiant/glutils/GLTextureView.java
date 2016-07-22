@@ -76,18 +76,6 @@ public class GLTextureView extends TextureView {
 		setSurfaceTextureListener(mSurfaceTextureListener);
 	}
 
-/*	@Override
-	protected void onAttachedToWindow() {
-		super.onAttachedToWindow();
-		if (DEBUG) Log.v(TAG, "onAttachedToWindow:");
-	} */
-
-/*	@Override
-	protected void onDetachedFromWindow() {
-		if (DEBUG) Log.v(TAG, "onDetachedFromWindow:");
-		super.onDetachedFromWindow();
-	} */
-
 	public void onResume() {
 		if (DEBUG) Log.v(TAG, "onResume:");
 		// XXX ここでは何もしなくてもいいかも

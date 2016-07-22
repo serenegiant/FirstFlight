@@ -70,82 +70,82 @@ void IPBase::findContours(cv::Mat &src, std::vector<std::vector< cv::Point>> &co
 	EXIT();
 }
 
-/**
- * 指定したHSV色範囲に収まる領域を抽出する
- * @param src
- * @param dst
- * @param convert_code srcの画像をHSVに変換するためのcv:cvtColorの第3引数
- * @param method 抽出方法 0:LUT, 1:inRange
- * @param lower HSV下限
- * @param upper HSV上限
- */
-/*protected*/
-int IPBase::colorExtraction(const cv::Mat &src, cv::Mat *dst,
-	int convert_code,			// cv:cvtColorの第3引数, カラー変換方法
-	int method,
-	const int lower[], const int upper[]) {
-
-	ENTER();
-
-	int result = 0;
-
-    cv::Mat hsv;
-
-	try {
-		// HSVに変換
-		cv::cvtColor(src, hsv, convert_code);
-
-		if (method == 1) {
-			cv::Mat mask;
-			cv::inRange(hsv, cv::Scalar(lower[0], lower[1], lower[2]) , cv::Scalar(upper[0], upper[1], upper[2]), mask);
-			cv::Mat output;
-			src.copyTo(output, mask);	// copyToの出力先はデータが入ってちゃだめらしい
-			*dst = output;
-		} else {
-			cv::Mat lut = cv::Mat(256, 1, CV_8UC3);
-			// 指定したHSV範囲からLUT(Look Up Table)を作成・・・これは設定変えた時だけでいい
-			for (int i = 0; i < 256; i++) {
-				for (int k = 0; k < 3; k++) {
-					if (lower[k] <= upper[k]) {
-						if ((lower[k] <= i) && (i <= upper[k])) {
-							lut.data[i * lut.step + k] = 255;
-						} else{
-							lut.data[i * lut.step + k] = 0;
-						}
-					} else {
-						if ((i <= upper[k]) || (lower[k] <= i)) {
-							lut.data[i * lut.step + k] = 255;
-						} else {
-							lut.data[i * lut.step + k] = 0;
-						}
-					}
-				}
-			}
-
-			// LUTを使用して二値化
-			cv::LUT(hsv, lut, hsv);
-
-			// Channel毎に分解
-			std::vector<cv::Mat> planes;
-			cv::split(hsv, planes);
-
-			// マスクを作成・・・HSVのどれかが0になってれば除外される
-			cv::Mat mask;
-			cv::bitwise_and(planes[0], planes[1], mask);
-			cv::bitwise_and(mask, planes[2], mask);
-
-			// 出力
-			cv::Mat output;
-			src.copyTo(output, mask);	// copyToの出力先はデータが入ってちゃだめらしい
-			*dst = output;
-//			*dst = mask;	// マスクを返せば勝手に２値画像になる
-		}
-	} catch (cv::Exception e) {
-		LOGE("colorExtraction failed:%s", e.msg.c_str());
-		result = -1;
-	}
-    RETURN(result, int);
-}
+///**
+// * 指定したHSV色範囲に収まる領域を抽出する
+// * @param src
+// * @param dst
+// * @param convert_code srcの画像をHSVに変換するためのcv:cvtColorの第3引数
+// * @param method 抽出方法 0:LUT, 1:inRange
+// * @param lower HSV下限
+// * @param upper HSV上限
+// */
+///*protected*/
+//int IPBase::colorExtraction(const cv::Mat &src, cv::Mat *dst,
+//	int convert_code,			// cv:cvtColorの第3引数, カラー変換方法
+//	int method,
+//	const int lower[], const int upper[]) {
+//
+//	ENTER();
+//
+//	int result = 0;
+//
+//	cv::Mat hsv;
+//
+//	try {
+//		// HSVに変換
+//		cv::cvtColor(src, hsv, convert_code);
+//
+//		if (method == 1) {
+//			cv::Mat mask;
+//			cv::inRange(hsv, cv::Scalar(lower[0], lower[1], lower[2]) , cv::Scalar(upper[0], upper[1], upper[2]), mask);
+//			cv::Mat output;
+//			src.copyTo(output, mask);	// copyToの出力先はデータが入ってちゃだめらしい
+//			*dst = output;
+//		} else {
+//			cv::Mat lut = cv::Mat(256, 1, CV_8UC3);
+//			// 指定したHSV範囲からLUT(Look Up Table)を作成・・・これは設定変えた時だけでいい
+//			for (int i = 0; i < 256; i++) {
+//				for (int k = 0; k < 3; k++) {
+//					if (lower[k] <= upper[k]) {
+//						if ((lower[k] <= i) && (i <= upper[k])) {
+//							lut.data[i * lut.step + k] = 255;
+//						} else{
+//							lut.data[i * lut.step + k] = 0;
+//						}
+//					} else {
+//						if ((i <= upper[k]) || (lower[k] <= i)) {
+//							lut.data[i * lut.step + k] = 255;
+//						} else {
+//							lut.data[i * lut.step + k] = 0;
+//						}
+//					}
+//				}
+//			}
+//
+//			// LUTを使用して二値化
+//			cv::LUT(hsv, lut, hsv);
+//
+//			// Channel毎に分解
+//			std::vector<cv::Mat> planes;
+//			cv::split(hsv, planes);
+//
+//			// マスクを作成・・・HSVのどれかが0になってれば除外される
+//			cv::Mat mask;
+//			cv::bitwise_and(planes[0], planes[1], mask);
+//			cv::bitwise_and(mask, planes[2], mask);
+//
+//			// 出力
+//			cv::Mat output;
+//			src.copyTo(output, mask);	// copyToの出力先はデータが入ってちゃだめらしい
+//			*dst = output;
+////			*dst = mask;	// マスクを返せば勝手に２値画像になる
+//		}
+//	} catch (cv::Exception e) {
+//		LOGE("colorExtraction failed:%s", e.msg.c_str());
+//		result = -1;
+//	}
+//	RETURN(result, int);
+//}
 
 // stringstreamをクリアして再利用できるようにする
 void IPBase::clear_stringstream(std::stringstream &ss) {

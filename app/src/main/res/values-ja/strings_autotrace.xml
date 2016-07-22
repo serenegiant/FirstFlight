@@ -22,23 +22,23 @@
 	<string name="trace_use_brightness">明るさ: %5.2f</string>
 	<string name="trace_use_posterize">ポスタライズ: %5.2f</string>
 	<string name="trace_binarize_threshold">二値化閾値: %5.2f</string>
-	<string name="trace_trapezium_rate">台形歪補正: %6.3f</string>
+<!--<string name="trace_trapezium_rate">台形歪補正: %6.3f</string> -->
 	<!-- 映像処理2 -->
-	<string name="trace_config_title_preprocess2">映像処理設定2</string>
-	<string name="trace_fill_contour">輪郭内塗りつぶし(OpenCV)</string>
-	<string name="trace_smooth">平滑化</string>
-	<string name="trace_smooth_opencv">平滑化(OpenCV)</string>
-	<string name="trace_smooth_non">無し</string>
-	<string name="trace_smooth_gaussian">ガウシアン</string>
-	<string name="trace_smooth_median">メディアン</string>
-	<string name="trace_smooth_blur">ブラー</string>
-	<string name="trace_smooth_dilation">ダイレーション</string>
-	<string name="trace_use_native_canny">エッジ検出(Canny)OpenCV</string>
-	<string name="trace_use_canny">エッジ検出(Canny)OpenGL|ES</string>
-	<string name="trace_max_thinning_loop">細線化(OpenCV): %3d</string>
+<!--<string name="trace_config_title_preprocess2">映像処理設定2</string> -->
+<!--<string name="trace_fill_contour">輪郭内塗りつぶし(OpenCV)</string> -->
+<!--<string name="trace_smooth">平滑化</string> -->
+<!--<string name="trace_smooth_opencv">平滑化(OpenCV)</string> -->
+<!--<string name="trace_smooth_non">無し</string> -->
+<!--<string name="trace_smooth_gaussian">ガウシアン</string> -->
+<!--<string name="trace_smooth_median">メディアン</string> -->
+<!--<string name="trace_smooth_blur">ブラー</string> -->
+<!--<string name="trace_smooth_dilation">ダイレーション</string> -->
+<!--<string name="trace_use_native_canny">エッジ検出(Canny)OpenCV</string> -->
+<!--<string name="trace_use_canny">エッジ検出(Canny)OpenGL|ES</string> -->
+<!--<string name="trace_max_thinning_loop">細線化(OpenCV): %3d</string> -->
 	<!-- 色抽出設定-->
 	<string name="trace_config_title_color_extract">色抽出設定</string>
-	<string name="trace_config_extract_use_opencv">色抽出OpenCV</string>
+<!--<string name="trace_config_extract_use_opencv">色抽出OpenCV</string> -->
 	<string name="trace_config_extract_use">色抽出OpenGL|ES</string>
 	<string name="trace_config_extract_color_update">取得</string>
 	<string name="trace_config_extract_color_select">選択</string>

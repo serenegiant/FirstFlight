@@ -19,7 +19,7 @@
 #include "IPPreprocess.h"
 
 IPPreprocess::IPPreprocess()
-:	mThinning(2, 2)
+//:	mThinning(2, 2)
 {
 	ENTER();
 
@@ -50,10 +50,10 @@ int IPPreprocess::pre_process(cv::Mat &frame, cv::Mat &src, cv::Mat &result, con
 		// RGBAのままだとHSVに変換できないので一旦BGRに変える
 		cv::cvtColor(frame, src, cv::COLOR_RGBA2BGR, 1);
 //		cv::normalize(src, src, 0, 255, cv::NORM_MINMAX);
-		// 色抽出処理
-		if (param.mEnableExtract) {
-			colorExtraction(src, &src, cv::COLOR_BGR2HSV, 0, &param.extractColorHSV[0], &param.extractColorHSV[3]);
-		}
+//		// 色抽出処理
+//		if (param.mEnableExtract) {
+//			colorExtraction(src, &src, cv::COLOR_BGR2HSV, 0, &param.extractColorHSV[0], &param.extractColorHSV[3]);
+//		}
 		// グレースケールに変換(RGBA->Y)
 		cv::cvtColor(src, src, cv::COLOR_BGR2GRAY, 1);
 		// 輪郭内の塗りつぶし(色抽出してなければ全面塗りつぶされる)
@@ -65,26 +65,26 @@ int IPPreprocess::pre_process(cv::Mat &frame, cv::Mat &src, cv::Mat &result, con
 		// 平滑化
 //		cv::Sobel(src, src, CV_32F, 1, 1);
 //		cv::convertScaleAbs(src, src, 1, 0);
-		if (param.mSmoothType) {
-			static const double sigma = 3.0;	// FIXME これはパラメータにする?
-			const int ksize = (int)(sigma * 5) | 1;	// カーネルサイズ, 正の奇数かゼロでないとだめ(ゼロの時はsigmaから内部計算)
-			switch (param.mSmoothType) {
-			case SMOOTH_GAUSSIAN:
-				cv::GaussianBlur(src, src, cv::Size(ksize, ksize), sigma, sigma);
-				break;
-			case SMOOTH_MEDIAN:
-				cv::medianBlur(src, src, ksize);
-				break;
-			case SMOOTH_BLUR:
-				cv::blur(src, src, cv::Size(ksize, ksize));
-				break;
-			case SMOOTH_DILATION:
-				cv::dilate(src, src, cv::Mat());
-				break;
-			default:
-				break;
-			}
-		}
+//		if (param.mSmoothType) {
+//			static const double sigma = 3.0;	// FIXME これはパラメータにする?
+//			const int ksize = (int)(sigma * 5) | 1;	// カーネルサイズ, 正の奇数かゼロでないとだめ(ゼロの時はsigmaから内部計算)
+//			switch (param.mSmoothType) {
+//			case SMOOTH_GAUSSIAN:
+//				cv::GaussianBlur(src, src, cv::Size(ksize, ksize), sigma, sigma);
+//				break;
+//			case SMOOTH_MEDIAN:
+//				cv::medianBlur(src, src, ksize);
+//				break;
+//			case SMOOTH_BLUR:
+//				cv::blur(src, src, cv::Size(ksize, ksize));
+//				break;
+//			case SMOOTH_DILATION:
+//				cv::dilate(src, src, cv::Mat());
+//				break;
+//			default:
+//				break;
+//			}
+//		}
 		// FIXME 平滑化後に2値化が必要?
 //		if (param.mSmoothType) {
 //		// 2値化
@@ -94,27 +94,27 @@ int IPPreprocess::pre_process(cv::Mat &frame, cv::Mat &src, cv::Mat &result, con
 //		cv::threshold(src, src, 125, 255, cv::THRESH_BINARY);
 //		cv::threshold(src, src, 200, 255, cv::THRESH_BINARY_INV);
 		// 細線化
-		if (param.mMaxThinningLoop) {
-			mThinning.resize(src.cols, src.rows);
-			if (outlines.empty()) {
-				// 輪郭内塗りつぶしをしてない時は最外形を取得してないのでここで取得
-				findContours(src, outlines, cv::RETR_EXTERNAL);
-			}
-			cv::threshold(src, src, 10, 255, CV_THRESH_BINARY);
-			for (auto outline = outlines.begin(); outline != outlines.end(); outline++) {
-				// 外接四角を取得
-				cv::Rect bounds = cv::boundingRect(*outline);
-				// ROIを作成
-				cv::Mat roi = src(bounds);
-				// ROIに対して細線化
-				mThinning.apply(roi, roi, param.mMaxThinningLoop);
-			}
-		}
+//		if (param.mMaxThinningLoop) {
+//			mThinning.resize(src.cols, src.rows);
+//			if (outlines.empty()) {
+//				// 輪郭内塗りつぶしをしてない時は最外形を取得してないのでここで取得
+//				findContours(src, outlines, cv::RETR_EXTERNAL);
+//			}
+//			cv::threshold(src, src, 10, 255, CV_THRESH_BINARY);
+//			for (auto outline = outlines.begin(); outline != outlines.end(); outline++) {
+//				// 外接四角を取得
+//				cv::Rect bounds = cv::boundingRect(*outline);
+//				// ROIを作成
+//				cv::Mat roi = src(bounds);
+//				// ROIに対して細線化
+//				mThinning.apply(roi, roi, param.mMaxThinningLoop);
+//			}
+//		}
 		outlines.clear();
-		// エッジ検出(Cannyの結果は2値化されてる)
-		if (param.mEnableCanny) {
-			cv::Canny(src, src, param.mCannyThreshold1, param.mCannyThreshold2);
-		}
+//		// エッジ検出(Cannyの結果は2値化されてる)
+//		if (param.mEnableCanny) {
+//			cv::Canny(src, src, param.mCannyThreshold1, param.mCannyThreshold2);
+//		}
 
 		// 表示用にカラー画像に戻す
 		if (param.needs_result) {

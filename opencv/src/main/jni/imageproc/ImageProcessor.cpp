@@ -40,10 +40,10 @@ ImageProcessor::ImageProcessor(JNIEnv* env, jobject weak_thiz_obj, jclass clazz)
 {
 	// 結果形式
 	mParam.mResultFrameType = RESULT_FRAME_TYPE_DST_LINE;
-	// 色抽出するかどうか
-	mParam.mEnableExtract = false;
-	// 輪郭近似前にガウシアンフィルタを当てるかどうか
-	mParam.mSmoothType = SMOOTH_NON;
+//	// 色抽出するかどうか
+//	mParam.mEnableExtract = false;
+//	// 輪郭近似前にガウシアンフィルタを当てるかどうか
+//	mParam.mSmoothType = SMOOTH_NON;
 	// 輪郭近似
 #if 1
 	mParam.mApproxType = APPROX_RELATIVE;
@@ -52,23 +52,23 @@ ImageProcessor::ImageProcessor(JNIEnv* env, jobject weak_thiz_obj, jclass clazz)
 	mParam.mApproxType = APPROX_ABS;
 	mParam.mApproxFactor = 10;
 #endif
-	// Canny
-	mParam.mEnableCanny = true;
-	mParam.mCannyThreshold1 = 50.0;	// エッジ検出する際のしきい値
-	mParam.mCannyThreshold2 = 200.0;
-	// 細線化
-	mParam.mMaxThinningLoop = 0;
+//	// Canny
+//	mParam.mEnableCanny = true;
+//	mParam.mCannyThreshold1 = 50.0;	// エッジ検出する際のしきい値
+//	mParam.mCannyThreshold2 = 200.0;
+//	// 細線化
+//	mParam.mMaxThinningLoop = 0;
 	// 検出輪郭の内部空隙を塗りつぶすかどうか
 	mParam.mFillInnerContour = false;
 	// 基準図形との類似性の最大値
 	mParam.mMaxAnalogous = 200.0;
-	// H(色相)は制限なし, S(彩度)は0-約5%, 2:V(明度)は約80-100%
-	mParam.extractColorHSV[0] = 0;		// H下限
-	mParam.extractColorHSV[1] = 0;		// S下限
-	mParam.extractColorHSV[2] = 200;	// V下限
-	mParam.extractColorHSV[3] = 180;	// H下限
-	mParam.extractColorHSV[4] = 10;		// S上限
-	mParam.extractColorHSV[5] = 255;	// V上限
+//	// H(色相)は制限なし, S(彩度)は0-約5%, 2:V(明度)は約80-100%
+//	mParam.extractColorHSV[0] = 0;		// H下限
+//	mParam.extractColorHSV[1] = 0;		// S下限
+//	mParam.extractColorHSV[2] = 200;	// V下限
+//	mParam.extractColorHSV[3] = 180;	// H下限
+//	mParam.extractColorHSV[4] = 10;		// S上限
+//	mParam.extractColorHSV[5] = 255;	// V上限
 	// 台形補正
 	mParam.mTrapeziumRate = 0.0;
 	// 輪郭検出時の最小/最大面積
@@ -116,7 +116,7 @@ int ImageProcessor::start(const int &width, const int &height) {
 		{
 			mLineDetector.resize(width, height);
 			mCurveDetector.resize(width, height);
-			mCornerDetector.resize(width, height);
+//			mCornerDetector.resize(width, height);
 			initFrame(width, height);
 			mIsRunning = true;
 			result = pthread_create(&processor_thread, NULL, processor_thread_func, (void *)this);
@@ -169,77 +169,77 @@ void ImageProcessor::setResultFrameType(const int &result_frame_type) {
 	EXIT();
 };
 
-void ImageProcessor::setEnableExtract(const int &enable) {
-	ENTER();
+//void ImageProcessor::setEnableExtract(const int &enable) {
+//	ENTER();
+//
+//	Mutex::Autolock lock(mMutex);
+//
+//	mParam.mEnableExtract = enable != 0;
+//	mParam.changed = true;
+//
+//	EXIT();
+//};
 
-	Mutex::Autolock lock(mMutex);
+//void ImageProcessor::setEnableSmooth(const SmoothType_t &smooth_type) {
+//	ENTER();
+//
+//	Mutex::Autolock lock(mMutex);
+//
+//	mParam.mSmoothType = smooth_type;
+//	mParam.changed = true;
+//
+//	EXIT();
+//};
 
-	mParam.mEnableExtract = enable != 0;
-	mParam.changed = true;
+//void ImageProcessor::setEnableCanny(const int &enable) {
+//	ENTER();
+//
+//	Mutex::Autolock lock(mMutex);
+//
+//	mParam.mEnableCanny = enable != 0;
+//	mParam.changed = true;
+//
+//	EXIT();
+//};
 
-	EXIT();
-};
+//int ImageProcessor::setExtractionColor(const int lower[], const int upper[]) {
+//	ENTER();
+//
+//	Mutex::Autolock lock(mMutex);
+//
+//	memcpy(&mParam.extractColorHSV[0], &lower[0], sizeof(int) * 3);
+//	memcpy(&mParam.extractColorHSV[3], &upper[0], sizeof(int) * 3);
+//	mParam.changed = true;
+//
+//	RETURN(0, int);
+//}
 
-void ImageProcessor::setEnableSmooth(const SmoothType_t &smooth_type) {
-	ENTER();
-
-	Mutex::Autolock lock(mMutex);
-
-	mParam.mSmoothType = smooth_type;
-	mParam.changed = true;
-
-	EXIT();
-};
-
-void ImageProcessor::setEnableCanny(const int &enable) {
-	ENTER();
-
-	Mutex::Autolock lock(mMutex);
-
-	mParam.mEnableCanny = enable != 0;
-	mParam.changed = true;
-
-	EXIT();
-};
-
-int ImageProcessor::setExtractionColor(const int lower[], const int upper[]) {
-	ENTER();
-
-	Mutex::Autolock lock(mMutex);
-
-	memcpy(&mParam.extractColorHSV[0], &lower[0], sizeof(int) * 3);
-	memcpy(&mParam.extractColorHSV[3], &upper[0], sizeof(int) * 3);
-	mParam.changed = true;
-
-	RETURN(0, int);
-}
-
-/** 台形歪補正係数を設定 */
-int ImageProcessor::setTrapeziumRate(const double &trapezium_rate) {
-	ENTER();
-
-	if (mParam.mTrapeziumRate != trapezium_rate) {
-
-		cv::Point2f src[4] = { cv::Point2f(0.0f, 0.0f), cv::Point2f(0.0f, (float)height()), cv::Point2f((float)width(), (float)height()), cv::Point2f((float)width(), 0.0f)};
-		cv::Point2f dst[4] = {
-			cv::Point2f((trapezium_rate < 0 ? -trapezium_rate * 150.0f : 0.0f) + 0.0f, 0.0f),
-			cv::Point2f((trapezium_rate >= 0 ?  trapezium_rate * 150.0f : 0.0f) + 0.0f, (float)height()),
-			cv::Point2f((trapezium_rate >= 0 ?  -trapezium_rate * 150.0f : 0.0f) + (float)width(), (float)height()),
-			cv::Point2f((trapezium_rate < 0 ?  trapezium_rate * 150.0f : 0.0f) + (float)width(), 0.0f)};
-		cv::Mat_<double> perspectiveTransform = cv::getPerspectiveTransform(src, dst);
-		auto iter = perspectiveTransform.begin();
-		LOGV("%f,%f,%f,%f,%f,%f,%f,%f", *(iter++), *(iter++), *(iter++), *(iter++), *(iter++), *(iter++), *(iter++), *(iter++));
-		mMutex.lock();
-		{
-			mParam.mTrapeziumRate = trapezium_rate;
-			mParam.perspectiveTransform = perspectiveTransform;
-			mParam.changed = true;
-		}
-		mMutex.unlock();
-	}
-
-	RETURN(0, int);
-}
+///** 台形歪補正係数を設定 */
+//int ImageProcessor::setTrapeziumRate(const double &trapezium_rate) {
+//	ENTER();
+//
+//	if (mParam.mTrapeziumRate != trapezium_rate) {
+//
+//		cv::Point2f src[4] = { cv::Point2f(0.0f, 0.0f), cv::Point2f(0.0f, (float)height()), cv::Point2f((float)width(), (float)height()), cv::Point2f((float)width(), 0.0f)};
+//		cv::Point2f dst[4] = {
+//			cv::Point2f((trapezium_rate < 0 ? -trapezium_rate * 150.0f : 0.0f) + 0.0f, 0.0f),
+//			cv::Point2f((trapezium_rate >= 0 ?  trapezium_rate * 150.0f : 0.0f) + 0.0f, (float)height()),
+//			cv::Point2f((trapezium_rate >= 0 ?  -trapezium_rate * 150.0f : 0.0f) + (float)width(), (float)height()),
+//			cv::Point2f((trapezium_rate < 0 ?  trapezium_rate * 150.0f : 0.0f) + (float)width(), 0.0f)};
+//		cv::Mat_<double> perspectiveTransform = cv::getPerspectiveTransform(src, dst);
+//		auto iter = perspectiveTransform.begin();
+//		LOGV("%f,%f,%f,%f,%f,%f,%f,%f", *(iter++), *(iter++), *(iter++), *(iter++), *(iter++), *(iter++), *(iter++), *(iter++));
+//		mMutex.lock();
+//		{
+//			mParam.mTrapeziumRate = trapezium_rate;
+//			mParam.perspectiveTransform = perspectiveTransform;
+//			mParam.changed = true;
+//		}
+//		mMutex.unlock();
+//	}
+//
+//	RETURN(0, int);
+//}
 
 /** ライン検出時の面積の上下限をセット */
 int ImageProcessor::setAreaLimit(const float &min, const float &max) {
@@ -289,20 +289,20 @@ int ImageProcessor::setAreaErrLimit(const float &limit1, const float &limit2) {
 	RETURN(0, int);
 }
 
-int ImageProcessor::setMaxThinningLoop(const int &max_loop) {
-	ENTER();
-
-	if (mParam.mMaxThinningLoop != max_loop) {
-		mMutex.lock();
-		{
-			mParam.mMaxThinningLoop = max_loop;
-			mParam.changed = true;
-		}
-		mMutex.unlock();
-	}
-
-	RETURN(0, int);
-}
+//int ImageProcessor::setMaxThinningLoop(const int &max_loop) {
+//	ENTER();
+//
+//	if (mParam.mMaxThinningLoop != max_loop) {
+//		mMutex.lock();
+//		{
+//			mParam.mMaxThinningLoop = max_loop;
+//			mParam.changed = true;
+//		}
+//		mMutex.unlock();
+//	}
+//
+//	RETURN(0, int);
+//}
 
 int ImageProcessor::setFillInnerContour(const bool &fill) {
 	ENTER();
@@ -393,8 +393,8 @@ void ImageProcessor::do_process(JNIEnv *env) {
 				mCurveDetector.detect(src, approxes, work, result, curve, param);
 				if (UNLIKELY(!mIsRunning)) break;
 // コーナーの検出処理
-				mCornerDetector.detect(src, approxes, work,result, corner, param);
-				if (UNLIKELY(!mIsRunning)) break;
+//				mCornerDetector.detect(src, approxes, work,result, corner, param);
+//				if (UNLIKELY(!mIsRunning)) break;
 //================================================================================
 				{	// vectorの余分なメモリーを開放する
 					std::vector<const DetectRec_t *> temp2;
@@ -637,136 +637,136 @@ static jint nativeGetResultFrameType(JNIEnv *env, jobject thiz,
 	RETURN(result, jint);
 }
 
-static jint nativeSetExtractionColor(JNIEnv *env, jobject thiz,
-	ID_TYPE id_native, jint lowerH, jint upperH, jint lowerS, jint upperS, jint lowerV, jint upperV) {
-
-	ENTER();
-
-	jint result = -1;
-	ImageProcessor *processor = reinterpret_cast<ImageProcessor *>(id_native);
-	if (LIKELY(processor)) {
-		const int lower[3] = {lowerH, lowerS, lowerV};
-		const int upper[3] = {upperH, upperS, upperV};
-		result = processor->setExtractionColor(lower, upper);
-	}
-
-	RETURN(result, jint);
-}
-
-static jint nativeSetEnableExtract(JNIEnv *env, jobject thiz,
-	ID_TYPE id_native, jint enable) {
-
-	ENTER();
-
-	jint result = -1;
-	ImageProcessor *processor = reinterpret_cast<ImageProcessor *>(id_native);
-	if (LIKELY(processor)) {
-		processor->setEnableExtract(enable);
-		result = 0;
-	}
-
-	RETURN(result, jint);
-}
-
-static jint nativeGetEnableExtract(JNIEnv *env, jobject thiz,
-	ID_TYPE id_native) {
-
-	ENTER();
-
-	jint result = -1;
-	ImageProcessor *processor = reinterpret_cast<ImageProcessor *>(id_native);
-	if (LIKELY(processor)) {
-		result = processor->getEnableExtract();
-	}
-
-	RETURN(result, jint);
-}
-
-static jint nativeSetSmooth(JNIEnv *env, jobject thiz,
-	ID_TYPE id_native, jint smooth_type) {
-
-	ENTER();
-
-	jint result = -1;
-	ImageProcessor *processor = reinterpret_cast<ImageProcessor *>(id_native);
-	if (LIKELY(processor)) {
-		processor->setEnableSmooth((SmoothType_t)smooth_type);
-		result = 0;
-	}
-
-	RETURN(result, jint);
-}
-
-static jint nativeGetSmooth(JNIEnv *env, jobject thiz,
-	ID_TYPE id_native) {
-
-	ENTER();
-
-	jint result = -1;
-	ImageProcessor *processor = reinterpret_cast<ImageProcessor *>(id_native);
-	if (LIKELY(processor)) {
-		result = processor->getEnableSmooth();
-	}
-
-	RETURN(result, jint);
-}
-
-static jint nativeSetEnableCanny(JNIEnv *env, jobject thiz,
-	ID_TYPE id_native, jint enable) {
-
-	ENTER();
-
-	jint result = -1;
-	ImageProcessor *processor = reinterpret_cast<ImageProcessor *>(id_native);
-	if (LIKELY(processor)) {
-		processor->setEnableCanny(enable);
-		result = 0;
-	}
-
-	RETURN(result, jint);
-}
-
-static jint nativeGetEnableCanny(JNIEnv *env, jobject thiz,
-	ID_TYPE id_native) {
-
-	ENTER();
-
-	jint result = -1;
-	ImageProcessor *processor = reinterpret_cast<ImageProcessor *>(id_native);
-	if (LIKELY(processor)) {
-		result = processor->getEnableCanny();
-	}
-
-	RETURN(result, jint);
-}
-
-static jint nativeSetTrapeziumRate(JNIEnv *env, jobject thiz,
-	ID_TYPE id_native, jdouble trapezium_rate) {
-
-	ENTER();
-
-	jint result = -1;
-	ImageProcessor *processor = reinterpret_cast<ImageProcessor *>(id_native);
-	if (LIKELY(processor)) {
-		result = processor->setTrapeziumRate(trapezium_rate);
-	}
-
-	RETURN(result, jint);
-}
-
-static jdouble nativeGetTrapeziumRate(JNIEnv *env, jobject thiz,
-	ID_TYPE id_native) {
-
-	ENTER();
-
-	jdouble result = 0.0;
-	ImageProcessor *processor = reinterpret_cast<ImageProcessor *>(id_native);
-	if (LIKELY(processor)) {
-		result = processor->getTrapeziumRate();
-	}
-
-	RETURN(result, jdouble);
-}
+//static jint nativeSetExtractionColor(JNIEnv *env, jobject thiz,
+//	ID_TYPE id_native, jint lowerH, jint upperH, jint lowerS, jint upperS, jint lowerV, jint upperV) {
+//
+//	ENTER();
+//
+//	jint result = -1;
+//	ImageProcessor *processor = reinterpret_cast<ImageProcessor *>(id_native);
+//	if (LIKELY(processor)) {
+//		const int lower[3] = {lowerH, lowerS, lowerV};
+//		const int upper[3] = {upperH, upperS, upperV};
+//		result = processor->setExtractionColor(lower, upper);
+//	}
+//
+//	RETURN(result, jint);
+//}
+//
+//static jint nativeSetEnableExtract(JNIEnv *env, jobject thiz,
+//	ID_TYPE id_native, jint enable) {
+//
+//	ENTER();
+//
+//	jint result = -1;
+//	ImageProcessor *processor = reinterpret_cast<ImageProcessor *>(id_native);
+//	if (LIKELY(processor)) {
+//		processor->setEnableExtract(enable);
+//		result = 0;
+//	}
+//
+//	RETURN(result, jint);
+//}
+//
+//static jint nativeGetEnableExtract(JNIEnv *env, jobject thiz,
+//	ID_TYPE id_native) {
+//
+//	ENTER();
+//
+//	jint result = -1;
+//	ImageProcessor *processor = reinterpret_cast<ImageProcessor *>(id_native);
+//	if (LIKELY(processor)) {
+//		result = processor->getEnableExtract();
+//	}
+//
+//	RETURN(result, jint);
+//}
+//
+//static jint nativeSetSmooth(JNIEnv *env, jobject thiz,
+//	ID_TYPE id_native, jint smooth_type) {
+//
+//	ENTER();
+//
+//	jint result = -1;
+//	ImageProcessor *processor = reinterpret_cast<ImageProcessor *>(id_native);
+//	if (LIKELY(processor)) {
+//		processor->setEnableSmooth((SmoothType_t)smooth_type);
+//		result = 0;
+//	}
+//
+//	RETURN(result, jint);
+//}
+//
+//static jint nativeGetSmooth(JNIEnv *env, jobject thiz,
+//	ID_TYPE id_native) {
+//
+//	ENTER();
+//
+//	jint result = -1;
+//	ImageProcessor *processor = reinterpret_cast<ImageProcessor *>(id_native);
+//	if (LIKELY(processor)) {
+//		result = processor->getEnableSmooth();
+//	}
+//
+//	RETURN(result, jint);
+//}
+//
+//static jint nativeSetEnableCanny(JNIEnv *env, jobject thiz,
+//	ID_TYPE id_native, jint enable) {
+//
+//	ENTER();
+//
+//	jint result = -1;
+//	ImageProcessor *processor = reinterpret_cast<ImageProcessor *>(id_native);
+//	if (LIKELY(processor)) {
+//		processor->setEnableCanny(enable);
+//		result = 0;
+//	}
+//
+//	RETURN(result, jint);
+//}
+//
+//static jint nativeGetEnableCanny(JNIEnv *env, jobject thiz,
+//	ID_TYPE id_native) {
+//
+//	ENTER();
+//
+//	jint result = -1;
+//	ImageProcessor *processor = reinterpret_cast<ImageProcessor *>(id_native);
+//	if (LIKELY(processor)) {
+//		result = processor->getEnableCanny();
+//	}
+//
+//	RETURN(result, jint);
+//}
+//
+//static jint nativeSetTrapeziumRate(JNIEnv *env, jobject thiz,
+//	ID_TYPE id_native, jdouble trapezium_rate) {
+//
+//	ENTER();
+//
+//	jint result = -1;
+//	ImageProcessor *processor = reinterpret_cast<ImageProcessor *>(id_native);
+//	if (LIKELY(processor)) {
+//		result = processor->setTrapeziumRate(trapezium_rate);
+//	}
+//
+//	RETURN(result, jint);
+//}
+//
+//static jdouble nativeGetTrapeziumRate(JNIEnv *env, jobject thiz,
+//	ID_TYPE id_native) {
+//
+//	ENTER();
+//
+//	jdouble result = 0.0;
+//	ImageProcessor *processor = reinterpret_cast<ImageProcessor *>(id_native);
+//	if (LIKELY(processor)) {
+//		result = processor->getTrapeziumRate();
+//	}
+//
+//	RETURN(result, jdouble);
+//}
 
 static jint nativeSetAreaLimit(JNIEnv *env, jobject thiz,
 	ID_TYPE id_native, jfloat min, jfloat max) {
@@ -810,57 +810,57 @@ static jint nativeSetAreaErrLimit(JNIEnv *env, jobject thiz,
 	RETURN(result, jint);
 }
 
-static jint nativeGetMaxThinningLoop(JNIEnv *env, jobject thiz,
-	ID_TYPE id_native) {
-	ENTER();
-
-	jint result = -1;
-	ImageProcessor *processor = reinterpret_cast<ImageProcessor *>(id_native);
-	if (LIKELY(processor)) {
-		result = processor->getMaxThinningLoop();
-	}
-
-	RETURN(result, jint);
-}
-
-static jint nativeSetMaxThinningLoop(JNIEnv *env, jobject thiz,
-	ID_TYPE id_native, jint max_loop) {
-	ENTER();
-
-	jint result = -1;
-	ImageProcessor *processor = reinterpret_cast<ImageProcessor *>(id_native);
-	if (LIKELY(processor)) {
-		result = processor->setMaxThinningLoop(max_loop);
-	}
-
-	RETURN(result, jint);
-}
-
-static jint nativeGetFillInnerContour(JNIEnv *env, jobject thiz,
-	ID_TYPE id_native) {
-	ENTER();
-
-	jint result = -1;
-	ImageProcessor *processor = reinterpret_cast<ImageProcessor *>(id_native);
-	if (LIKELY(processor)) {
-		result = processor->getFillInnerContour() ? 1 : 0;
-	}
-
-	RETURN(result, jint);
-}
-
-static jint nativeSetFillInnerContour(JNIEnv *env, jobject thiz,
-	ID_TYPE id_native, jboolean fill) {
-	ENTER();
-
-	jint result = -1;
-	ImageProcessor *processor = reinterpret_cast<ImageProcessor *>(id_native);
-	if (LIKELY(processor)) {
-		result = processor->setFillInnerContour(fill);
-	}
-
-	RETURN(result, jint);
-}
+//static jint nativeGetMaxThinningLoop(JNIEnv *env, jobject thiz,
+//	ID_TYPE id_native) {
+//	ENTER();
+//
+//	jint result = -1;
+//	ImageProcessor *processor = reinterpret_cast<ImageProcessor *>(id_native);
+//	if (LIKELY(processor)) {
+//		result = processor->getMaxThinningLoop();
+//	}
+//
+//	RETURN(result, jint);
+//}
+//
+//static jint nativeSetMaxThinningLoop(JNIEnv *env, jobject thiz,
+//	ID_TYPE id_native, jint max_loop) {
+//	ENTER();
+//
+//	jint result = -1;
+//	ImageProcessor *processor = reinterpret_cast<ImageProcessor *>(id_native);
+//	if (LIKELY(processor)) {
+//		result = processor->setMaxThinningLoop(max_loop);
+//	}
+//
+//	RETURN(result, jint);
+//}
+//
+//static jint nativeGetFillInnerContour(JNIEnv *env, jobject thiz,
+//	ID_TYPE id_native) {
+//	ENTER();
+//
+//	jint result = -1;
+//	ImageProcessor *processor = reinterpret_cast<ImageProcessor *>(id_native);
+//	if (LIKELY(processor)) {
+//		result = processor->getFillInnerContour() ? 1 : 0;
+//	}
+//
+//	RETURN(result, jint);
+//}
+//
+//static jint nativeSetFillInnerContour(JNIEnv *env, jobject thiz,
+//	ID_TYPE id_native, jboolean fill) {
+//	ENTER();
+//
+//	jint result = -1;
+//	ImageProcessor *processor = reinterpret_cast<ImageProcessor *>(id_native);
+//	if (LIKELY(processor)) {
+//		result = processor->setFillInnerContour(fill);
+//	}
+//
+//	RETURN(result, jint);
+//}
 
 //================================================================================
 //================================================================================
@@ -873,22 +873,22 @@ static JNINativeMethod methods[] = {
 	{ "nativeHandleFrame",			"(JIII)I", (void *) nativeHandleFrame },
 	{ "nativeSetResultFrameType",	"(JI)I", (void *) nativeSetResultFrameType },
 	{ "nativeGetResultFrameType",	"(J)I", (void *) nativeGetResultFrameType },
-	{ "nativeSetExtractionColor",	"(JIIIIII)I", (void *) nativeSetExtractionColor },
-	{ "nativeSetEnableExtract",		"(JI)I", (void *) nativeSetEnableExtract },
-	{ "nativeGetEnableExtract",		"(J)I", (void *) nativeGetEnableExtract },
-	{ "nativeSetSmooth",			"(JI)I", (void *) nativeSetSmooth },
-	{ "nativeGetSmooth",			"(J)I", (void *) nativeGetSmooth },
-	{ "nativeSetEnableCanny",		"(JI)I", (void *) nativeSetEnableCanny },
-	{ "nativeGetEnableCanny",		"(J)I", (void *) nativeGetEnableCanny },
-	{ "nativeSetTrapeziumRate",		"(JD)I", (void *) nativeSetTrapeziumRate },
-	{ "nativeGetTrapeziumRate",		"(J)D", (void *) nativeGetTrapeziumRate },
+//	{ "nativeSetExtractionColor",	"(JIIIIII)I", (void *) nativeSetExtractionColor },
+//	{ "nativeSetEnableExtract",		"(JI)I", (void *) nativeSetEnableExtract },
+//	{ "nativeGetEnableExtract",		"(J)I", (void *) nativeGetEnableExtract },
+//	{ "nativeSetSmooth",			"(JI)I", (void *) nativeSetSmooth },
+//	{ "nativeGetSmooth",			"(J)I", (void *) nativeGetSmooth },
+//	{ "nativeSetEnableCanny",		"(JI)I", (void *) nativeSetEnableCanny },
+//	{ "nativeGetEnableCanny",		"(J)I", (void *) nativeGetEnableCanny },
+//	{ "nativeSetTrapeziumRate",		"(JD)I", (void *) nativeSetTrapeziumRate },
+//	{ "nativeGetTrapeziumRate",		"(J)D", (void *) nativeGetTrapeziumRate },
 	{ "nativeSetAreaLimit",			"(JFF)I", (void *) nativeSetAreaLimit },
 	{ "nativeSetAspectLimit",		"(JF)I", (void *) nativeSetAspectLimit },
 	{ "nativeSetAreaErrLimit",		"(JFF)I", (void *) nativeSetAreaErrLimit },
-	{ "nativeGetMaxThinningLoop",	"(J)I", (void *) nativeGetMaxThinningLoop },
-	{ "nativeSetMaxThinningLoop",	"(JI)I", (void *) nativeSetMaxThinningLoop },
-	{ "nativeGetFillInnerContour",	"(J)I", (void *) nativeGetFillInnerContour },
-	{ "nativeSetFillInnerContour",	"(JZ)I", (void *) nativeSetFillInnerContour },
+//	{ "nativeGetMaxThinningLoop",	"(J)I", (void *) nativeGetMaxThinningLoop },
+//	{ "nativeSetMaxThinningLoop",	"(JI)I", (void *) nativeSetMaxThinningLoop },
+//	{ "nativeGetFillInnerContour",	"(J)I", (void *) nativeGetFillInnerContour },
+//	{ "nativeSetFillInnerContour",	"(JZ)I", (void *) nativeSetFillInnerContour },
 };
 
 

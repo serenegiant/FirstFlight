@@ -8,7 +8,7 @@ package com.serenegiant.glutils;
 */
 
 /**
- * プライベートスレッド上でOpenGL|ESを使って描画するための
+ * ワーカースレッド上でOpenGL|ESを使って描画するための
  * EGLレンダリングコンテキストを生成＆使用するためのヘルパークラス
  */
 

@@ -10,6 +10,7 @@ public interface IDeviceController {
 	public static final int STATE_STARTED = 0x0002;
 	public static final int STATE_STOPPING = 0x0003;
 
+// 参考
 //	ARCONTROLLER_DEVICE_STATE_ENUM.
 //		ARCONTROLLER_DEVICE_STATE_STOPPED (0, "device controller is stopped"),
 //		ARCONTROLLER_DEVICE_STATE_STARTING (1, "device controller is starting"),
@@ -139,8 +140,6 @@ public interface IDeviceController {
 
 	/**
 	 * 日付を送信
-	 * 従来のAPIやと接続開始時に必ず送らなあかんかったけど、新しいAPIはどうなんやろ？
-	 * 今のところは送らんでも問題なさそうやねんけど。中で勝手に送っとるのかもしれん
 	 * @param currentDate
 	 * @return
 	 */
@@ -148,8 +147,6 @@ public interface IDeviceController {
 
 	/**
 	 * 時刻を送信
-	 * 従来のAPIやと接続開始時に必ず送らなあかんかったけど、新しいAPIはどうなんやろ？
-	 * 今のところは送らんでも問題なさそうやねんけど。中で勝手に送っとるのかもしれん
 	 * @param currentTime
 	 * @return
 	 */

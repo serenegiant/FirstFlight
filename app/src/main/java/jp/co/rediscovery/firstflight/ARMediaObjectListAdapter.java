@@ -52,7 +52,7 @@ public class ARMediaObjectListAdapter extends ArrayAdapter<ARMediaObject> {
 		}
 		final ARMediaObject mediaObject = getItem(position);
 		if (mediaObject != null) {
-			// FIXME 非同期でセットするようにした方がいいかも
+			// FIXME 非同期でセットするようにした方がいい
 			holder.mediaObject = mediaObject;
 			if (holder.title != null) {
 				holder.title.setText(mediaObject.getName());

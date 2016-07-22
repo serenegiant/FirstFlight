@@ -31,12 +31,12 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import com.serenegiant.utils.ThreadPool;
 
 /** デバイスへFTPで接続してデバイス内の静止画・動画の操作をするためのクラス */
 public abstract class FTPController {
-	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること
 	private static final String TAG = "FTPController:";
 
 	public interface FTPControllerCallback {
@@ -118,9 +118,7 @@ public abstract class FTPController {
 		mFTPHandler = new FTPHandler(thread.getLooper());
 
 		mOrgLevel = ARSALPrint.getMinimumLogLevel();
-		if (DEBUG) {
-//			ARSALPrint.setMinimumLogLevel(ARSAL_PRINT_LEVEL_ENUM.ARSAL_PRINT_VERBOSE);
-		}
+//		ARSALPrint.setMinimumLogLevel(ARSAL_PRINT_LEVEL_ENUM.ARSAL_PRINT_VERBOSE);
 
 		mFTPListManager = createARUtilsManager();
 		mFTPQueueManager = createARUtilsManager();
@@ -133,7 +131,6 @@ public abstract class FTPController {
 	}
 
 	public void connect() {
-		if (DEBUG) Log.v(TAG, "connect:");
 		try {
 			mConnected = true;
 			mFTPHandler.sendEmptyMessage(REQ_CONNECT);
@@ -146,7 +143,6 @@ public abstract class FTPController {
 	 * 関連するリソースを破棄する。必ず呼び出すこと。再利用は出来ない。
 	 */
 	public void release() {
-		if (DEBUG) Log.v(TAG, "release:");
 		cancel();
 		try {
 			mConnected = false;
@@ -161,9 +157,8 @@ public abstract class FTPController {
 	 * 実行中・実行待ちの処理を中断要求する
 	 */
 	public void cancel() {
-		if (DEBUG) Log.v(TAG, "cancel:");
 		try {
-			// FIXME ここで未実行のCMD_RELEASE以外のコマンドを取り除く
+			// 未実行のCMD_RELEASE以外のコマンドを取り除く
 			mFTPHandler.removeMessages(REQ_CANCEL);
 			mFTPHandler.removeMessages(REQ_DELETE);
 			mFTPHandler.removeMessages(REQ_DELETE_ONE);
@@ -200,7 +195,6 @@ public abstract class FTPController {
 	 * メディアファイル一覧更新要求
 	 */
 	public void updateMedia(final int requestCode) {
-		if (DEBUG) Log.v(TAG, "updateMedia:" + mConnected);
 		if (mConnected) {
 			mRequestCancel = false;
 			mFTPHandler.removeMessages(REQ_LIST_MEDIAS);	// 未処理は無かったことにする
@@ -217,7 +211,6 @@ public abstract class FTPController {
 	 * @param deleteAfterFetch true:取得後に削除する
 	 */
 	public void transfer(final int requestCode, final ARMediaObject[] medias, final boolean deleteAfterFetch) {
-		if (DEBUG) Log.v(TAG, "transfer:" + mConnected);
 		if (mConnected) {
 			mRequestCancel = false;
 			mFTPHandler.sendMessage(mFTPHandler.obtainMessage(REQ_TRANSFER, requestCode, deleteAfterFetch ? 1 : 0, medias));
@@ -232,7 +225,6 @@ public abstract class FTPController {
 	 * @param medias
 	 */
 	public void delete(final int requestCode, final ARMediaObject[] medias) {
-		if (DEBUG) Log.v(TAG, "delete:" + mConnected);
 		if (mConnected) {
 			mRequestCancel = false;
 			mFTPHandler.sendMessage(mFTPHandler.obtainMessage(REQ_DELETE, requestCode, 0, medias));
@@ -268,7 +260,6 @@ public abstract class FTPController {
 	protected abstract void handleInit(final IFlightController controller);
 
 	protected void handleConnect() {
-		if (DEBUG) Log.v(TAG, String.format("handleConnect:mExternalDirectory=%s,mRemotePath=%s", mExternalDirectory, mRemotePath));
 		try {
 			mDownLoader = mDataTransferManager.getARDataTransferMediasDownloader();
 			mDownLoader.createMediasDownloader(mFTPListManager, mFTPQueueManager, mRemotePath, mExternalDirectory);
@@ -320,18 +311,16 @@ public abstract class FTPController {
 	 * @param medias
 	 */
 	protected void handleDelete(final int requestCode, final ARMediaObject[] medias) {
-		if (DEBUG) Log.v(TAG, "handleDelete:" + medias);
 		final int n = medias != null ? medias.length : 0;
 		boolean result = false;
 		if (n > 0) {
 			int i = 0;
 			for (final ARMediaObject mediaObject: medias) {
 				if (result || mRequestCancel) break;
-				result |= handleDeleteOne(requestCode, mediaObject);
+				result = handleDeleteOne(requestCode, mediaObject);
 			}
 		}
 		callOnFinished(requestCode, result ? 1 : 0, medias);
-		if (DEBUG) Log.v(TAG, "handleDelete:finished");
 	}
 
 	/**
@@ -376,14 +365,12 @@ public abstract class FTPController {
 	 * @param needDelete
 	 */
 	protected void handleTransfer(final int requestCode, final ARMediaObject[] medias, final boolean needDelete) {
-		if (DEBUG) Log.v(TAG, "handleTransfer:" + medias);
 		final int n = medias != null ? medias.length : 0;
 		if (n > 0) {
 			synchronized (mTransferSync) {
 				mTotalTransferNum = n;
 				mFinishedTransferNum = 0;
 			}
-			if (DEBUG) Log.v(TAG, "request transfer");
 			if (mConnected && !mRequestCancel) {
 				// 転送要求キューに追加
 				for (final ARMediaObject mediaObject : medias) {
@@ -391,7 +378,6 @@ public abstract class FTPController {
 				}
 				synchronized (mTransferSync) {
 					if (mFinishedTransferNum < mTotalTransferNum) {
-						if (DEBUG) Log.v(TAG, "run downloaderQueueRunnable");
 						// これをEXECUTORを使わずに直接Runするとこの後での待機がいらない?
 						// ここは別スレッドでDownloaderQueueRunnableを実行&終了待ちする方がいいかも
 						ThreadPool.queueEvent(mDownLoader.getDownloaderQueueRunnable());
@@ -410,7 +396,6 @@ public abstract class FTPController {
 			}
 		}
 		callOnFinished(requestCode, 0, medias);
-		if (DEBUG) Log.v(TAG, "handleTransfer:finished");
 	}
 
 	/**
@@ -427,13 +412,11 @@ public abstract class FTPController {
 			final TransferRec rec = new TransferRec(requestCode, mediaObject, needDelete);
 			if (!file.exists() || (file.length() != mediaObject.getSize())) {
 				// 端末内にファイルが存在しないかサイズが異なる時
-				if (DEBUG) Log.v(TAG, "addMediaToQueue:");
 				mDownLoader.addMediaToQueue(mediaObject.media,
 					mTransferProcessListener, rec,		// progressArg
 					mTransferCompletionListener, rec);	// completionArg
 			} else {
-				if (DEBUG) Log.w(TAG, "既に読み込み済");
-				// 転送完了したことにする
+				// 既に読み込み済なら転送完了したことにする
 				finishTransferOne(requestCode, 0, rec);
 			}
 		} catch (final Exception e) {
@@ -598,8 +581,7 @@ public abstract class FTPController {
 	 * @return
 	 */
 	private List<ARMediaObject> getAvailableMedias(final int requestCode) {
-		if (DEBUG) Log.v(TAG, "getAvailableMedias:");
-		int num = -1;
+		int num;
 		final List<ARMediaObject> medias = new ArrayList<ARMediaObject>();
 		try {
 			// メディアの数を取得
@@ -628,7 +610,6 @@ public abstract class FTPController {
 	 * @return
 	 */
 	private List<ARMediaObject> getMediaThumbnails(final int requestCode, final List<ARMediaObject> medias) {
-		if (DEBUG) Log.v(TAG, "getMediaThumbnails:");
 		final int num = medias != null ? medias.size() : 0;
 		if (num > 0) {
 			final Resources res = mWeakContext.get().getResources();
@@ -678,7 +659,7 @@ public abstract class FTPController {
 				break;
 			case REQ_CONNECT:
 				final IFlightController controller = mWeakController.get();
-				mRemotePath = String.format("%s_%03d", controller.getMassStorageName(), controller.getMassStorageId());
+				mRemotePath = String.format(Locale.US, "%s_%03d", controller.getMassStorageName(), controller.getMassStorageId());
 				handleConnect();
 				updateMedia(-1);
 				break;
@@ -721,13 +702,11 @@ public abstract class FTPController {
 	public static class FTPControllerWiFi extends FTPController {
 		public FTPControllerWiFi(final Context context, final IFlightController controller) {
 			super(context, controller);
-			if (DEBUG) Log.v(TAG, "FTPControllerWiFi:コンストラクタ");
 			mFTPHandler.sendMessage(mFTPHandler.obtainMessage(REQ_INIT, controller));
 		}
 
 		@Override
 		protected void handleInit(final IFlightController controller) {
-			if (DEBUG) Log.v(TAG, "FTPControllerWiFi:handleInit:controller=" + controller);
 			final Object device = controller.getDeviceService().getDevice();
 			final String hostAddr;
 			if (device instanceof ARDiscoveryDeviceNetService) {
@@ -750,7 +729,6 @@ public abstract class FTPController {
 
 		@Override
 		protected void handleRelease() {
-			if (DEBUG) Log.v(TAG, "FTPControllerWiFi:handleRelease");
 			if ((mFTPListManager != null) && mFTPListManager.isCorrectlyInitialized()) {
 				mFTPListManager.closeWifiFtp();
 			}
@@ -767,12 +745,10 @@ public abstract class FTPController {
 		public FTPControllerBLE(final Context context, final IFlightController controller) {
 			super(context, controller);
 			mFTPHandler.sendMessage(mFTPHandler.obtainMessage(REQ_INIT, controller));
-			if (DEBUG) Log.v(TAG, "FTPControllerBLE:コンストラクタ");
 		}
 
 		@Override
 		protected void handleInit(final IFlightController controller) {
-			if (DEBUG) Log.v(TAG, "FTPControllerBLE:handleInit:controller=" + controller);
 			final Context context = mWeakContext.get();
 			final Object device = controller.getDeviceService().getDevice();
 			if (!(device instanceof ARDiscoveryDeviceBLEService)) {
@@ -794,7 +770,6 @@ public abstract class FTPController {
 
 		@Override
 		protected void handleRelease() {
-			if (DEBUG) Log.v(TAG, "FTPControllerBLE:handleRelease");
 			final Context context = mWeakContext.get();
 			if ((mFTPListManager != null) && mFTPListManager.isCorrectlyInitialized()) {
 				mFTPListManager.closeBLEFtp(context);

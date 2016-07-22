@@ -10,8 +10,8 @@ public class WiFiStatus {
 
 	public double factor = 2.0;
 
-	public WiFiStatus(final int txPower) {
-		this.txPower = txPower;
+	public WiFiStatus(final int _txPower) {
+		txPower = _txPower;
 	}
 
 // RSSI(受信信号強度[dbm])とTxPower(送信強度[dbm])とd(距離[m])の関係

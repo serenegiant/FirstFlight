@@ -38,8 +38,7 @@ import com.serenegiant.utils.HandlerThreadHandler;
 
 /*** 検出・接続したデバイスを管理するための非UI Fragment */
 public class ManagerFragment extends Fragment {
-	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること
-	private static final String TAG = "ManagerFragment";
+	private static final String TAG = ManagerFragment.class.getSimpleName();
 
 	public interface ManagerCallback {
 		public void onServicesDevicesListUpdated(final List<ARDiscoveryDeviceService> devices);
@@ -160,14 +159,12 @@ public class ManagerFragment extends Fragment {
 		if (fragment != null) {
 			fragment.releaseController(controller);
 		} else {
-			if (DEBUG) Log.w(TAG, "no activity, try to release on private thread.");
+			Log.d(TAG, "no activity, try to release on private thread.");
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
 					try {
-						if (controller != null) {
-							controller.release();
-						}
+						controller.release();
 					} catch (final Exception e) {
 						Log.w(TAG, e);
 					}
@@ -203,35 +200,30 @@ public class ManagerFragment extends Fragment {
 	public ManagerFragment() {
 		super();
 		// デフォルトコンストラクタが必要
-//		setRetainInstance(true);	// Activityから切り離されても破棄されないようにする時
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onAttach(final Activity activity) {
 		super.onAttach(activity);
-		if (DEBUG) Log.i(TAG, "onAttach:");
 		synchronized (mSync) {
 			mAsyncHandler = HandlerThreadHandler.createHandler(TAG);
 		}
 	}
 
-	@Override
-	public void onResume() {
-		super.onResume();
-		if (DEBUG) Log.i(TAG, "onResume:");
-//		startDiscovery();	// これは明示的に接続画面から呼び出すべき
-	}
+//	@Override
+//	public void onResume() {
+//		super.onResume();
+//	}
 
 	@Override
 	public void onPause() {
-		if (DEBUG) Log.i(TAG, "onPause:");
 		stopDiscovery();
 		super.onPause();
 	}
 
 	@Override
 	public void onDetach() {
-		if (DEBUG) Log.i(TAG, "onDetach:");
 		releaseAll();
 		synchronized (mSync) {
 			if (mAsyncHandler != null) {
@@ -248,7 +240,6 @@ public class ManagerFragment extends Fragment {
 
 	/** デバイス探索開始 */
 	public void startDiscovery() {
-		if (DEBUG) Log.v(TAG, "startDiscovery:");
 		mDeviceListUpdatedReceiverDelegate.onServicesDevicesListUpdated();
 		bindServices();
 		registerReceivers();
@@ -256,7 +247,6 @@ public class ManagerFragment extends Fragment {
 
 	/** デバイス探索終了 */
 	public void stopDiscovery() {
-		if (DEBUG) Log.v(TAG, "stopDiscovery:");
 		unregisterReceivers();
 		unbindServices();
 	}
@@ -405,7 +395,6 @@ public class ManagerFragment extends Fragment {
 	 * @return
 	 */
 	public IDeviceController createController(final ARDiscoveryDeviceService device) {
-		if (DEBUG) Log.i(TAG, "createController:" + device + ",ardiscoveryServiceBound=" + ardiscoveryServiceBound);
 		IDeviceController result = null;
 		if (device != null) {
 			switch (ARDiscoveryService.getProductFromProductID(device.getProductID())) {
@@ -438,7 +427,6 @@ public class ManagerFragment extends Fragment {
 		} else {
 			Log.w(TAG, "deviceがnullやんか");
 		}
-		if (DEBUG) Log.i(TAG, "createController:終了,result=" + result);
 		return result;
 	}
 
@@ -448,30 +436,25 @@ public class ManagerFragment extends Fragment {
 	 * @param listener
 	 */
 	public void startController(final IDeviceController controller, final StartControllerListener listener) {
-		if (DEBUG) Log.i(TAG, "startController:" + controller);
-
 		if (controller != null) {
 			final Activity activity = getActivity();
 			if (activity != null) {
 				showProgress(R.string.connecting, true, new DialogInterface.OnCancelListener() {
 					@Override
 					public void onCancel(final DialogInterface dialog) {
-						if (DEBUG) Log.w(TAG, "startController:ユーザーキャンセル");
-							controller.cancelStart();
-						}
+						Log.w(TAG, "startController:ユーザーキャンセル");
+						controller.cancelStart();
 					}
-				);
+				});
 			}
 
 			queueEvent(new Runnable() {
 				@Override
 				public void run() {
-					if (DEBUG) Log.v(TAG, "startController:接続開始");
 					boolean failed = true;
 					synchronized (mControllers) {
 						if (mControllers.containsKey(controller.getName())) {
 							try {
-								if (DEBUG) Log.v(TAG, "startController:IDeviceController#start");
 								failed = controller.start();
 							} catch (final Exception e) {
 								Log.w(TAG, e);
@@ -489,7 +472,6 @@ public class ManagerFragment extends Fragment {
 							Log.w(TAG, e);
 						}
 					}
-					if (DEBUG) Log.v(TAG, "startController:接続完了");
 				}
 			});
 		}
@@ -500,7 +482,6 @@ public class ManagerFragment extends Fragment {
 	 * @param controller
 	 */
 	public void releaseController(final IDeviceController controller) {
-		if (DEBUG) Log.i(TAG, "releaseController:" + controller);
 		if (controller != null) {
 			synchronized (mControllers) {
 				mControllers.remove(controller.getName());
@@ -520,7 +501,6 @@ public class ManagerFragment extends Fragment {
 			queueEvent(new Runnable() {
 				@Override
 				public void run() {
-					if (DEBUG) Log.v(TAG, "releaseController:終了中");
 					try {
 						controller.stop();
 						controller.release();
@@ -528,7 +508,6 @@ public class ManagerFragment extends Fragment {
 						Log.w(TAG, e);
 					}
 					hideProgress();
-					if (DEBUG) Log.v(TAG, "releaseController:終了");
 				}
 			});
 		}
@@ -539,7 +518,6 @@ public class ManagerFragment extends Fragment {
 	 * @param device
 	 */
 	public void releaseDevice(final ARDiscoveryDeviceService device) {
-		if (DEBUG) Log.i(TAG, "releaseDevice:" + device);
 		synchronized (mDevices) {
 			mDevices.remove(device);
 		}
@@ -550,7 +528,6 @@ public class ManagerFragment extends Fragment {
 	 * 全てのIDeviceControllerをHashMapから取り除く
 	 */
 	public void releaseAll() {
-		if (DEBUG) Log.i(TAG, "releaseAll:");
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -558,7 +535,6 @@ public class ManagerFragment extends Fragment {
 					for (final WeakReference<IDeviceController> weak_controller: mControllers.values()) {
 						final IDeviceController controller = weak_controller != null ? weak_controller.get() : null;
 						if (controller != null) {
-							if (DEBUG) Log.i(TAG, "releaseAll:" + controller);
 							controller.release();
 						}
 					}
@@ -576,7 +552,6 @@ public class ManagerFragment extends Fragment {
 	 * #startDiscoveryの実際の処理
 	 */
 	private void bindServices() {
-		if (DEBUG) Log.d(TAG, "bindServices ...:binder=" + discoveryServiceBinder);
 		if (discoveryServiceBinder == null) {
 			final Context app = getActivity().getApplicationContext();
 			final Intent intent = new Intent(app, ARDiscoveryService.class);
@@ -594,8 +569,6 @@ public class ManagerFragment extends Fragment {
 	 * #stopDiscoveryの実際の処理
 	 */
 	private void unbindServices() {
-		if (DEBUG) Log.d(TAG, "unbindServices ...");
-
 		if (ardiscoveryServiceBound) {
 			ardiscoveryServiceBound = false;
 			final Activity activity = getActivity();
@@ -638,7 +611,6 @@ public class ManagerFragment extends Fragment {
 	private NetworkChangedReceiver mNetworkChangedReceiver;
 	/** ネットワークへの接続状態監視用BroadcastReceiverを登録する  */
 	private void registerReceivers() {
-		if (DEBUG) Log.v(TAG, "registerReceivers:mRegistered=" + mRegistered);
 		if (!mRegistered) {
 			mRegistered = true;
 			final LocalBroadcastManager localBroadcastMgr
@@ -653,7 +625,6 @@ public class ManagerFragment extends Fragment {
 
 	/** ネットワークへの接続状態監視用BroadcastReceiverを登録解除する */
 	private void unregisterReceivers() {
-		if (DEBUG) Log.v(TAG, "unregisterReceivers:mRegistered=" + mRegistered);
 		mRegistered = false;
 		final LocalBroadcastManager localBroadcastMgr = LocalBroadcastManager.getInstance(
 			getActivity().getApplicationContext());
@@ -671,10 +642,8 @@ public class ManagerFragment extends Fragment {
 		public void onNetworkChanged(final int isConnectedOrConnecting, final int isConnected, final int activeNetworkFlag) {
 			if (mRegistered && (ardiscoveryService != null)) {
 				if (NetworkChangedReceiver.isWifiNetworkReachable()) {
-					if (DEBUG) Log.v(TAG, "startWifiDiscovering");
 					ardiscoveryService.startWifiDiscovering();
 				} else {
-					if (DEBUG) Log.v(TAG, "stopWifiDiscovering");
 					ardiscoveryService.stopWifiDiscovering();
 				}
 			}
@@ -687,8 +656,6 @@ public class ManagerFragment extends Fragment {
 			= new ARDiscoveryServicesDevicesListUpdatedReceiverDelegate() {
 		@Override
 		public void onServicesDevicesListUpdated() {
-			if (DEBUG) Log.d(TAG, "onServicesDevicesListUpdated ...");
-
 			if (ardiscoveryService != null) {
 				final List<ARDiscoveryDeviceService> list = ardiscoveryService.getDeviceServicesArray();
 
@@ -775,7 +742,6 @@ public class ManagerFragment extends Fragment {
 	 * @param controller
 	 */
 	protected void stopController(final IDeviceController controller) {
-		if (DEBUG) Log.v(TAG, "stopController:" + controller);
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
@@ -817,12 +783,10 @@ public class ManagerFragment extends Fragment {
 		= new DeviceConnectionListener() {
 		@Override
 		public void onConnect(final IDeviceController controller) {
-			if (DEBUG) Log.v(TAG, "onConnect:" + controller);
 		}
 
 		@Override
 		public void onDisconnect(final IDeviceController controller) {
-			if (DEBUG) Log.v(TAG, "onDisconnect:" + controller);
 			releaseController(controller);
 		}
 

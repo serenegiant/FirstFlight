@@ -127,7 +127,7 @@ public class SkyController extends FlightControllerBebop implements ISkyControll
 		synchronized (mStateSync) {
 			return super.isConnected()
 				&& (mConnectDevice != null)
-				&& ARCONTROLLER_DEVICE_STATE_ENUM.ARCONTROLLER_DEVICE_STATE_RUNNING.equals(mExtensionState);
+				&& ARCONTROLLER_DEVICE_STATE_ENUM.ARCONTROLLER_DEVICE_STATE_RUNNING.equals(getExtensionDeviceState());
 		}
 	}
 

@@ -17,7 +17,6 @@ import com.serenegiant.mediaeffect.MediaEffectDilation;
 import com.serenegiant.mediaeffect.MediaEffectErosion;
 import com.serenegiant.mediaeffect.MediaEffectExposure;
 import com.serenegiant.mediaeffect.MediaEffectExtraction;
-import com.serenegiant.mediaeffect.MediaEffectPosterize;
 import com.serenegiant.mediaeffect.MediaEffectSaturate;
 import com.serenegiant.mediaeffect.MediaSource;
 
@@ -59,15 +58,15 @@ public class ImageProcessor {
 	private float mBrightness;
 	private boolean mEnableSaturation;
 	private float mSaturation;
-	private boolean mEnablePosterize;
-	private float mPosterize;	// [1,256], デフォルト10
+//	private boolean mEnablePosterize;
+//	private float mPosterize;	// [1,256], デフォルト10
 	private boolean mEnableExtraction;
 //	private int mSmoothType = 0;
 	private float mBinarizeThreshold = 0.5f;
 //	private boolean mEnableCanny;
 	private static final int[][] COLOR_RANGES = {
 		{0, 180, 0, 50, 120, 255},		// 白色
-		{25, 35, 120, 130, 180, 200},	// 黄色...蛍光色はこれだとだめみたい
+		{25, 35, 120, 130, 180, 200},	// 黄色...蛍光色はこれだとだめ
 	};
 	private int COLOR_RANGE_IX = 0;
 	protected final int[] EXTRACT_COLOR_HSV_LIMIT = COLOR_RANGES[COLOR_RANGE_IX];
@@ -94,6 +93,9 @@ public class ImageProcessor {
 		mSrcHeight = src_height;
 		mCallback = callback;
 		mNativePtr = nativeCreate(new WeakReference<ImageProcessor>(this));
+		final HandlerThread thread = new HandlerThread("OnFrameAvailable");
+		thread.start();
+		mAsyncHandler = new Handler(thread.getLooper());
 	}
 
 	/**
@@ -104,9 +106,6 @@ public class ImageProcessor {
 	public void start(final int width, final int height) {
 //		if (DEBUG) Log.v(TAG, "start:");
 		if (mProcessingTask == null) {
-			final HandlerThread thread = new HandlerThread("OnFrameAvailable");
-			thread.start();
-			mAsyncHandler = new Handler(thread.getLooper());
 			mProcessingTask = new ProcessingTask(this, mSrcWidth, mSrcHeight, width, height);
 			new Thread(mProcessingTask, "VideoStream$rendererTask").start();
 			mProcessingTask.waitReady();
@@ -122,6 +121,9 @@ public class ImageProcessor {
 		}
 	}
 
+	/**
+	 * ImageProcessorの処理スレッドを停止
+	 */
 	public void stop() {
 //		if (DEBUG) Log.v(TAG, "stop:");
 		final ProcessingTask task = mProcessingTask;
@@ -133,13 +135,6 @@ public class ImageProcessor {
 			}
 			task.release();
 		}
-		if (mAsyncHandler != null) {
-			try {
-				mAsyncHandler.getLooper().quit();
-			} catch (final Exception e) {
-			}
-			mAsyncHandler = null;
-		}
 	}
 
 	/**
@@ -148,6 +143,13 @@ public class ImageProcessor {
 	public void release() {
 //		if (DEBUG) Log.v(TAG, "release");
 		stop();
+		if (mAsyncHandler != null) {
+			try {
+				mAsyncHandler.getLooper().quit();
+			} catch (final Exception e) {
+			}
+			mAsyncHandler = null;
+		}
 		nativeRelease(mNativePtr);
 //		if (DEBUG) Log.v(TAG, "release:finished");
 	}
@@ -162,14 +164,25 @@ public class ImageProcessor {
 		return mProcessingTask.getSurfaceTexture();
 	}
 
+	/**
+	 * 処理フレームレートを更新
+	 */
 	public void updateFps() {
 		mResultFps.update();
 	}
 
+	/**
+	 * 前回#getFpsを呼び出してから現在までの処理フレームレートを取得
+	 * @return
+	 */
 	public float getFps() {
 		return mResultFps.getFps();
 	}
 
+	/**
+	 * 測定開始からの処理フレームレートを取得
+	 * @return
+	 */
 	public float getTotalFps() {
 		return mResultFps.getTotalFps();
 	}
@@ -336,45 +349,45 @@ public class ImageProcessor {
 		return mSaturation;
 	}
 
-	public void enablePosterize(final boolean enable) {
-		if (mEnablePosterize != enable) {
+//	public void enablePosterize(final boolean enable) {
+//		if (mEnablePosterize != enable) {
 //			if (DEBUG) Log.v(TAG, "enablePosterize:" + enable);
-			mEnablePosterize = enable;
-			synchronized (mSync) {
-				for (final IEffect effect: mEffects) {
-					if (effect instanceof MediaEffectPosterize) {
-						effect.setEnable(enable);
-					}
-				}
-			}
-		}
-	}
-
-	public boolean enablePosterize() {
-		return mEnablePosterize;
-	}
-
-	/**
-	 * ポスタライズ(階調化)
-	 * @param posterize 1〜256, デフォルト10
-	 */
-	public void setPosterize(final float posterize) {
-		final float post = sat((int)posterize, 1, 256);
-		if (mPosterize != post) {
-			mPosterize = post;
-			synchronized (mSync) {
-				for (final IEffect effect: mEffects) {
-					if (effect instanceof MediaEffectPosterize) {
-						((MediaEffectPosterize)effect).setParameter(post);
-					}
-				}
-			}
-		}
-	}
-
-	public float getPosterize() {
-		return mPosterize;
-	}
+//			mEnablePosterize = enable;
+//			synchronized (mSync) {
+//				for (final IEffect effect: mEffects) {
+//					if (effect instanceof MediaEffectPosterize) {
+//						effect.setEnable(enable);
+//					}
+//				}
+//			}
+//		}
+//	}
+//
+//	public boolean enablePosterize() {
+//		return mEnablePosterize;
+//	}
+//
+//	/**
+//	 * ポスタライズ(階調化)
+//	 * @param posterize 1〜256, デフォルト10
+//	 */
+//	public void setPosterize(final float posterize) {
+//		final float post = sat((int)posterize, 1, 256);
+//		if (mPosterize != post) {
+//			mPosterize = post;
+//			synchronized (mSync) {
+//				for (final IEffect effect: mEffects) {
+//					if (effect instanceof MediaEffectPosterize) {
+//						((MediaEffectPosterize)effect).setParameter(post);
+//					}
+//				}
+//			}
+//		}
+//	}
+//
+//	public float getPosterize() {
+//		return mPosterize;
+//	}
 
 	/**
 	 * OpenGL|ESでの色抽出の有効/無効切り替え
@@ -521,74 +534,74 @@ public class ImageProcessor {
 		if ((mProcessingTask != null) && (mProcessingTask.mExtraction != null)) {
 			// 指定色範囲を抽出(OpenGL|ES側)
 			mProcessingTask.mExtraction.setParameter(
-				EXTRACT_COLOR_HSV_LIMIT[0] / 180.0f,    // H(色相) 制限なし(0-180),
+				EXTRACT_COLOR_HSV_LIMIT[0] / 180.0f,    // H(色相)
 				EXTRACT_COLOR_HSV_LIMIT[1] / 180.0f,
-				EXTRACT_COLOR_HSV_LIMIT[2] / 255.0f,    // S(彩度) 0-10,
+				EXTRACT_COLOR_HSV_LIMIT[2] / 255.0f,    // S(彩度)
 				EXTRACT_COLOR_HSV_LIMIT[3] / 255.0f,
-				EXTRACT_COLOR_HSV_LIMIT[4] / 255.0f,    // V(明度) 200-255,
+				EXTRACT_COLOR_HSV_LIMIT[4] / 255.0f,    // V(明度)
 				EXTRACT_COLOR_HSV_LIMIT[5] / 255.0f,
 				0.00f, 0.00f, 0.00f,    // 抽出後加算値(HSV)
 				mBinarizeThreshold);	// 2値化時のしきい値, 0なら2値化なし
 		}
-		// 指定色範囲を抽出(OpenCV)
-		final int result = nativeSetExtractionColor(mNativePtr,
-			EXTRACT_COLOR_HSV_LIMIT[0],
-			EXTRACT_COLOR_HSV_LIMIT[1],
-			EXTRACT_COLOR_HSV_LIMIT[2],
-			EXTRACT_COLOR_HSV_LIMIT[3],
-			EXTRACT_COLOR_HSV_LIMIT[4],
-			EXTRACT_COLOR_HSV_LIMIT[5]);
-		if (result != 0) {
-			throw new IllegalStateException("nativeSetExtractionColor:result=" + result);
-		}
+//		// 指定色範囲を抽出(OpenCV)
+//		final int result = nativeSetExtractionColor(mNativePtr,
+//			EXTRACT_COLOR_HSV_LIMIT[0],
+//			EXTRACT_COLOR_HSV_LIMIT[1],
+//			EXTRACT_COLOR_HSV_LIMIT[2],
+//			EXTRACT_COLOR_HSV_LIMIT[3],
+//			EXTRACT_COLOR_HSV_LIMIT[4],
+//			EXTRACT_COLOR_HSV_LIMIT[5]);
+//		if (result != 0) {
+//			throw new IllegalStateException("nativeSetExtractionColor:result=" + result);
+//		}
 	}
 
-	public void enableNativeExtract(final boolean enable) {
-		final int result = nativeSetEnableExtract(mNativePtr, enable ? 1 : 0);
-		if (result != 0) {
-			throw new IllegalStateException("nativeSetEnableExtract:result=" + result);
-		}
-	}
+//	public void enableNativeExtract(final boolean enable) {
+//		final int result = nativeSetEnableExtract(mNativePtr, enable ? 1 : 0);
+//		if (result != 0) {
+//			throw new IllegalStateException("nativeSetEnableExtract:result=" + result);
+//		}
+//	}
 
-	public boolean enableNativeExtract() {
-		final int result = nativeGetEnableExtract(mNativePtr);
-		if (result < 0) {
-			throw new IllegalStateException("nativeGetEnableExtract:result=" + result);
-		}
-		return result != 0;
-	}
+//	public boolean enableNativeExtract() {
+//		final int result = nativeGetEnableExtract(mNativePtr);
+//		if (result < 0) {
+//			throw new IllegalStateException("nativeGetEnableExtract:result=" + result);
+//		}
+//		return result != 0;
+//	}
 
-	public void nativeSmoothType(final int smooth_type) {
-		final int result = nativeSetSmooth(mNativePtr, smooth_type % 4);
-		if (result != 0) {
-			throw new IllegalStateException("nativeSetSmooth:result=" + result);
-		}
-	}
+//	public void nativeSmoothType(final int smooth_type) {
+//		final int result = nativeSetSmooth(mNativePtr, smooth_type % 4);
+//		if (result != 0) {
+//			throw new IllegalStateException("nativeSetSmooth:result=" + result);
+//		}
+//	}
 
-	public int nativeSmoothType() {
-		final int result = nativeGetSmooth(mNativePtr);
-		if (result < 0) {
-			throw new IllegalStateException("nativeGetSmooth:result=" + result);
-		}
-		return result;
-	}
+//	public int nativeSmoothType() {
+//		final int result = nativeGetSmooth(mNativePtr);
+//		if (result < 0) {
+//			throw new IllegalStateException("nativeGetSmooth:result=" + result);
+//		}
+//		return result;
+//	}
 
-	public void enableNativeCanny(final boolean enable) {
-		final int result = nativeSetEnableCanny(mNativePtr, enable ? 1 : 0);
-		if (result != 0) {
-			throw new IllegalStateException("nativeSetEnableCanny:result=" + result);
-		}
-	}
+//	public void enableNativeCanny(final boolean enable) {
+//		final int result = nativeSetEnableCanny(mNativePtr, enable ? 1 : 0);
+//		if (result != 0) {
+//			throw new IllegalStateException("nativeSetEnableCanny:result=" + result);
+//		}
+//	}
 
-	public boolean enableNativeCanny() {
-		final int result = nativeGetEnableCanny(mNativePtr);
-		if (result < 0) {
-			throw new IllegalStateException("nativeGetEnableCanny:result=" + result);
-		}
-		return result != 0;
-	}
+//	public boolean enableNativeCanny() {
+//		final int result = nativeGetEnableCanny(mNativePtr);
+//		if (result < 0) {
+//			throw new IllegalStateException("nativeGetEnableCanny:result=" + result);
+//		}
+//		return result != 0;
+//	}
 
-	public void trapeziumRate(final float trapezium_rate) {
+//	public void trapeziumRate(final float trapezium_rate) {
 /*		FIXME MediaEffectTexProjectionはまだうまく動かない
 		final float[] src = { 0.0f, 0.0f, 0.0f, 368.0f, 640.0f, 368.0f, 640.0f, 0.0f, };
 		final float[] dst = {
@@ -603,16 +616,16 @@ public class ImageProcessor {
 				}
 			}
 		} */
-		final int result = nativeSetTrapeziumRate(mNativePtr,
-			trapezium_rate < -0.01 ? trapezium_rate : (trapezium_rate > 0.01 ? trapezium_rate : 0.0));
-		if (result != 0) {
-			throw new IllegalStateException("nativeSetTrapeziumRate:result=" + result);
-		}
-	}
+//		final int result = nativeSetTrapeziumRate(mNativePtr,
+//			trapezium_rate < -0.01 ? trapezium_rate : (trapezium_rate > 0.01 ? trapezium_rate : 0.0));
+//		if (result != 0) {
+//			throw new IllegalStateException("nativeSetTrapeziumRate:result=" + result);
+//		}
+//	}
 
-	public double trapeziumRate() {
-		return nativeGetTrapeziumRate(mNativePtr);
-	}
+//	public double trapeziumRate() {
+//		return nativeGetTrapeziumRate(mNativePtr);
+//	}
 
 	public void setAreaLimit(final float min, final float max) {
 		final int result = nativeSetAreaLimit(mNativePtr, min, max);
@@ -635,35 +648,35 @@ public class ImageProcessor {
 		}
 	}
 
-	public int getMaxThinningLoop() {
-		final int result = nativeGetMaxThinningLoop(mNativePtr);
-		if (result < 0) {
-			throw new IllegalStateException("nativeGetMaxThinningLoop:result=" + result);
-		}
-		return result;
-	}
+//	public int getMaxThinningLoop() {
+//		final int result = nativeGetMaxThinningLoop(mNativePtr);
+//		if (result < 0) {
+//			throw new IllegalStateException("nativeGetMaxThinningLoop:result=" + result);
+//		}
+//		return result;
+//	}
 
-	public void setMaxThinningLoop(final int max_loop) {
-		final int result = nativeSetMaxThinningLoop(mNativePtr, max_loop);
-		if (result != 0) {
-			throw new IllegalStateException("nativeSetMaxThinningLoop:result=" + result);
-		}
-	}
+//	public void setMaxThinningLoop(final int max_loop) {
+//		final int result = nativeSetMaxThinningLoop(mNativePtr, max_loop);
+//		if (result != 0) {
+//			throw new IllegalStateException("nativeSetMaxThinningLoop:result=" + result);
+//		}
+//	}
 
-	public boolean getFillInnerContour() {
-		final int result = nativeGetFillInnerContour(mNativePtr);
-		if (result < 0) {
-			throw new IllegalStateException("nativeGetFillInnerContour:result=" + result);
-		}
-		return result != 0;
-	}
+//	public boolean getFillInnerContour() {
+//		final int result = nativeGetFillInnerContour(mNativePtr);
+//		if (result < 0) {
+//			throw new IllegalStateException("nativeGetFillInnerContour:result=" + result);
+//		}
+//		return result != 0;
+//	}
 
-	public void setFillInnerContour(final boolean fill) {
-		final int result = nativeSetFillInnerContour(mNativePtr, fill);
-		if (result != 0) {
-			throw new IllegalStateException("nativeSetFillInnerContour:result=" + result);
-		}
-	}
+//	public void setFillInnerContour(final boolean fill) {
+//		final int result = nativeSetFillInnerContour(mNativePtr, fill);
+//		if (result != 0) {
+//			throw new IllegalStateException("nativeSetFillInnerContour:result=" + result);
+//		}
+//	}
 //================================================================================
 	/**
 	 * native側からの結果コールバック
@@ -1126,23 +1139,23 @@ public class ImageProcessor {
 	private static native int nativeHandleFrame(final long id_native, final int width, final int height, final int tex_name);
 	private static native int nativeSetResultFrameType(final long id_native, final int showDetects);
 	private static native int nativeGetResultFrameType(final long id_native);
-	private static native int nativeSetExtractionColor(final long id_native,
-		final int lowerH, final int upperH,
-		final int lowerS, final int upperS,
-		final int lowerV, final int upperV);
-	private static native int nativeSetEnableExtract(final long id_native, final int enable);
-	private static native int nativeGetEnableExtract(final long id_native);
-	private static native int nativeSetSmooth(final long id_native, final int smooth_type);
-	private static native int nativeGetSmooth(final long id_native);
-	private static native int nativeSetEnableCanny(final long id_native, final int enable);
-	private static native int nativeGetEnableCanny(final long id_native);
-	private static native int nativeSetTrapeziumRate(final long id_native, final double trapeziumRate);
-	private static native double nativeGetTrapeziumRate(final long id_native);
+//	private static native int nativeSetExtractionColor(final long id_native,
+//		final int lowerH, final int upperH,
+//		final int lowerS, final int upperS,
+//		final int lowerV, final int upperV);
+//	private static native int nativeSetEnableExtract(final long id_native, final int enable);
+//	private static native int nativeGetEnableExtract(final long id_native);
+//	private static native int nativeSetSmooth(final long id_native, final int smooth_type);
+//	private static native int nativeGetSmooth(final long id_native);
+//	private static native int nativeSetEnableCanny(final long id_native, final int enable);
+//	private static native int nativeGetEnableCanny(final long id_native);
+//	private static native int nativeSetTrapeziumRate(final long id_native, final double trapeziumRate);
+//	private static native double nativeGetTrapeziumRate(final long id_native);
 	private static native int nativeSetAreaLimit(final long id_native, final float min, final float max);
 	private static native int nativeSetAspectLimit(final long id_native, final float min);
 	private static native int nativeSetAreaErrLimit(final long id_native, final float limit1, final float limit2);
-	private static native int nativeGetMaxThinningLoop(final long id_native);
-	private static native int nativeSetMaxThinningLoop(final long id_native, final int max_loop);
-	private static native int nativeGetFillInnerContour(final long id_native);
-	private static native int nativeSetFillInnerContour(final long id_native, final boolean fill);
+//	private static native int nativeGetMaxThinningLoop(final long id_native);
+//	private static native int nativeSetMaxThinningLoop(final long id_native, final int max_loop);
+//	private static native int nativeGetFillInnerContour(final long id_native);
+//	private static native int nativeSetFillInnerContour(final long id_native, final boolean fill);
 }

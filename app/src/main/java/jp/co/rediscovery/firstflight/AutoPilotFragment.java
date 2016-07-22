@@ -58,12 +58,12 @@ public class AutoPilotFragment extends BaseAutoPilotFragment {
 			mImageProcessor.enableExtraction(mEnableGLESExtraction);
 //			mImageProcessor.enableNativeExtract(mEnableNativeExtraction);
 //			mImageProcessor.enableNativeCanny(mEnableNativeCanny);
-			mImageProcessor.trapeziumRate(mTrapeziumRate);
+//			mImageProcessor.trapeziumRate(mTrapeziumRate);
 			mImageProcessor.setAreaLimit(mAreaLimitMin, AREA_LIMIT_MAX);
 			mImageProcessor.setAreaErrLimit(mAreaErrLimit1, mAreaErrLimit2);
 			mImageProcessor.setAspectLimit(mAspectLimitMin);
-			mImageProcessor.setMaxThinningLoop(mMaxThinningLoop);
-			mImageProcessor.setFillInnerContour(mFillContour);
+//			mImageProcessor.setMaxThinningLoop(mMaxThinningLoop);
+//			mImageProcessor.setFillInnerContour(mFillContour);
 			mImageProcessor.start(processing_width, processing_height);	// これも処理サイズ
 			final Surface surface = mImageProcessor.getSurface();
 			mImageProcessorSurfaceId = surface != null ? surface.hashCode() : 0;
