@@ -377,7 +377,7 @@ public class VideoStream {
 
 				final ByteBuffer result = ByteBuffer.allocateDirect(csdSize);
 				result.clear();
-				result.put(data, 0, csdSize);	// これはちょっと遅い
+				result.put(data, 0, csdSize);	// 要素を1つずつループしてputするのでちょっと遅い
 //				final byte[] csdInfo = new byte[csdSize];
 //				System.arraycopy(data, 0, csdInfo, 0, csdSize);
 //				return ByteBuffer.wrap(csdInfo);
@@ -576,7 +576,6 @@ public class VideoStream {
 					client = mClients.valueAt(i);
 					if (client != null) {
 						client.mTargetSurface.makeCurrent();
-//						mDrawer.setMvpMatrix(client.mMvpMatrix, 0);
 						mDrawer.draw(mTexId, mTexMatrix, 0);
 						client.mTargetSurface.swap();
 					}
@@ -664,7 +663,7 @@ public class VideoStream {
 		}
 
 		/**
-		 * 製造サイズ変更処理(ワーカースレッド上で実行)
+		 * 映像サイズ変更処理(ワーカースレッド上で実行)
 		 * @param width
 		 * @param height
 		 */
@@ -676,6 +675,7 @@ public class VideoStream {
 
 		/**
 		 * TextureSurfaceで映像を受け取った際のコールバックリスナー
+		 * TextureSurface#setOnFrameAvailableListenerで割り当てる際にHandlerを指定していないので任意スレッド上で実行される
 		 */
 		private final SurfaceTexture.OnFrameAvailableListener
 			mOnFrameAvailableListener = new SurfaceTexture.OnFrameAvailableListener() {
@@ -685,5 +685,5 @@ public class VideoStream {
 				offer(REQUEST_DRAW);
 			}
 		};
-	};
+	}
 }

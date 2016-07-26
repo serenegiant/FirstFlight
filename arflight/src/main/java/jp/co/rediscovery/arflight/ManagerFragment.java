@@ -53,7 +53,7 @@ public class ManagerFragment extends Fragment {
 	 * @param activity
 	 * @return
 	 */
-	public static ManagerFragment getInstance(final Activity activity) {
+	public static synchronized ManagerFragment getInstance(final Activity activity) {
 		ManagerFragment result = null;
 		if ((activity != null) && !activity.isFinishing()) {
 			final FragmentManager fm = activity.getFragmentManager();

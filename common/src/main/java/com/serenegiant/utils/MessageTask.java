@@ -70,7 +70,8 @@ public abstract class MessageTask implements Runnable {
 	protected boolean onError(final Exception e) {
 //		if (DEBUG) Log.w(TAG, e);
 		return true;
-	};
+	}
+
 	/** 要求メッセージの処理(内部メッセージは来ない)
 	 * trueを返すと要求メッセージ処理ループを終了する */
 	protected abstract boolean processRequest(final int request, final int arg1, final int arg2, final Object obj);

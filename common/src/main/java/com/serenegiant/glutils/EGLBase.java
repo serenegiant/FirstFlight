@@ -323,7 +323,7 @@ public class EGLBase {
             }
             return false;
         }
-        // attach EGL renderring context to specific EGL window surface
+        // attach EGL rendering context to specific EGL window surface
         if (!mEgl.eglMakeCurrent(mEglDisplay, surface, surface, mEglContext)) {
             Log.w("TAG", "eglMakeCurrent" + mEgl.eglGetError());
             return false;
