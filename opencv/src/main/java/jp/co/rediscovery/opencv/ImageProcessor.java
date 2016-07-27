@@ -33,7 +33,7 @@ import com.serenegiant.utils.BuildCheck;
 import com.serenegiant.utils.FpsCounter;
 
 public class ImageProcessor {
-//	private static final boolean DEBUG = true; // FIXME 実働時はfalseにすること
+//	private static final boolean DEBUG = false; // FIXME 実働時はfalseにすること
 	private static final String TAG = ImageProcessor.class.getSimpleName();
 
 	private static final int REQUEST_DRAW = 1;
@@ -58,12 +58,8 @@ public class ImageProcessor {
 	private float mBrightness;
 	private boolean mEnableSaturation;
 	private float mSaturation;
-//	private boolean mEnablePosterize;
-//	private float mPosterize;	// [1,256], デフォルト10
 	private boolean mEnableExtraction;
-//	private int mSmoothType = 0;
 	private float mBinarizeThreshold = 0.5f;
-//	private boolean mEnableCanny;
 	private static final int[][] COLOR_RANGES = {
 		{0, 180, 0, 50, 120, 255},		// 白色
 		{25, 35, 120, 130, 180, 200},	// 黄色...蛍光色はこれだとだめ
@@ -85,7 +81,6 @@ public class ImageProcessor {
 	 * @param callback
 	 */
 	public ImageProcessor(final int src_width, final int src_height, final ImageProcessorCallback callback) {
-//		if (DEBUG) Log.v(TAG, "コンストラクタ");
 		if (callback == null) {
 			throw new NullPointerException("callback should not be null");
 		}
@@ -104,7 +99,6 @@ public class ImageProcessor {
 	 * @param height 処理画像サイズ
 	 */
 	public void start(final int width, final int height) {
-//		if (DEBUG) Log.v(TAG, "start:");
 		if (mProcessingTask == null) {
 			mProcessingTask = new ProcessingTask(this, mSrcWidth, mSrcHeight, width, height);
 			new Thread(mProcessingTask, "VideoStream$rendererTask").start();
@@ -125,7 +119,6 @@ public class ImageProcessor {
 	 * ImageProcessorの処理スレッドを停止
 	 */
 	public void stop() {
-//		if (DEBUG) Log.v(TAG, "stop:");
 		final ProcessingTask task = mProcessingTask;
 		mProcessingTask = null;
 		if (task != null) {
@@ -141,7 +134,6 @@ public class ImageProcessor {
 	 * 関連するリソースをすべて破棄する
 	 */
 	public void release() {
-//		if (DEBUG) Log.v(TAG, "release");
 		stop();
 		if (mAsyncHandler != null) {
 			try {
@@ -151,7 +143,6 @@ public class ImageProcessor {
 			mAsyncHandler = null;
 		}
 		nativeRelease(mNativePtr);
-//		if (DEBUG) Log.v(TAG, "release:finished");
 	}
 
 	/** 映像受け取り用Surfaceを取得 */
@@ -349,53 +340,12 @@ public class ImageProcessor {
 		return mSaturation;
 	}
 
-//	public void enablePosterize(final boolean enable) {
-//		if (mEnablePosterize != enable) {
-//			if (DEBUG) Log.v(TAG, "enablePosterize:" + enable);
-//			mEnablePosterize = enable;
-//			synchronized (mSync) {
-//				for (final IEffect effect: mEffects) {
-//					if (effect instanceof MediaEffectPosterize) {
-//						effect.setEnable(enable);
-//					}
-//				}
-//			}
-//		}
-//	}
-//
-//	public boolean enablePosterize() {
-//		return mEnablePosterize;
-//	}
-//
-//	/**
-//	 * ポスタライズ(階調化)
-//	 * @param posterize 1〜256, デフォルト10
-//	 */
-//	public void setPosterize(final float posterize) {
-//		final float post = sat((int)posterize, 1, 256);
-//		if (mPosterize != post) {
-//			mPosterize = post;
-//			synchronized (mSync) {
-//				for (final IEffect effect: mEffects) {
-//					if (effect instanceof MediaEffectPosterize) {
-//						((MediaEffectPosterize)effect).setParameter(post);
-//					}
-//				}
-//			}
-//		}
-//	}
-//
-//	public float getPosterize() {
-//		return mPosterize;
-//	}
-
 	/**
 	 * OpenGL|ESでの色抽出の有効/無効切り替え
 	 * @param enable
 	 */
 	public void enableExtraction(final boolean enable) {
 		if (mEnableExtraction != enable) {
-//			if (DEBUG) Log.v(TAG, "setExtraction:" + enable);
 			synchronized (mSync) {
 				mEnableExtraction = enable;
 			}
@@ -408,7 +358,6 @@ public class ImageProcessor {
 
 	public void setBinarizeThreshold(final float binarize_threshold) {
 		if (mBinarizeThreshold != binarize_threshold) {
-//			if (DEBUG) Log.v(TAG, "setBinarizeThreshold:" + binarize_threshold);
 			synchronized (mSync) {
 				mBinarizeThreshold = binarize_threshold;
 				applyExtractionColor();
@@ -420,63 +369,11 @@ public class ImageProcessor {
 		return mBinarizeThreshold;
 	}
 
-//	public void smoothType(final int smooth_type) {
-//		if (mSmoothType != smooth_type) {
-//			synchronized (mSync) {
-//				mSmoothType = smooth_type;
-//				applySmooth(smooth_type);
-//			}
-//		}
-//	}
-//
-//	private void applySmooth(final int smooth_type) {
-//		if ((mProcessingTask != null) && (mProcessingTask.mSmooth != null)) {
-//			switch (smooth_type) {
-//			case 1:	// ガウシアン
-//				mProcessingTask.mSmooth.setParameter(Texture2dProgram.KERNEL_GAUSSIAN, 0.0f);
-//				break;
-//			case 2:	// メディアン
-//				// FIXME 未実装
-//				break;
-//			case 3:	// ブラー
-//				// FIXME 未実装
-//				break;
-//			case 4:	// ダイレーション
-//				// これはmProcessingTask.mSmoothを使わないのでここでは何もしない
-//				break;
-//			default:
-//				mProcessingTask.mSmooth.setParameter(Texture2dProgram.KERNEL_NULL, 0.0f);
-//				break;
-//			}
-//		}
-//	}
-//
-//	public int smoothType() {
-//		return mSmoothType;
-//	}
-
-//	/**
-//	 * OpenGL|ESでのCannyエッジ検出の有効/無効を切り替え
-//	 * @param enable
-//	 */
-//	public void enableCanny(final boolean enable) {
-//		if (mEnableCanny != enable) {
-//			synchronized (mSync) {
-//				mEnableCanny = enable;
-//			}
-//		}
-//	}
-//
-//	public boolean enableCanny() {
-//		return mEnableCanny;
-//	}
-
 	/**
 	 * 抽出色を映像中央部から取得して適用
 	 * @return
 	 */
 	public int[] requestUpdateExtractionColor() {
-//		if (DEBUG) Log.v(TAG, "requestUpdateExtractionColor:");
 		final int[] temp = new int[6];
 		synchronized (mSync) {
 			requestUpdateExtractionColor = true;
@@ -543,89 +440,7 @@ public class ImageProcessor {
 				0.00f, 0.00f, 0.00f,    // 抽出後加算値(HSV)
 				mBinarizeThreshold);	// 2値化時のしきい値, 0なら2値化なし
 		}
-//		// 指定色範囲を抽出(OpenCV)
-//		final int result = nativeSetExtractionColor(mNativePtr,
-//			EXTRACT_COLOR_HSV_LIMIT[0],
-//			EXTRACT_COLOR_HSV_LIMIT[1],
-//			EXTRACT_COLOR_HSV_LIMIT[2],
-//			EXTRACT_COLOR_HSV_LIMIT[3],
-//			EXTRACT_COLOR_HSV_LIMIT[4],
-//			EXTRACT_COLOR_HSV_LIMIT[5]);
-//		if (result != 0) {
-//			throw new IllegalStateException("nativeSetExtractionColor:result=" + result);
-//		}
 	}
-
-//	public void enableNativeExtract(final boolean enable) {
-//		final int result = nativeSetEnableExtract(mNativePtr, enable ? 1 : 0);
-//		if (result != 0) {
-//			throw new IllegalStateException("nativeSetEnableExtract:result=" + result);
-//		}
-//	}
-
-//	public boolean enableNativeExtract() {
-//		final int result = nativeGetEnableExtract(mNativePtr);
-//		if (result < 0) {
-//			throw new IllegalStateException("nativeGetEnableExtract:result=" + result);
-//		}
-//		return result != 0;
-//	}
-
-//	public void nativeSmoothType(final int smooth_type) {
-//		final int result = nativeSetSmooth(mNativePtr, smooth_type % 4);
-//		if (result != 0) {
-//			throw new IllegalStateException("nativeSetSmooth:result=" + result);
-//		}
-//	}
-
-//	public int nativeSmoothType() {
-//		final int result = nativeGetSmooth(mNativePtr);
-//		if (result < 0) {
-//			throw new IllegalStateException("nativeGetSmooth:result=" + result);
-//		}
-//		return result;
-//	}
-
-//	public void enableNativeCanny(final boolean enable) {
-//		final int result = nativeSetEnableCanny(mNativePtr, enable ? 1 : 0);
-//		if (result != 0) {
-//			throw new IllegalStateException("nativeSetEnableCanny:result=" + result);
-//		}
-//	}
-
-//	public boolean enableNativeCanny() {
-//		final int result = nativeGetEnableCanny(mNativePtr);
-//		if (result < 0) {
-//			throw new IllegalStateException("nativeGetEnableCanny:result=" + result);
-//		}
-//		return result != 0;
-//	}
-
-//	public void trapeziumRate(final float trapezium_rate) {
-/*		FIXME MediaEffectTexProjectionはまだうまく動かない
-		final float[] src = { 0.0f, 0.0f, 0.0f, 368.0f, 640.0f, 368.0f, 640.0f, 0.0f, };
-		final float[] dst = {
-			(trapezium_rate < 0 ? -trapezium_rate * 150.0f : 0.0f) + 0.0f, 0.0f,
-			(trapezium_rate >= 0 ?  trapezium_rate * 150.0f : 0.0f) + 0.0f, 368.0f,
-			(trapezium_rate >= 0 ?  -trapezium_rate * 150.0f : 0.0f) + 640.0f, 368.0f,
-			(trapezium_rate < 0 ?  trapezium_rate * 150.0f : 0.0f) + 640.0f, 0.0f};
-		synchronized (mSync) {
-			for (final IEffect effect: mEffects) {
-				if (effect instanceof MediaEffectTexProjection) {
-					((MediaEffectTexProjection)effect).calcPerspectiveTransform(src, dst);
-				}
-			}
-		} */
-//		final int result = nativeSetTrapeziumRate(mNativePtr,
-//			trapezium_rate < -0.01 ? trapezium_rate : (trapezium_rate > 0.01 ? trapezium_rate : 0.0));
-//		if (result != 0) {
-//			throw new IllegalStateException("nativeSetTrapeziumRate:result=" + result);
-//		}
-//	}
-
-//	public double trapeziumRate() {
-//		return nativeGetTrapeziumRate(mNativePtr);
-//	}
 
 	public void setAreaLimit(final float min, final float max) {
 		final int result = nativeSetAreaLimit(mNativePtr, min, max);
@@ -648,35 +463,6 @@ public class ImageProcessor {
 		}
 	}
 
-//	public int getMaxThinningLoop() {
-//		final int result = nativeGetMaxThinningLoop(mNativePtr);
-//		if (result < 0) {
-//			throw new IllegalStateException("nativeGetMaxThinningLoop:result=" + result);
-//		}
-//		return result;
-//	}
-
-//	public void setMaxThinningLoop(final int max_loop) {
-//		final int result = nativeSetMaxThinningLoop(mNativePtr, max_loop);
-//		if (result != 0) {
-//			throw new IllegalStateException("nativeSetMaxThinningLoop:result=" + result);
-//		}
-//	}
-
-//	public boolean getFillInnerContour() {
-//		final int result = nativeGetFillInnerContour(mNativePtr);
-//		if (result < 0) {
-//			throw new IllegalStateException("nativeGetFillInnerContour:result=" + result);
-//		}
-//		return result != 0;
-//	}
-
-//	public void setFillInnerContour(final boolean fill) {
-//		final int result = nativeSetFillInnerContour(mNativePtr, fill);
-//		if (result != 0) {
-//			throw new IllegalStateException("nativeSetFillInnerContour:result=" + result);
-//		}
-//	}
 //================================================================================
 	/**
 	 * native側からの結果コールバック
@@ -687,7 +473,6 @@ public class ImageProcessor {
 	 */
 	private static void callFromNative(final WeakReference<ImageProcessor> weakSelf,
 		final int type, final ByteBuffer frame, final float[] result) {
-//		if (DEBUG) Log.v(TAG, "callFromNative");
 		final ImageProcessor self = weakSelf != null ? weakSelf.get() : null;
 		if (self != null) {
 			try {
@@ -699,7 +484,6 @@ public class ImageProcessor {
 				Log.w(TAG, e);
 			}
 		}
-//		if (DEBUG) Log.v(TAG, "callFromNative:finished");
 	}
 
 	/**
@@ -707,7 +491,6 @@ public class ImageProcessor {
 	 * @param result
 	 */
 	private void handleResult(final int type, final float[] result) {
-//		if (DEBUG) Log.v(TAG, "handleResult");
 		mResultFps.count();
 		try {
 			mCallback.onResult(type, result);
@@ -720,7 +503,6 @@ public class ImageProcessor {
 	 * @param frame
 	 */
 	private void handleOpenCVFrame(final ByteBuffer frame) {
-//		if (DEBUG) Log.v(TAG, "handleOpenCVFrame");
 		mCallback.onFrame(frame);
 	}
 
@@ -741,11 +523,8 @@ public class ImageProcessor {
 		private EffectContext mEffectContext;
 		private FullFrameRect mSrcDrawer;
 		private MediaEffectExtraction mExtraction;
-//		private MediaEffectKernel mSmooth;
 		private MediaEffectDilation mDilation;
 		private MediaEffectErosion mErosion;
-//		private MediaEffectGrayScale mGray;
-//		private MediaEffectCanny mEdgeDetection;
 		// 映像受け取り用
 		private MediaSource mMediaSource;
 
@@ -759,33 +538,22 @@ public class ImageProcessor {
 
 		/** 映像受け取り用Surfaceを取得 */
 		public Surface getSurface() {
-//			if (DEBUG) Log.v(TAG, "getSurface:" + mSourceSurface);
 			return mSourceSurface;
 		}
 
 		/** 映像受け取り用SurfaceTextureを取得 */
 		public SurfaceTexture getSurfaceTexture() {
-//			if (DEBUG) Log.v(TAG, "ProcessingTask:getSurfaceTexture:" + mSourceTexture);
 			return mSourceTexture;
 		}
 
 		@SuppressLint("NewApi")
 		@Override
 		protected void onStart() {
-//			if (DEBUG) Log.v(TAG, "ProcessingTask#onStart:");
 			// ソース映像の描画用
 			mSrcDrawer = new FullFrameRect(new Texture2dProgram(Texture2dProgram.ProgramType.TEXTURE_EXT_FILT3x3));
 			mSrcDrawer.getProgram().setTexSize(WIDTH, HEIGHT);
 			mSrcDrawer.flipMatrix(true);	// 上下入れ替え
-//			mSrcDrawer.getProgram().setKernel(Texture2dProgram.KERNEL_EMBOSS, 0.5f);		// エンボス
-//			mSrcDrawer.getProgram().setKernel(Texture2dProgram.KERNEL_SOBEL_H, 0.0f);		// ソ-ベル(エッジ検出, 1次微分)
-//			mSrcDrawer.getProgram().setKernel(Texture2dProgram.KERNEL_SOBEL2_H, 0.0f);		// ソ-ベル2(エッジ検出, 1次微分)
-//			mSrcDrawer.getProgram().setKernel(Texture2dProgram.KERNEL_EDGE_DETECT, 0.0f);	// エッジ検出
-//			mSrcDrawer.getProgram().setKernel(Texture2dProgram.KERNEL_SHARPNESS, 0.0f);		// シャープ
-//			mSrcDrawer.getProgram().setKernel(Texture2dProgram.KERNEL_SMOOTH, 0.0f);		// 移動平均(平滑化)
 			mSrcDrawer.getProgram().setKernel(Texture2dProgram.KERNEL_GAUSSIAN, 0.0f);		// ガウシアン(平滑化)
-//			mSrcDrawer.getProgram().setKernel(Texture2dProgram.KERNEL_BRIGHTEN, 0.0f);		//
-//			mSrcDrawer.getProgram().setKernel(Texture2dProgram.KERNEL_LAPLACIAN, 0.0f);		// ラプラシアン(2次微分)
 			mTexId = mSrcDrawer.createTextureObject();
 			mSourceTexture = new SurfaceTexture(mTexId);
 			mSourceTexture.setDefaultBufferSize(WIDTH, HEIGHT);
@@ -809,44 +577,20 @@ public class ImageProcessor {
 				mEffects.add(exposure);
 				// 彩度調整(-1.0f〜1.0f, -1.0fならグレースケール)
 				final MediaEffectSaturate saturate = new MediaEffectSaturate(mEffectContext, mSaturation);
-//				final MediaEffectSaturateGLES saturate = new MediaEffectSaturateGLES(mSaturation);
-//				saturate.setEnable(mSaturation != 0.0f);
 				mEffects.add(saturate);
 				// 明るさ調整(0〜, 1.0fなら変化なし)
 				final MediaEffectBrightness brightness = new MediaEffectBrightness(mBrightness);
 				brightness.setEnable(true);
 				mEffects.add(brightness);
-/*				// コントラスト(0〜1.0f, 0なら変化なし)
-				final MediaEffectContrast contrast = new MediaEffectContrast(mEffectContext, 1.0f);
-				mEffects.add(contrast); */
-/*				// ポスタライズ
-				final MediaEffectPosterize posterize = new MediaEffectPosterize(mParent.mPosterize);
-				posterize.setEnable(mParent.mEnablePosterize);
-				mEffects.add(posterize); */
-//				// エンボス
-//				final MediaEffectEmboss emboss = new MediaEffectEmboss();
-//				emboss.setParameter(2.0f);
-//				mEffects.add(emboss);
-//				// 台形補正 FIXME これはまだうまく動かない
-//				final MediaEffectTexProjection proj = new MediaEffectTexProjection();
-//				proj.setEnable(true);
-//				mEffects.add(proj);
 //--------------------------------------------------------------------------------
 				// ここから下はプレフィルタじゃないよ
 				// 色抽出
 				mExtraction = new MediaEffectExtraction();
 				applyExtractionColor();
-//				// ノイズ除去(平滑化)
-//				mSmooth = new MediaEffectKernel();
-//				mSmooth.setParameter(Texture2dProgram.KERNEL_GAUSSIAN, 0.0f);
 				// 膨張
 				mDilation = new MediaEffectDilation(4);
 				// 縮小
 				mErosion = new MediaEffectErosion(1);
-//				// グレースケール
-//				mGray = new MediaEffectGrayScale(mEffectContext);
-//				// Cannyエッジ検出フィルタ
-//				mEdgeDetection = new MediaEffectCanny();
 			}	// synchronized (mSync)
 //--------------------------------------------------------------------------------
 			handleResize(mVideoWidth, mVideoHeight);
@@ -857,12 +601,10 @@ public class ImageProcessor {
 				mSync.notifyAll();
 			}
 			mResultFps.reset();
-//			if (DEBUG) Log.v(TAG, "ProcessingTask#onStart:finished");
 		}
 
 		@Override
 		protected void onStop() {
-//			if (DEBUG) Log.v(TAG, "ProcessingTask#onStop");
 			synchronized (mSync) {
 				isProcessingRunning = false;
 				mSync.notifyAll();
@@ -880,10 +622,6 @@ public class ImageProcessor {
 				mExtraction.release();
 				mExtraction = null;
 			}
-//			if (mSmooth != null) {
-//				mSmooth.release();
-//				mSmooth = null;
-//			}
 			if (mDilation != null) {
 				mDilation.release();
 				mDilation = null;
@@ -892,14 +630,6 @@ public class ImageProcessor {
 				mErosion.release();
 				mErosion = null;
 			}
-//			if (mGray != null) {
-//				mGray.release();
-//				mGray = null;
-//			}
-//			if (mEdgeDetection != null) {
-//				mEdgeDetection.release();
-//				mEdgeDetection = null;
-//			}
 			for (final IEffect effect: mEffects) {
 				effect.release();
 			}
@@ -912,7 +642,6 @@ public class ImageProcessor {
 				mSrcDrawer.release();
 				mSrcDrawer = null;
 			}
-//			if (DEBUG) Log.v(TAG, "ProcessingTask#onStop:finished");
 		}
 
 		@Override
@@ -938,7 +667,6 @@ public class ImageProcessor {
 		 * 実際の描画処理(ワーカースレッド上で実行)
 		 */
 		private void handleDraw() {
-//			if (DEBUG) Log.v(TAG, "ProcessingTask#handleDraw:");
 			try {
 				makeCurrent();
 				mSourceTexture.updateTexImage();
@@ -975,23 +703,6 @@ public class ImageProcessor {
 					// 収縮処理
 					mMediaSource.apply(mErosion);
 				}
-//				// 平滑化処理
-//				switch (mSmoothType) {
-//				case 0: break;
-//				case 4:
-//					mMediaSource.apply(mDilation);
-//					break;
-//				default:
-//					mMediaSource.apply(mSmooth);
-//					break;
-//				}
-//				// エッジ検出処理
-//				if (mEnableCanny) {
-//					if (!mEnableExtraction || (mBinarizeThreshold == 0)) {
-//						mMediaSource.apply(mGray);
-//					}
-//					mMediaSource.apply(mEdgeDetection);
-//				}
 			}
 			// プレフィルター処理後の画像をNative側へ送る
 			mMediaSource.getOutputTexture().bind();
@@ -1000,11 +711,10 @@ public class ImageProcessor {
 			// PBOのピンポンバッファを使うと約1/10の0.5ミリ秒で返ってくる
 			nativeHandleFrame(mNativePtr, mVideoWidth, mVideoHeight, 0);
 			mMediaSource.getOutputTexture().unbind();
-			// 何も描画しないとハングアップする機種があるので塗りつぶす(と言っても1x1だから気にしなくて良い?)
+			// 何も描画しないとハングアップする機種があるので塗りつぶす(と言っても1x1だから気にしなくて良い)
 			makeCurrent();
 			GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 			GLES20.glFlush();
-//			if (DEBUG) Log.v(TAG, "ProcessingTask#handleDraw:finished");
 		}
 
 		private void updateExtractionColor() {
@@ -1072,11 +782,8 @@ public class ImageProcessor {
 		 * @param height
 		 */
 		private void handleResize(final int width, final int height) {
-//			if (DEBUG) Log.v(TAG, String.format("ProcessingTask#handleResize:(%d,%d)", width, height));
 			mVideoWidth = width;
 			mVideoHeight = height;
-//			mSourceTexture.setDefaultBufferSize(WIDTH, HEIGHT);	// FIXME ここは別扱いにして640x368固定にしとかないとだめかも
-//			mSrcDrawer.getProgram().setTexSize(WIDTH, HEIGHT);	// FIXME ここは別扱いにして640x368固定にしとかないとだめかも
 			// プレフィルタ用
 			if (mMediaSource != null) {
 				mMediaSource.resize(width, height);
@@ -1087,11 +794,8 @@ public class ImageProcessor {
 				effect.resize(width, height);
 			}
 			mExtraction.resize(width, height);
-//			mSmooth.resize(width, height);
-//			mGray.resize(width, height);
 			mDilation.resize(width, height);
 			mErosion.resize(width, height);
-//			mEdgeDetection.resize(width, height);
 		}
 
 		/**
@@ -1139,23 +843,7 @@ public class ImageProcessor {
 	private static native int nativeHandleFrame(final long id_native, final int width, final int height, final int tex_name);
 	private static native int nativeSetResultFrameType(final long id_native, final int showDetects);
 	private static native int nativeGetResultFrameType(final long id_native);
-//	private static native int nativeSetExtractionColor(final long id_native,
-//		final int lowerH, final int upperH,
-//		final int lowerS, final int upperS,
-//		final int lowerV, final int upperV);
-//	private static native int nativeSetEnableExtract(final long id_native, final int enable);
-//	private static native int nativeGetEnableExtract(final long id_native);
-//	private static native int nativeSetSmooth(final long id_native, final int smooth_type);
-//	private static native int nativeGetSmooth(final long id_native);
-//	private static native int nativeSetEnableCanny(final long id_native, final int enable);
-//	private static native int nativeGetEnableCanny(final long id_native);
-//	private static native int nativeSetTrapeziumRate(final long id_native, final double trapeziumRate);
-//	private static native double nativeGetTrapeziumRate(final long id_native);
 	private static native int nativeSetAreaLimit(final long id_native, final float min, final float max);
 	private static native int nativeSetAspectLimit(final long id_native, final float min);
 	private static native int nativeSetAreaErrLimit(final long id_native, final float limit1, final float limit2);
-//	private static native int nativeGetMaxThinningLoop(final long id_native);
-//	private static native int nativeSetMaxThinningLoop(final long id_native, final int max_loop);
-//	private static native int nativeGetFillInnerContour(final long id_native);
-//	private static native int nativeSetFillInnerContour(final long id_native, final boolean fill);
 }
