@@ -24,34 +24,35 @@ LOCAL_CFLAGS := $(LOCAL_C_INCLUDES:%=-I%)
 
 LOCAL_SRC_FILES := \
 	common_utils.cpp \
-	Threads.cpp \
-	AAtomizer.cpp \
-	ABuffer.cpp \
-	AMessage.cpp \
-	AString.cpp \
-	hexdump.cpp \
 	JNIHelp.cpp \
 	JniConstants.cpp \
-	RefBase.cpp \
-	SharedBuffer.cpp \
-	VectorImpl.cpp \
-	base64.cpp \
-	url_escape.cpp \
-	time_utc.cpp \
 	Timers.cpp \
-	assets.cpp \
-	eglbase.cpp \
-	glutils.cpp \
-	glProgram.cpp \
-	eglwindow.cpp \
-	gltexture.cpp \
-	glrenderer.cpp \
-	frame_conv.cpp \
-	gloffscreen.cpp \
-	matrix.cpp \
-	crc32.cpp \
-	binutils.cpp \
-	charutils.cpp \
+
+#	AAtomizer.cpp \
+#	ABuffer.cpp \
+#	AMessage.cpp \
+#	AString.cpp \
+#	base64.cpp \
+#	hexdump.cpp \
+#	url_escape.cpp \
+#	Threads.cpp \
+#	charutils.cpp \
+#	binutils.cpp \
+#	crc32.cpp \
+#	frame_conv.cpp \
+#	matrix.cpp \
+#	time_utc.cpp \
+#	VectorImpl.cpp \
+#	SharedBuffer.cpp \
+#	gloffscreen.cpp \
+#	glProgram.cpp \
+#	glrenderer.cpp \
+#	gltexture.cpp \
+#	eglbase.cpp \
+#	eglwindow.cpp \
+#	assets.cpp \
+#	glutils.cpp \
+#	RefBase.cpp \
 
 #	matrix.cpp \
 #	glutstuff.cpp \

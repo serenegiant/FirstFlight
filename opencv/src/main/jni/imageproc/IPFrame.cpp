@@ -18,7 +18,6 @@
 
 #include "IPFrame.h"
 
-#include "glutils.h"
 #include "common_utils.h"
 
 #define USE_PBO 1
@@ -58,12 +57,9 @@ void IPFrame::initFrame(const int &width, const int &height) {
 	pbo_size = (GLsizeiptr)width * height * 4;
 	// バッファ名を2つ生成
 	glGenBuffers(2, pbo);
-	GLCHECK("glGenBuffers");
 	glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo[0]);
-	GLCHECK("glBindBuffer");
 	glBufferData(GL_PIXEL_PACK_BUFFER, pbo_size, NULL, GL_DYNAMIC_READ);
 	glBindBuffer(GL_PIXEL_PACK_BUFFER, pbo[1]);
-	GLCHECK("glBindBuffer");
 	glBufferData(GL_PIXEL_PACK_BUFFER, pbo_size, NULL, GL_DYNAMIC_READ);
 	glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
 	pbo_ix = 0;
