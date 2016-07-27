@@ -47,9 +47,6 @@ LOCAL_SRC_FILES := \
 	IPDetectorCurve.cpp \
 	ImageProcessor.cpp \
 
-#	IPDetectorCorner.cpp \
-#	thinning.cpp \
-
 LOCAL_ARM_MODE := arm
 LOCAL_MODULE := imageproc
 include $(BUILD_SHARED_LIBRARY)

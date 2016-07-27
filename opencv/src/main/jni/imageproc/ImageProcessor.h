@@ -13,7 +13,7 @@
 #include "IPFrame.h"
 #include "IPDetectorLine.h"
 #include "IPDetectorCurve.h"
-#include "IPDetectorCorner.h"
+//#include "IPDetectorCorner.h"
 
 using namespace android;
 

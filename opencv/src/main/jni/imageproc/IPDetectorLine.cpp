@@ -80,10 +80,10 @@ int IPDetectorLine::detect(
 //	std::vector<const DetectRec_t *> possibles;		// 可能性のある輪郭
 	possibles.clear();
 
-#if CALC_COEFFS
-	cv::Mat work = src;
-	cv::threshold(work, work, 10, 255, CV_THRESH_BINARY);
-#endif
+//#if CALC_COEFFS
+//	cv::Mat work = src;
+//	cv::threshold(work, work, 10, 255, CV_THRESH_BINARY);
+//#endif
 	// 検出した輪郭の数分ループする
 	for (auto iter = contours.begin(); iter != contours.end(); iter++) {
 		DetectRec_t *rec = &(*iter);		// 輪郭レコード
@@ -101,13 +101,13 @@ int IPDetectorLine::detect(
 		if (param.show_detects) {
 			cv::polylines(result_frame, rec->contour, true, COLOR_ACUA, 2);
 		}
-#if CALC_COEFFS
-		// 細線化して3次スプライン近似
-		if (calcCoeffs(work, rec->contour, rec->coeffs)) continue;
-		if (param.show_detects) {
-			drawSpline(result_frame);
-		}
-#endif
+//#if CALC_COEFFS
+//		// 細線化して3次スプライン近似
+//		if (calcCoeffs(work, rec->contour, rec->coeffs)) continue;
+//		if (param.show_detects) {
+//			drawSpline(result_frame);
+//		}
+//#endif
 		// 輪郭のHu momentを計算
 		cv::HuMoments(rec->moments, hu_moments);
 		// 基準値と比較, メソッド1は時々一致しない, メソッド2,3だとほとんど一致しない, 完全一致なら0が返る
