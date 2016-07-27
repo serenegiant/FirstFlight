@@ -2,7 +2,6 @@ package jp.co.rediscovery.firstflight;
 
 import android.content.Context;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,7 @@ import java.util.Locale;
 
 /** デバイス内の動画・静止画一覧表示するためのAdapter */
 public class ARMediaObjectListAdapter extends ArrayAdapter<ARMediaObject> {
-	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること
+//	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること
 	private static final String TAG = ARMediaObjectListAdapter.class.getSimpleName();
 
 	private final SimpleDateFormat mDurationFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
@@ -64,7 +63,6 @@ public class ARMediaObjectListAdapter extends ArrayAdapter<ARMediaObject> {
 					holder.datetime.setText(DateUtils.formatDateTime(getContext(), date.getTime(),
 						DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME));
 				} catch (ParseException e) {
-					if (DEBUG) Log.w(TAG, "dateStr:" + dateStr, e);
 					holder.datetime.setText(dateStr);
 				}
 			}

@@ -56,13 +56,9 @@ public class AutoPilotFragment extends BaseAutoPilotFragment {
 			mImageProcessor.setBrightness(mBrightness);
 			applyExtractRange(mExtractRangeH, mExtractRangeS, mExtractRangeV);
 			mImageProcessor.enableExtraction(mEnableGLESExtraction);
-//			mImageProcessor.enableNativeExtract(mEnableNativeExtraction);
-//			mImageProcessor.enableNativeCanny(mEnableNativeCanny);
-//			mImageProcessor.trapeziumRate(mTrapeziumRate);
 			mImageProcessor.setAreaLimit(mAreaLimitMin, AREA_LIMIT_MAX);
 			mImageProcessor.setAreaErrLimit(mAreaErrLimit1, mAreaErrLimit2);
 			mImageProcessor.setAspectLimit(mAspectLimitMin);
-//			mImageProcessor.setMaxThinningLoop(mMaxThinningLoop);
 //			mImageProcessor.setFillInnerContour(mFillContour);
 			mImageProcessor.start(processing_width, processing_height);	// これも処理サイズ
 			final Surface surface = mImageProcessor.getSurface();
@@ -95,7 +91,6 @@ public class AutoPilotFragment extends BaseAutoPilotFragment {
 		final Vector scale = new Vector((float)mScaleX, (float)mScaleY, (float)mScaleZ);
 		float scaleR = (float)mScaleR;
 		float directionalReverseBias = mTraceDirectionalReverseBias;
-//		float curvature = 0.0f; // mTraceCurvature;
 		float sensitivity = mTraceSensitivity;
 		//
 		final Vector dir = new Vector(0.0f, flightSpeed, 0.0f).rotate(0.0f, 0.0f, flightAngleYaw);
@@ -114,7 +109,6 @@ public class AutoPilotFragment extends BaseAutoPilotFragment {
 			scaleR = (float)mScaleR;
 			dir.set(0.0f, flightSpeed, 0.0f).rotateXY(flightAngleYaw);
 			directionalReverseBias = mTraceDirectionalReverseBias;
-//			curvature = mTraceCurvature;
 			sensitivity = mTraceSensitivity;
 			if (mMovingAveTap != mTraceMovingAveTap) {
 				createMovingAve(mTraceMovingAveTap);
@@ -238,10 +232,6 @@ public class AutoPilotFragment extends BaseAutoPilotFragment {
 				if (Math.abs(calcValue.angle - ellipse_angle) > 10.0f) {
 					calcValue.angle = ellipse_angle;
 				}
-				break;
-			}
-			case 2: // TYPE_CORNER
-			{
 				break;
 			}
 			}	// switch (rec.type)

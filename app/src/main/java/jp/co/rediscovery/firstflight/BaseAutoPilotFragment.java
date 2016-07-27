@@ -32,6 +32,7 @@ import android.widget.Toast;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import jp.co.rediscovery.arflight.DroneStatus;
 import jp.co.rediscovery.arflight.ICameraController;
@@ -50,14 +51,17 @@ import static jp.co.rediscovery.firstflight.AutoPilotConst.*;
 
 /** 画像解析により飛行するための操縦画面Fragmentの基本クラス */
 public abstract class BaseAutoPilotFragment extends BasePilotFragment {
-	private static final boolean DEBUG = false; // FIXME 実働時はfalseにすること
+//	private static final boolean DEBUG = false; // FIXME 実働時はfalseにすること
 	private final String TAG = "BaseAutoPilotFragment:" + getClass().getSimpleName();
 
 	public static final int MODE_TRACE = 0;
 	public static final int MODE_TRACKING = 1;
 
+	private final Object mCtrlSync = new Object();
+
 	protected int mMode;
-	private ViewGroup mControllerFrame;		// 操作パネル全体
+
+//	private ViewGroup mControllerFrame;		// 操作パネル全体
 
 	// 上パネル
 	private View mTopPanel;
@@ -85,7 +89,6 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 	protected SurfaceView mDetectView;
 	protected ImageProcessor mImageProcessor;
 	protected ControlTask mControlTask;
-//	protected Switch mAutoWhiteBlanceSw;
 	protected TextView mTraceTv1, mTraceTv2, mTraceTv3;
 	private TextView mCpuLoadTv;
 	private TextView mFpsSrcTv, mFpsResultTv;
@@ -103,7 +106,6 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 
 	@Override
 	public void onDetach() {
-		if (DEBUG) Log.v(TAG, "onDetach");
 		mPref = null;
 		super.onDetach();
 	}
@@ -140,15 +142,10 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		mCameraPan = getInt(mPref, KEY_CAMERA_PAN, DEFAULT_CAMERA_PAN);
 		mCameraTilt = getInt(mPref, KEY_CAMERA_TILT, DEFAULT_CAMERA_TILT);
 		//
-//		mAutoWhiteBlance = mPref.getBoolean(KEY_AUTO_WHITE_BLANCE, false);
 		mExposure = mPref.getFloat(KEY_EXPOSURE, DEFAULT_EXPOSURE);
 		mSaturation = mPref.getFloat(KEY_SATURATION, DEFAULT_SATURATION);
 		mBrightness = mPref.getFloat(KEY_BRIGHTNESS, DEFAULT_BRIGHTNESS);
-//		mPosterize = mPref.getFloat(KEY_POSTERIZE, DEFAULT_POSTERIZE);
-//		mEnablePosterize = mPref.getBoolean(KEY_ENABLE_POSTERIZE, false);
 		mBinarizeThreshold = mPref.getFloat(KEY_BINARIZE_THRESHOLD, DEFAULT_BINARIZE_THRESHOLD);
-//		mTrapeziumRate = (float)Double.parseDouble(mPref.getString(KEY_TRAPEZIUM_RATE, "0.0"));
-//		if (Math.abs(mTrapeziumRate) < 0.01f) mTrapeziumRate = 0.0f;
 		//
 		mExtractH = mPref.getFloat(KEY_EXTRACT_H, DEFAULT_EXTRACT_H);
 		mExtractRangeH = mPref.getFloat(KEY_EXTRACT_RANGE_H, DEFAULT_EXTRACT_RANGE_H);
@@ -158,13 +155,6 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		mExtractRangeV = mPref.getFloat(KEY_EXTRACT_RANGE_V, DEFAULT_EXTRACT_RANGE_V);
 		//
 		mEnableGLESExtraction = mPref.getBoolean(KEY_ENABLE_EXTRACTION, DEFAULT_ENABLE_EXTRACTION);
-//		mGLESSmoothType = getInt(mPref, KEY_SMOOTH_TYPE, DEFAULT_SMOOTH_TYPE);
-//		mEnableGLESCanny = mPref.getBoolean(KEY_ENABLE_EDGE_DETECTION, DEFAULT_ENABLE_EDGE_DETECTION);
-//		mFillContour = mPref.getBoolean(KEY_FILL_INNER_CONTOUR, DEFAULT_FILL_INNER_CONTOUR);
-//		mEnableNativeExtraction = mPref.getBoolean(KEY_ENABLE_NATIVE_EXTRACTION, false);
-//		mEnableNativeCanny = mPref.getBoolean(KEY_ENABLE_NATIVE_EDGE_DETECTION, DEFAULT_ENABLE_NATIVE_EDGE_DETECTION);
-//		mNativeSmoothType = getInt(mPref, KEY_NATIVE_SMOOTH_TYPE, DEFAULT_NATIVE_SMOOTH_TYPE);
-//		mMaxThinningLoop = getInt(mPref, KEY_NATIVE_MAX_THINNING_LOOP, DEFAULT_NATIVE_MAX_THINNING_LOOP);
 		//
 		mAreaLimitMin = mPref.getFloat(KEY_AREA_LIMIT_MIN, DEFAULT_AREA_LIMIT_MIN);
 		mAspectLimitMin = mPref.getFloat(KEY_ASPECT_LIMIT_MIN, DEFAULT_ASPECT_LIMIT_MIN);
@@ -175,7 +165,6 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		mTraceSpeed = mPref.getFloat(KEY_TRACE_SPEED, DEFAULT_TRACE_SPEED);
 		mTraceAltitudeEnabled = mPref.getBoolean(KEY_TRACE_ALTITUDE_ENABLED, DEFAULT_TRACE_ALTITUDE_ENABLED);
 		mTraceAltitude = Math.min(mPref.getFloat(KEY_TRACE_ALTITUDE, DEFAULT_TRACE_ALTITUDE), mFlightController.getMaxAltitude().current());
-//		mTraceCurvature = mPref.getFloat(KEY_TRACE_CURVATURE, DEFAULT_TRACE_CURVATURE);
 		mTraceDirectionalReverseBias = mPref.getFloat(KEY_TRACE_DIR_REVERSE_BIAS, DEFAULT_TRACE_DIR_REVERSE_BIAS);
 		mTraceMovingAveTap = mPref.getInt(KEY_TRACE_MOVING_AVE_TAP, DEFAULT_TRACE_MOVING_AVE_TAP);
 		mTraceDecayRate = mPref.getFloat(KEY_TRACE_DECAY_RATE, DEFAULT_TRACE_DECAY_RATE);
@@ -186,8 +175,8 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 
 		final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_pilot_auto, container, false);
 
-		mControllerFrame = (ViewGroup) rootView.findViewById(R.id.controller_frame);
-		mControllerFrame.setOnClickListener(mOnClickListener);
+		final ViewGroup controllerFrame = (ViewGroup) rootView.findViewById(R.id.controller_frame);
+		controllerFrame.setOnClickListener(mOnClickListener);
 
 // 上パネル
 		mTopPanel = rootView.findViewById(R.id.top_panel);
@@ -272,7 +261,6 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 	private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
 		@Override
 		public void onClick(final View view) {
-//			if (DEBUG) Log.v(TAG, "onClick:" + view);
 			switch (view.getId()) {
 			case R.id.flat_trim_btn:
 				// フラットトリム
@@ -442,7 +430,6 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 	@Override
 	protected void onConnect(final IDeviceController controller) {
 		super.onConnect(controller);
-		if (DEBUG) Log.v(TAG, "onConnect");
 		if (controller instanceof ICameraController) {
 			final ICameraController camera = (ICameraController)controller;
 			originalExposure = camera.exposure();
@@ -461,7 +448,6 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 
 	@Override
 	protected void onDisconnect(final IDeviceController controller) {
-		if (DEBUG) Log.v(TAG, "onDisconnect");
 		clearAutoPilot();	// 自動操縦解除
 		stopImageProcessor();
 		if (controller instanceof ICameraController) {
@@ -476,14 +462,9 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 
 	@Override
 	protected void startVideoStreaming() {
-		if (DEBUG) Log.v(TAG, "startVideoStreaming:");
 		super.startVideoStreaming();
 		try {
-			startImageProcessor(
-				512, 256
-//				VideoStream.VIDEO_HEIGHT >>> 1, VideoStream.VIDEO_HEIGHT
-//				VideoStream.VIDEO_HEIGHT, VideoStream.VIDEO_HEIGHT
-			);
+			startImageProcessor(512, 256);
 		} catch (final Exception e) {
 			Log.w(TAG, e);
 		}
@@ -491,7 +472,6 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 
 	@Override
 	protected void stopVideoStreaming() {
-		if (DEBUG) Log.v(TAG, "stopVideoStreaming:");
 		clearAutoPilot();	// 自動操縦解除
 		stopImageProcessor();
 		super.stopVideoStreaming();
@@ -561,20 +541,18 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 			final int video_recording_state = getVideoRecordingState();
 			final boolean is_connected = isStarted();
 			final boolean can_fly = alarm_state == DroneStatus.ALARM_NON;
-			final boolean can_flattrim = can_fly && (state == IFlightController.STATE_STARTED);
-			final boolean can_config = can_flattrim;
+			final boolean can_config = can_fly && (state == IFlightController.STATE_STARTED);
 			final boolean is_battery_alarm
 				= (alarm_state == DroneStatus.ALARM_BATTERY) || (alarm_state == DroneStatus.ALARM_BATTERY_CRITICAL);
 
 			// 上パネル
 			mTopPanel.setEnabled(is_connected);
-			mFlatTrimBtn.setEnabled(can_flattrim);	// フラットトリム
+			mFlatTrimBtn.setEnabled(can_config);	// フラットトリム
 			mBatteryLabel.setTextColor(is_battery_alarm ? 0xffff0000 : 0xff9400d3);
-			mConfigShowBtn.setEnabled(can_flattrim);
-			mConfigShowBtn.setColorFilter(can_flattrim ? 0 : DISABLE_COLOR);
+			mConfigShowBtn.setEnabled(can_config);
+			mConfigShowBtn.setColorFilter(can_config ? 0 : DISABLE_COLOR);
 
 			// 下パネル
-//			mBottomPanel.setEnabled(is_connected);
 			mEmergencyBtn.setEnabled(is_connected);	// 非常停止
 			mCopilotBtn.setEnabled(is_connected);	// コパイロット
 			mCopilotBtn.setColorFilter(
@@ -651,7 +629,6 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 	 * @param isError
 	 */
 	protected void onStopAutoPilot(final boolean isError) {
-		if (DEBUG) Log.v(TAG, "onStopAutoPilot:");
 		mVibrator.vibrate(100);
 		clearAutoPilot();	// 自動操縦解除
 		updateButtons();
@@ -757,17 +734,16 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 	}
 
 	protected void setMove(final float roll, final float pitch, final float gaz, final float yaw, final float decay_rate) {
-//		if (DEBUG) Log.v(TAG, String.format("ControlTask#setMove:%f,%f,%f,%f", roll, pitch, gaz, yaw));
-		if (mControlTask != null) {
-			synchronized (mControlTask) {
+		synchronized (mCtrlSync) {
+			if (mControlTask != null) {
 				mControlTask.roll = roll;
 				mControlTask.pitch = pitch;
 				mControlTask.gaz = gaz;
 				mControlTask.yaw = yaw;
 				mControlTask.decayRate = decay_rate;
 				mControlTask.requested = true;
-				mControlTask.notify();
 			}
+			mCtrlSync.notify();
 		}
 	}
 
@@ -937,7 +913,7 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 							} else {
 								startTime = -1L;
 							}
-							final String m3 = String.format("p(%5.1f,%5.1f,%5.1f,%5.1f)", mPilotValue.x, mPilotValue.y, mPilotValue.z, mPilotValue.angle);
+							final String m3 = String.format(Locale.US, "p(%5.1f,%5.1f,%5.1f,%5.1f)", mPilotValue.x, mPilotValue.y, mPilotValue.z, mPilotValue.angle);
 							final String m1 = msg1;
 							final String m2 = msg2;
 							runOnUiThread(new Runnable() {
@@ -985,8 +961,7 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 
 		@Override
 		public void run() {
-			if (DEBUG) Log.v(TAG, "ControlTask#run:start");
-			float local_roll = 0.0f, local_pitch = 0.0f, local_gaz = 0.0f, local_yaw = 0.0f;
+			float local_roll = 0.0f, local_pitch = 0.0f, local_gaz, local_yaw = 0.0f;
 			// 少しスレッドの優先順位を上げる
 			Process.setThreadPriority(Process. THREAD_PRIORITY_DISPLAY);	// -4
 			for (; mIsRunning ; ) {
@@ -1024,7 +999,6 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 				// ignore
 			}
 			clearAutoPilot();
-			if (DEBUG) Log.v(TAG, "ControlTask#run:finished");
 		}
 	}
 
@@ -1092,7 +1066,7 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 				rec.ellipseAngle = result[11];	// 楕円の回転角
 				// 重心座標
 				rec.center.set(result[12], result[13], 0.0f);
-				// 処理時間
+				// 概算処理時間
 				rec.processingTimeMs = (long)(result[19]);
 				// キュー内に最大数入っていたら先頭(一番古いもの)をプールに戻す(と言っても最新１つしか保持しないけど)
 				for ( ; mQueue.size() > MAX_QUEUE ; ) {
@@ -1131,6 +1105,7 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 			addAll(entries);
 		}
 
+		@SuppressWarnings("deprecation")
 		@Override
 		public View getView(final int position, final View convertView, final ViewGroup parent) {
 			final View rootView = super.getView(position, convertView, parent);
@@ -1151,45 +1126,11 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		}
 	}
 
-//	private static class SmoothTypeAdapter extends ArrayAdapter<String> {
-//		private final String[] values;
-//		public SmoothTypeAdapter(final Context context) {
-//			super(context, android.R.layout.simple_dropdown_item_1line);
-//			values = context.getResources().getStringArray(R.array.trace_smooth_value2);
-//			final String[] entries = context.getResources().getStringArray(R.array.trace_smooth_entries);
-//			addAll(entries);
-//		}
-//
-//		@Override
-//		public View getView(final int position, final View convertView, final ViewGroup parent) {
-//			final View rootView = super.getView(position, convertView, parent);
-//			changeColor(rootView, getContext().getResources().getColor(R.color.WHITE));
-//			return rootView;
-//		}
-//
-//		private void changeColor(final View view, final int cl) {
-//			if (view instanceof TextView) {
-//				((TextView)view).setTextColor(cl);
-//			} else if (view instanceof ViewGroup) {
-//				final ViewGroup parent = (ViewGroup)view;
-//				final int n = parent.getChildCount();
-//				for (int i = 0; i < n; i++) {
-//					changeColor(parent.getChildAt(i), cl);
-//				}
-//			}
-//		}
-//	}
-
 	private final AdapterView.OnItemSelectedListener mOnItemSelectedListener
 		= new AdapterView.OnItemSelectedListener() {
 		@Override
 		public void onItemSelected(final AdapterView<?> parent, final View view, final int position, final long id) {
 			switch (parent.getId()) {
-//			case R.id.use_native_smooth_spinner:
-//				if (mImageProcessor != null) {
-//					mImageProcessor.nativeSmoothType(position % 4);
-//				}
-//				break;
 			case R.id.camera_white_blance_spinner:
 				final int white_blance = position - 1;
 				if (mCameraAutoWhiteBlance != white_blance) {
@@ -1208,11 +1149,6 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		@Override
 		public void onNothingSelected(final AdapterView<?> parent) {
 			switch (parent.getId()) {
-//			case R.id.use_native_smooth_spinner:
-//				if (mImageProcessor != null) {
-//					mImageProcessor.nativeSmoothType(0);
-//				}
-//				break;
 			case R.id.camera_white_blance_spinner:
 				if (mController instanceof ICameraController) {
 					((ICameraController)mController).sendAutoWhiteBalance(0);
@@ -1230,12 +1166,6 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		@Override
 		public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
 			switch (buttonView.getId()) {
-//			case R.id.white_balance_sw:
-//				((ICameraController)mController).sendAutoWhiteBalance(isChecked ? 0 : -1);
-//				if (mPref != null) {
-//					mPref.edit().putBoolean(KEY_AUTO_WHITE_BLANCE, isChecked).apply();
-//				}
-//				break;
 			case R.id.use_extract_sw:
 				if (mImageProcessor != null) {
 					mEnableGLESExtraction = isChecked;
@@ -1245,48 +1175,12 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 					mPref.edit().putBoolean(KEY_ENABLE_EXTRACTION, isChecked).apply();
 				}
 				break;
-//			case R.id.use_canny_sw:
-//				if (mImageProcessor != null) {
-//					mEnableGLESCanny = isChecked;
-//					mImageProcessor.enableCanny(isChecked);
-//				}
-//				if (mPref != null) {
-//					mPref.edit().putBoolean(KEY_ENABLE_EDGE_DETECTION, isChecked).apply();
-//				}
-//				break;
-//			case R.id.use_native_extract_sw:
-//				if (mImageProcessor != null) {
-//					mEnableNativeExtraction = isChecked;
-//					mImageProcessor.enableNativeExtract(isChecked);
-//				}
-//				if (mPref != null) {
-//					mPref.edit().putBoolean(KEY_ENABLE_NATIVE_EXTRACTION, isChecked).apply();
-//				}
-//				break;
 //			case R.id.use_fill_contour_sw:
 //				if (mImageProcessor != null) {
 //					mImageProcessor.setFillInnerContour(isChecked);
 //				}
 //				if (mPref != null) {
 //					mPref.edit().putBoolean(KEY_FILL_INNER_CONTOUR, isChecked).apply();
-//				}
-//				break;
-//			case R.id.use_native_canny_sw:
-//				if (mImageProcessor != null) {
-//					mEnableNativeCanny = isChecked;
-//					mImageProcessor.enableNativeCanny(isChecked);
-//				}
-//				if (mPref != null) {
-//					mPref.edit().putBoolean(KEY_ENABLE_NATIVE_EDGE_DETECTION, isChecked).apply();
-//				}
-//				break;
-//			case R.id.use_posterize_sw:
-//				if (mImageProcessor != null) {
-//					mEnablePosterize = isChecked;
-//					mImageProcessor.enablePosterize(isChecked);
-//				}
-//				if (mPref != null) {
-//					mPref.edit().putBoolean(KEY_ENABLE_POSTERIZE, isChecked).apply();
 //				}
 //				break;
 			case R.id.trace_flight_altitude_enable_switch:
@@ -1298,15 +1192,6 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 					mPref.edit().putBoolean(KEY_TRACE_ALTITUDE_ENABLED, mTraceAltitudeEnabled).apply();
 				}
 				break;
-//			case R.id.curvature_sw:
-//				synchronized (mParamSync) {
-//					mTraceCurvature = isChecked ? 1.0f : 0.0f;
-//					mReqUpdateParams = true;
-//				}
-//				if (mPref != null) {
-//					mPref.edit().putFloat(KEY_TRACE_CURVATURE, mTraceCurvature).apply();
-//				}
-//				break;
 			}
 		}
 	};
@@ -1387,16 +1272,6 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 					updateBrightness(brightness);
 				}
 				break;
-//			case R.id.posterize_seekbar:
-//				final float posterize = progress + 1;
-//				if (mPosterize != posterize) {
-//					mPosterize = posterize;
-//					if (mImageProcessor != null) {
-//						mImageProcessor.setPosterize(posterize);
-//					}
-//					updatePosterize(posterize);
-//				}
-//				break;
 			case R.id.binarize_threshold_seekbar:
 				final float threshold = progress / 100.0f;
 				if (mBinarizeThreshold != threshold) {
@@ -1407,25 +1282,6 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 					updateBinarizeThreshold(threshold);
 				}
 				break;
-//			case R.id.trapezium_rate_seekbar:
-//				final float trapezium_rate = progressToTrapeziumRate(progress);
-//				if (mTrapeziumRate != trapezium_rate) {
-//					mTrapeziumRate = trapezium_rate;
-//					if (mImageProcessor != null) {
-//						mImageProcessor.trapeziumRate(trapezium_rate);
-//					}
-//					updateTrapeziumRate(trapezium_rate);
-//				}
-//				break;
-//			case R.id.max_thinning_loop_seekbar:
-//				if (mMaxThinningLoop != progress) {
-//					mMaxThinningLoop = progress;
-//					if (mImageProcessor != null) {
-//						mImageProcessor.setMaxThinningLoop(progress);
-//					}
-//					updateMaxThinningLoop(progress);
-//				}
-//				break;
 			case R.id.extract_range_h_seekbar:
 				final float range_h = progress / 100.0f;
 				if (mExtractRangeH != range_h) {
@@ -1602,26 +1458,11 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 					mPref.edit().putFloat(KEY_BRIGHTNESS, mBrightness).apply();
 				}
 				break;
-//			case R.id.posterize_seekbar:
-//				if (mPref != null) {
-//					mPref.edit().putFloat(KEY_POSTERIZE, mPosterize).apply();
-//				}
-//				break;
 			case R.id.binarize_threshold_seekbar:
 				if (mPref != null) {
 					mPref.edit().putFloat(KEY_BINARIZE_THRESHOLD, mBinarizeThreshold).apply();
 				}
 				break;
-//			case R.id.trapezium_rate_seekbar:
-//				if (mPref != null) {
-//					mPref.edit().putString(KEY_TRAPEZIUM_RATE, Double.toString(mTrapeziumRate)).apply();
-//				}
-//				break;
-//			case R.id.max_thinning_loop_seekbar:
-//				if (mPref != null) {
-//					mPref.edit().putInt(KEY_NATIVE_MAX_THINNING_LOOP, mMaxThinningLoop).apply();
-//				}
-//				break;
 			case R.id.extract_range_h_seekbar:
 				if (mPref != null) {
 					mPref.edit().putFloat(KEY_EXTRACT_RANGE_H, mExtractRangeH).apply();
@@ -1922,47 +1763,28 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 	private String mExposureFormat;
 	private String mSaturationFormat;
 	private String mBrightnessFormat;
-//	private String mPosterizeFormat;
 	private String mBinarizeThresholdFormat;
-//	private String mTrapeziumRateFormat;
 	private TextView mExposureLabel;
 	private TextView mSaturationLabel;
 	private TextView mBrightnessLabel;
-//	private TextView mPosterizeLabel;
 	private TextView mBinarizeThresholdLabel;
-//	private TextView mTrapeziumRateLabel;
-//	/** ホワイトバランス */
-//	protected boolean mAutoWhiteBlance;
 	/** 露出 */
 	protected float mExposure;
 	/** 彩度 */
 	protected float mSaturation;
 	/** 明るさ */
 	protected float mBrightness;
-//	/** ポスタライズ */
-//	protected boolean mEnablePosterize;
-//	protected float mPosterize;
 	/** 2値化閾値 */
 	protected float mBinarizeThreshold;
-	/** 台形補正係数 */
-//	protected float mTrapeziumRate;
 
 	private void initPreprocess(final View rootView) {
 		mExposureFormat = getString(R.string.trace_use_exposure);
 		mSaturationFormat = getString(R.string.trace_use_saturation);
 		mBrightnessFormat = getString(R.string.trace_use_brightness);
-//		mPosterizeFormat = getString(R.string.trace_use_posterize);
 		mBinarizeThresholdFormat = getString(R.string.trace_binarize_threshold);
-//		mTrapeziumRateFormat = getString(R.string.trace_trapezium_rate);
 
-		Switch sw;
 		SeekBar sb;
 		Button btn;
-//		// ホワイトバランス
-//		mAutoWhiteBlance = mPref.getBoolean(KEY_AUTO_WHITE_BLANCE, true);
-//		mAutoWhiteBlanceSw = (Switch)rootView.findViewById(R.id.white_balance_sw);
-//		mAutoWhiteBlanceSw.setChecked(mAutoWhiteBlance);
-//		mAutoWhiteBlanceSw.setOnCheckedChangeListener(mOnCheckedChangeListener);
 		// 露出
 		mExposure = mPref.getFloat(KEY_EXPOSURE, DEFAULT_EXPOSURE);
 		mExposureLabel = (TextView)rootView.findViewById(R.id.exposure_textview);
@@ -1987,18 +1809,6 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		sb.setProgress((int)(mBrightness * 100.0f) + 100);	// [-1.0f, +1.0f] => [0, 200]
 		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateBrightness(mBrightness);
-//		// ポスタライズ
-//		mPosterize = mPref.getFloat(KEY_POSTERIZE, DEFAULT_POSTERIZE);
-//		mPosterizeLabel = (TextView)rootView.findViewById(R.id.posterize_textview);
-//		sb = (SeekBar)rootView.findViewById(R.id.posterize_seekbar);
-//		sb.setMax(255);
-//		sb.setProgress((int)(mPosterize - 1));	// [1, 256] => [0, 255]
-//		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
-//		mEnablePosterize = mPref.getBoolean(KEY_ENABLE_POSTERIZE, false);
-//		sw = (Switch)rootView.findViewById(R.id.use_posterize_sw);
-//		sw.setChecked(mEnablePosterize);
-//		sw.setOnCheckedChangeListener(mOnCheckedChangeListener);
-//		updatePosterize(mPosterize);
 		// 二値化閾値
 		mBinarizeThreshold = mPref.getFloat(KEY_BINARIZE_THRESHOLD, DEFAULT_BINARIZE_THRESHOLD);
 		mBinarizeThresholdLabel = (TextView)rootView.findViewById(R.id.binarize_threshold_textview);
@@ -2007,24 +1817,13 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		sb.setProgress((int)(mBinarizeThreshold * 100.0f));	// [0.0f, +1.0f] => [0, 100]
 		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateBinarizeThreshold(mBinarizeThreshold);
-//		// 台形補正係数
-//		mTrapeziumRate = (float)Double.parseDouble(mPref.getString(KEY_TRAPEZIUM_RATE, "0.0"));
-//		if (Math.abs(mTrapeziumRate) < 0.01f) mTrapeziumRate = 0.0f;
-//		mTrapeziumRateLabel = (TextView)rootView.findViewById(R.id.trapezium_rate_textview);
-//		sb = (SeekBar)rootView.findViewById(R.id.trapezium_rate_seekbar);
-//		sb.setMax(4000);
-//		sb.setProgress(trapeziumRateToProgress(mTrapeziumRate));	// [-2.0f, +2.0f] => [0, 4000]
-//		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
-//		updateTrapeziumRate(mTrapeziumRate);
 	}
 
 	private void releasePreprocess(final View rootView) {
 		mExposureLabel = null;
 		mSaturationLabel = null;
 		mBrightnessLabel = null;
-//		mPosterizeLabel = null;
 		mBinarizeThresholdLabel = null;
-//		mTrapeziumRateLabel = null;
 	}
 
 	private int exposureToProgress(final float exposure) {
@@ -2054,100 +1853,11 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		}
 	}
 
-//	private void updatePosterize(final float posterize) {
-//		if (mPosterizeLabel != null) {
-//			mPosterizeLabel.setText(String.format(mPosterizeFormat, posterize));
-//		}
-//	}
-
 	private void updateBinarizeThreshold(final float threshold) {
 		if (mBinarizeThresholdLabel != null) {
 			mBinarizeThresholdLabel.setText(String.format(mBinarizeThresholdFormat, threshold));
 		}
 	}
-
-//	private int trapeziumRateToProgress(final double trapezium_rate) {
-//		return (int)(trapezium_rate * 1000.0) + 2000;
-//	}
-//
-//	private float progressToTrapeziumRate(final int progress) {
-//		float trapezium_rate = (progress - 2000) / 1000.0f;
-//		if (Math.abs(trapezium_rate) < 0.01f) trapezium_rate = 0.0f;
-//		return trapezium_rate;
-//	}
-//
-//	private void updateTrapeziumRate(final double trapezium_rate) {
-//		if (mTrapeziumRateLabel != null) {
-//			mTrapeziumRateLabel.setText(String.format(mTrapeziumRateFormat, trapezium_rate));
-//		}
-//	}
-
-//--------------------------------------------------------------------------------
-//	private String mMaxThinningLoopFormat;
-//	private TextView mMaxThinningLoopLabel;
-//	/** OpenGL|ESでのエッジ検出前平滑化 */
-//	protected int mGLESSmoothType = 0;
-//	/** OpenGL|ESでエッジ検出(Canny)を行うかどうか */
-//	protected boolean mEnableGLESCanny = false;
-//	/** 輪郭内を塗り潰すかどうか */
-//	protected boolean mFillContour = false;
-//	/** native側のエッジ検出前平滑化 */
-//	protected int mNativeSmoothType = 0;
-//	/** native側のエッジ検出(Canny)を使うかどうか */
-//	protected boolean mEnableNativeCanny = true;
-//	/** native側の細線化処理のループ回数(0なら無効) */
-//	protected int mMaxThinningLoop;
-
-	private void initPreprocess2(final View rootView) {
-		Switch sw;
-		Spinner spinner;
-		SeekBar sb;
-
-//		mMaxThinningLoopFormat = getString(R.string.trace_max_thinning_loop);
-		// OpenGL|ESのエッジ検出前平滑化
-//		mGLESSmoothType = getInt(mPref, KEY_SMOOTH_TYPE, DEFAULT_SMOOTH_TYPE);
-//		spinner = (Spinner)rootView.findViewById(R.id.use_smooth_spinner);
-//		spinner.setAdapter(new SmoothTypeAdapter(getActivity()));
-//		spinner.setOnItemSelectedListener(mOnItemSelectedListener);
-//		// OpenGL|ESでエッジ検出を行うかどうか
-//		mEnableGLESCanny = mPref.getBoolean(KEY_ENABLE_EDGE_DETECTION, DEFAULT_ENABLE_EDGE_DETECTION);
-//		sw = (Switch)rootView.findViewById(R.id.use_canny_sw);
-//		sw.setChecked(mEnableGLESCanny);
-//		sw.setOnCheckedChangeListener(mOnCheckedChangeListener);
-//		// 輪郭内を塗りつぶすかどうか
-//		mFillContour = mPref.getBoolean(KEY_FILL_INNER_CONTOUR, DEFAULT_FILL_INNER_CONTOUR);
-//		sw = (Switch)rootView.findViewById(R.id.use_fill_contour_sw);
-//		sw.setChecked(mFillContour);
-//		sw.setOnCheckedChangeListener(mOnCheckedChangeListener);
-//		// Native側のCannyを使うかどうか
-//		mEnableNativeCanny = mPref.getBoolean(KEY_ENABLE_NATIVE_EDGE_DETECTION, DEFAULT_ENABLE_NATIVE_EDGE_DETECTION);
-//		sw = (Switch)rootView.findViewById(R.id.use_native_canny_sw);
-//		sw.setChecked(mEnableNativeCanny);
-//		sw.setOnCheckedChangeListener(mOnCheckedChangeListener);
-//		// native側のエッジ検出前フィルタ
-//		mNativeSmoothType = getInt(mPref, KEY_NATIVE_SMOOTH_TYPE, DEFAULT_NATIVE_SMOOTH_TYPE);
-//		spinner = (Spinner)rootView.findViewById(R.id.use_native_smooth_spinner);
-//		spinner.setAdapter(new SmoothTypeAdapter(getActivity()));
-//		spinner.setOnItemSelectedListener(mOnItemSelectedListener);
-//		// native側の細線化処理
-//		mMaxThinningLoop = getInt(mPref, KEY_NATIVE_MAX_THINNING_LOOP, DEFAULT_NATIVE_MAX_THINNING_LOOP);
-//		mMaxThinningLoopLabel = (TextView)rootView.findViewById(R.id.max_thinning_loop_textview);
-//		sb = (SeekBar)rootView.findViewById(R.id.max_thinning_loop_seekbar);
-//		sb.setMax(20);
-//		sb.setProgress(mMaxThinningLoop);
-//		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
-//		updateMaxThinningLoop(mMaxThinningLoop);
-	}
-
-	private void releasePreprocess2(final View rootView) {
-//		mMaxThinningLoopLabel = null;
-	}
-
-//	private void updateMaxThinningLoop(final int max_loop) {
-//		if (mMaxThinningLoopLabel != null) {
-//			mMaxThinningLoopLabel.setText(String.format(mMaxThinningLoopFormat, max_loop));
-//		}
-//	}
 
 //--------------------------------------------------------------------------------
 	private String mExtractRangeHFormat;
@@ -2161,10 +1871,6 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 	private SeekBar mExtractRangeVSeekbar;
 	/** OpenGL|ESで色抽出を行うかどうか  */
 	protected boolean mEnableGLESExtraction = false;
-//	/** 色抽出範囲設定(HSV上下限) */
-//	protected final int[] EXTRACT_COLOR_HSV_LIMIT = new int[] {0, 180, 0, 50, 120, 255};
-	/** native側の色抽出を使うかどうか */
-//	protected boolean mEnableNativeExtraction = false;
 	// 抽出色
 	protected float mExtractH;	// [0.0f, 1.0f] => [0, 180]
 	protected float mExtractS;	// [0.0f, 1.0f] => [0, 255]
@@ -2186,11 +1892,6 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		sw = (Switch)rootView.findViewById(R.id.use_extract_sw);
 		sw.setChecked(mEnableGLESExtraction);
 		sw.setOnCheckedChangeListener(mOnCheckedChangeListener);
-//		// Native側の色抽出を使うかどうか
-//		mEnableNativeExtraction = mPref.getBoolean(KEY_ENABLE_NATIVE_EXTRACTION, false);
-//		sw = (Switch)rootView.findViewById(R.id.use_native_extract_sw);
-//		sw.setChecked(mEnableNativeExtraction);
-//		sw.setOnCheckedChangeListener(mOnCheckedChangeListener);
 		// 抽出色取得
 		btn = (Button)rootView.findViewById(R.id.update_extraction_color_btn);
 		btn.setOnClickListener(mOnClickListener);
@@ -2456,7 +2157,6 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 
 	private void initAutoTrace(final View rootView) {
 		SeekBar sb;
-		Switch sw;
 		//
 		mTraceDirectionalReverseBiasFormat = getString(R.string.trace_config_trace_reverse_bias);
 		mTraceMovingAveTapFormat = getString(R.string.trace_config_moving_ave_tap);
@@ -2619,7 +2319,6 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 	 * @param root
 	 */
 	private void initConfigFlight(final View root) {
-		if (DEBUG) Log.v(TAG, "initConfigFlight:");
 		mMaxAltitudeFormat = getString(R.string.config_max_altitude);
 		mMaxTiltFormat = getString(R.string.config_max_tilt);
 		mMaxVerticalSpeedFormat = getString(R.string.config_max_vertical_speed);
@@ -2894,7 +2593,7 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 	private static PagerAdapterConfig[] PAGER_CONFIG_TRACE;
 	static {
 		//
-		PAGER_CONFIG_TRACE = new PagerAdapterConfig[9];
+		PAGER_CONFIG_TRACE = new PagerAdapterConfig[8];
 		PAGER_CONFIG_TRACE[0] = new PagerAdapterConfig(R.string.trace_config_title_camera, R.layout.trace_config_camera, new AdapterItemHandler() {
 			@Override
 			public void initialize(final BaseAutoPilotFragment parent, final View view) {
@@ -2915,17 +2614,7 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 				parent.releasePreprocess(view);
 			}
 		});
-		PAGER_CONFIG_TRACE[2] = new PagerAdapterConfig(R.string.trace_config_title_preprocess2, R.layout.trace_config_preprocess2, new AdapterItemHandler() {
-			@Override
-			public void initialize(final BaseAutoPilotFragment parent, final View view) {
-				parent.initPreprocess2(view);
-			}
-			@Override
-			public void release(final BaseAutoPilotFragment parent, final View view) {
-				parent.releasePreprocess2(view);
-			}
-		});
-		PAGER_CONFIG_TRACE[3] = new PagerAdapterConfig(R.string.trace_config_title_color_extract, R.layout.trace_config_color_extraction, new AdapterItemHandler() {
+		PAGER_CONFIG_TRACE[2] = new PagerAdapterConfig(R.string.trace_config_title_color_extract, R.layout.trace_config_color_extraction, new AdapterItemHandler() {
 			@Override
 			public void initialize(final BaseAutoPilotFragment parent, final View view) {
 				parent.initColorExtraction(view);
@@ -2935,7 +2624,7 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 				parent.releaseColorExtraction(view);
 			}
 		});
-		PAGER_CONFIG_TRACE[4] = new PagerAdapterConfig(R.string.trace_config_title_detect, R.layout.trace_config_detect, new AdapterItemHandler() {
+		PAGER_CONFIG_TRACE[3] = new PagerAdapterConfig(R.string.trace_config_title_detect, R.layout.trace_config_detect, new AdapterItemHandler() {
 			@Override
 			public void initialize(final BaseAutoPilotFragment parent, final View view) {
 				parent.initDetect(view);
@@ -2945,7 +2634,7 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 				parent.releaseDetect(view);
 			}
 		});
-		PAGER_CONFIG_TRACE[5] = new PagerAdapterConfig(R.string.trace_config_title_auto_trace, R.layout.trace_config_auto_trace, new AdapterItemHandler() {
+		PAGER_CONFIG_TRACE[4] = new PagerAdapterConfig(R.string.trace_config_title_auto_trace, R.layout.trace_config_auto_trace, new AdapterItemHandler() {
 			@Override
 			public void initialize(final BaseAutoPilotFragment parent, final View view) {
 				parent.initAutoTrace(view);
@@ -2955,7 +2644,7 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 				parent.releaseAutoTrace(view);
 			}
 		});
-		PAGER_CONFIG_TRACE[6] = new PagerAdapterConfig(R.string.trace_config_title_auto_trace2, R.layout.trace_config_auto_trace2, new AdapterItemHandler() {
+		PAGER_CONFIG_TRACE[5] = new PagerAdapterConfig(R.string.trace_config_title_auto_trace2, R.layout.trace_config_auto_trace2, new AdapterItemHandler() {
 			@Override
 			public void initialize(final BaseAutoPilotFragment parent, final View view) {
 				parent.initAutoTrace2(view);
@@ -2965,7 +2654,7 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 				parent.releaseAutoTrace2(view);
 			}
 		});
-		PAGER_CONFIG_TRACE[7] = new PagerAdapterConfig(R.string.config_title_flight, R.layout.trace_config_flight, new AdapterItemHandler() {
+		PAGER_CONFIG_TRACE[6] = new PagerAdapterConfig(R.string.config_title_flight, R.layout.trace_config_flight, new AdapterItemHandler() {
 			@Override
 			public void initialize(final BaseAutoPilotFragment parent, final View view) {
 				parent.initConfigFlight(view);
@@ -2975,7 +2664,7 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 				parent.releaseConfigFlight(view);
 			}
 		});
-		PAGER_CONFIG_TRACE[8] = new PagerAdapterConfig(R.string.config_title_autopilot, R.layout.trace_config_autopilot, new AdapterItemHandler() {
+		PAGER_CONFIG_TRACE[7] = new PagerAdapterConfig(R.string.config_title_autopilot, R.layout.trace_config_autopilot, new AdapterItemHandler() {
 			@Override
 			public void initialize(final BaseAutoPilotFragment parent, final View view) {
 				parent.initConfigAutopilot(view);
@@ -3001,7 +2690,6 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 
 		@Override
 		public synchronized Object instantiateItem(final ViewGroup container, final int position) {
-//			if (DEBUG) Log.v(TAG, "instantiateItem:position=" + position);
 			View view = null;
 			final int n = mConfigs != null ? mConfigs.length : 0;
 			if ((position >= 0) && (position < n)) {
@@ -3017,7 +2705,6 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 
 		@Override
 		public synchronized void destroyItem(final ViewGroup container, final int position, final Object object) {
-//			if (DEBUG) Log.v(TAG, "destroyItem:position=" + position);
 			if (object instanceof View) {
 				container.removeView((View)object);
 			}
@@ -3035,7 +2722,6 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 
 		@Override
 		public CharSequence getPageTitle(final int position) {
-//			if (DEBUG) Log.v(TAG, "getPageTitle:position=" + position);
 			CharSequence result = null;
 			final int n = mConfigs != null ? mConfigs.length : 0;
 			if ((position >= 0) && (position < n)) {
@@ -3065,13 +2751,13 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		@Override
 		public void run() {
 			if (mVideoStream != null) {
-				mFpsSrcTv.setText(String.format("%5.1f", mVideoStream.updateFps().getFps()));
+				mFpsSrcTv.setText(String.format(Locale.US, "%5.1f", mVideoStream.updateFps().getFps()));
 			} else {
 				mFpsSrcTv.setText(null);
 			}
 			if (mImageProcessor != null) {
 				mImageProcessor.updateFps();
-				mFpsResultTv.setText(String.format("%5.1f", mImageProcessor.getFps()));
+				mFpsResultTv.setText(String.format(Locale.US, "%5.1f", mImageProcessor.getFps()));
 			} else {
 				mFpsResultTv.setText(null);
 			}
