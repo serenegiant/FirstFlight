@@ -19,7 +19,6 @@
 #include "IPDetectorLine.h"
 
 static double HU_MOMENTS[] = {
-//	0.383871,0.119557,0.000044,0.000022,0.000000,0.000008,0.000000
 	3.673166e-01,1.071715e-01,1.763543e-04,9.209628e-05,1.173179e-08,3.007932e-05,-3.488433e-10
 };
 
@@ -97,15 +96,12 @@ int IPDetectorLine::detect(
 		cv::HuMoments(rec->moments, hu_moments);
 		// 基準値と比較, メソッド1は時々一致しない, メソッド2,3だとほとんど一致しない, 完全一致なら0が返る
 		const float analogous = (float)compHuMoments(HU_MOMENTS, hu_moments, 1);
-		// Hu momentsが基準値との差が大きい時はスキップ
-//		if (analogous < param.mMaxAnalogous) {
-			// ラインの可能性が高い輪郭を追加
-			rec->analogous = analogous;
-			possibles.push_back(rec);
-			if (param.show_detects) {
-				cv::polylines(result_frame, rec->contour, true, COLOR_BLUE, 2);
-			}
-//		}
+		// ラインの可能性が高い輪郭を追加
+		rec->analogous = analogous;
+		possibles.push_back(rec);
+		if (param.show_detects) {
+			cv::polylines(result_frame, rec->contour, true, COLOR_BLUE, 2);
+		}
 	}
 	// 優先度の最も高いものを選択する
 	if (possibles.size() > 0) {

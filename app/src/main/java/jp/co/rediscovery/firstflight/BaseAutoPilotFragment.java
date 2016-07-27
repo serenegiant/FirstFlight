@@ -365,7 +365,6 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 	private final View.OnLongClickListener mOnLongClickListener = new View.OnLongClickListener() {
 		@Override
 		public boolean onLongClick(View view) {
-//			if (DEBUG) Log.v(TAG, "onLongClick:" + view);
 			mVibrator.vibrate(50);
 			switch (view.getId()) {
 			case R.id.flat_trim_btn:

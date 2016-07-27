@@ -151,7 +151,6 @@ public:
 	bool needs_result;	// これは内部計算
 	bool show_src;		// これは内部計算
 	bool show_detects;	// これは内部計算
-//	cv::Mat perspectiveTransform;	// 透視変換行列, 台形歪補正用, 内部計算
 	// 幅と高さはchangedにかかわらず毎フレーム更新
 	int width, height;
 
@@ -167,8 +166,6 @@ public:
 		mAreaErrLimit1 = src.mAreaErrLimit1;
 		mAreaErrLimit2 = src.mAreaErrLimit2;
 		mMinLineAspect = src.mMinLineAspect;
-//		mTrapeziumRate = src.mTrapeziumRate;
-//		perspectiveTransform = src.perspectiveTransform;
 		// 計算
 		needs_result = mResultFrameType != RESULT_FRAME_TYPE_NON;
 		show_src = (mResultFrameType == RESULT_FRAME_TYPE_SRC) || (mResultFrameType == RESULT_FRAME_TYPE_SRC_LINE);

@@ -49,11 +49,9 @@ ImageProcessor::ImageProcessor(JNIEnv* env, jobject weak_thiz_obj, jclass clazz)
 	mParam.mApproxFactor = 10;
 #endif
 	// 検出輪郭の内部空隙を塗りつぶすかどうか
-	mParam.mFillInnerContour = false;
+	mParam.mFillInnerContour = true;
 	// 基準図形との類似性の最大値
 	mParam.mMaxAnalogous = 200.0;
-//	// 台形補正
-//	mParam.mTrapeziumRate = 0.0;
 	// 輪郭検出時の最小/最大面積
 	mParam.mAreaLimitMin = 1000.0f;
 	mParam.mAreaLimitMax = 120000.0f;
@@ -257,7 +255,7 @@ void ImageProcessor::do_process(JNIEnv *env) {
 		if (LIKELY(!frame.empty())) {
 			try {
 //================================================================================
-// フラグ更新
+// パラメータ更新
 				mMutex.lock();
 				{
 					if (UNLIKELY(mParam.changed)) {
