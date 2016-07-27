@@ -56,6 +56,7 @@ public class AutoPilotFragment extends BaseAutoPilotFragment {
 			mImageProcessor.setBrightness(mBrightness);
 			applyExtractRange(mExtractRangeH, mExtractRangeS, mExtractRangeV);
 			mImageProcessor.enableExtraction(mEnableGLESExtraction);
+			mImageProcessor.setBinarizeThreshold(mBinarizeThreshold);
 			mImageProcessor.setAreaLimit(mAreaLimitMin, AREA_LIMIT_MAX);
 			mImageProcessor.setAreaErrLimit(mAreaErrLimit1, mAreaErrLimit2);
 			mImageProcessor.setAspectLimit(mAspectLimitMin);

@@ -1170,6 +1170,7 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 				if (mImageProcessor != null) {
 					mEnableGLESExtraction = isChecked;
 					mImageProcessor.enableExtraction(isChecked);
+					mImageProcessor.setBinarizeThreshold(mBinarizeThreshold);
 				}
 				if (mPref != null) {
 					mPref.edit().putBoolean(KEY_ENABLE_EXTRACTION, isChecked).apply();

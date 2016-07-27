@@ -60,12 +60,10 @@ public class ImageProcessor {
 	private float mSaturation;
 	private boolean mEnableExtraction;
 	private float mBinarizeThreshold = 0.5f;
-	private static final int[][] COLOR_RANGES = {
-		{0, 180, 0, 50, 120, 255},		// 白色
-		{25, 35, 120, 130, 180, 200},	// 黄色...蛍光色はこれだとだめ
+	private static final int[] DEFAULT_EXTRACT_COLOR_HSV_LIMIT = {
+		0, 180, 0, 50, 120, 255,		// 白色
 	};
-	private int COLOR_RANGE_IX = 0;
-	protected final int[] EXTRACT_COLOR_HSV_LIMIT = COLOR_RANGES[COLOR_RANGE_IX];
+	protected final int[] EXTRACT_COLOR_HSV_LIMIT = new int[6];
 
 	private final int mSrcWidth, mSrcHeight;
 	private volatile boolean requestUpdateExtractionColor;
@@ -392,7 +390,7 @@ public class ImageProcessor {
 	public int[] resetExtractionColor() {
 		final int[] temp = new int[6];
 		synchronized (mSync) {
-			System.arraycopy(COLOR_RANGES[COLOR_RANGE_IX], 0, EXTRACT_COLOR_HSV_LIMIT, 0, 6);
+			System.arraycopy(DEFAULT_EXTRACT_COLOR_HSV_LIMIT, 0, EXTRACT_COLOR_HSV_LIMIT, 0, 6);
 			applyExtractionColor();
 			System.arraycopy(EXTRACT_COLOR_HSV_LIMIT, 0, temp, 0, 6);
 		}
@@ -553,7 +551,7 @@ public class ImageProcessor {
 			mSrcDrawer = new FullFrameRect(new Texture2dProgram(Texture2dProgram.ProgramType.TEXTURE_EXT_FILT3x3));
 			mSrcDrawer.getProgram().setTexSize(WIDTH, HEIGHT);
 			mSrcDrawer.flipMatrix(true);	// 上下入れ替え
-			mSrcDrawer.getProgram().setKernel(Texture2dProgram.KERNEL_GAUSSIAN, 0.0f);		// ガウシアン(平滑化)
+//			mSrcDrawer.getProgram().setKernel(Texture2dProgram.KERNEL_GAUSSIAN, 0.0f);		// ガウシアン(平滑化)
 			mTexId = mSrcDrawer.createTextureObject();
 			mSourceTexture = new SurfaceTexture(mTexId);
 			mSourceTexture.setDefaultBufferSize(WIDTH, HEIGHT);
@@ -567,7 +565,7 @@ public class ImageProcessor {
 			// プレフィルタの準備
 			mEffectContext = EffectContext.createWithCurrentGlContext();
 			synchronized (mSync) {
-				// 自動調整(0〜1.0f, 0なら変化なし) FIXME これを有効にするとNewAPIで取得した映像がかなり暗くなってしまう, でも無効にするとGPUのドライバーがエラーを吐く
+				// 自動調整(0〜1.0f, 0なら変化なし) これを有効にするとNewAPIで取得した映像がかなり暗くなってしまう, FIXME 無効にするとGPUのドライバーがエラーを吐く
 				final MediaEffectAutoFix autofix = new MediaEffectAutoFix(mEffectContext, mEnableAutoFix ? 1.0f : 0.0f);
 				autofix.setEnable(true);
 				mEffects.add(autofix);
