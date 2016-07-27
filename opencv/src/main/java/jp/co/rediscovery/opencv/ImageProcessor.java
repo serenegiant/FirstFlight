@@ -565,9 +565,9 @@ public class ImageProcessor {
 			// プレフィルタの準備
 			mEffectContext = EffectContext.createWithCurrentGlContext();
 			synchronized (mSync) {
-				// 自動調整(0〜1.0f, 0なら変化なし) これを有効にするとNewAPIで取得した映像がかなり暗くなってしまう, FIXME 無効にするとGPUのドライバーがエラーを吐く
+				// 自動調整(0〜1.0f, 0なら変化なし) これを有効にするとNewAPIで取得した映像がかなり暗くなってしまう
 				final MediaEffectAutoFix autofix = new MediaEffectAutoFix(mEffectContext, mEnableAutoFix ? 1.0f : 0.0f);
-				autofix.setEnable(true);
+				autofix.setEnable(true);	// FIXME 無効にするとGPUのドライバーがエラーを吐くので有効にして値を0にする
 				mEffects.add(autofix);
 				// 露出調整
 				final MediaEffectExposure exposure = new MediaEffectExposure(mExposure);
@@ -675,8 +675,8 @@ public class ImageProcessor {
 			}
 			// SurfaceTextureで受け取った画像をプレフィルター用にセット
 			mMediaSource.setSource(mSrcDrawer, mTexId, mTexMatrix);
-			// プレフィルター処理
 			synchronized (mSync) {
+				// プレフィルター処理
 				for (final IEffect effect: mEffects) {
 					if (effect.enabled()) {
 						mMediaSource.apply(effect);
@@ -709,7 +709,7 @@ public class ImageProcessor {
 			// PBOのピンポンバッファを使うと約1/10の0.5ミリ秒で返ってくる
 			nativeHandleFrame(mNativePtr, mVideoWidth, mVideoHeight, 0);
 			mMediaSource.getOutputTexture().unbind();
-			// 何も描画しないとハングアップする機種があるので塗りつぶす(と言っても1x1だから気にしなくて良い)
+			// 何も描画しないとハングアップする機種があるので塗りつぶす(と言っても1x1だから負荷は気にしなくて良い)
 			makeCurrent();
 			GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 			GLES20.glFlush();
