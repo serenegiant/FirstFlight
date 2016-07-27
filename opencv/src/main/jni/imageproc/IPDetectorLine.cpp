@@ -77,13 +77,8 @@ int IPDetectorLine::detect(
 	ENTER();
 
 	double hu_moments[8];
-//	std::vector<const DetectRec_t *> possibles;		// 可能性のある輪郭
 	possibles.clear();
 
-//#if CALC_COEFFS
-//	cv::Mat work = src;
-//	cv::threshold(work, work, 10, 255, CV_THRESH_BINARY);
-//#endif
 	// 検出した輪郭の数分ループする
 	for (auto iter = contours.begin(); iter != contours.end(); iter++) {
 		DetectRec_t *rec = &(*iter);		// 輪郭レコード
@@ -95,19 +90,9 @@ int IPDetectorLine::detect(
 
 		// 最小矩形と元輪郭の面積比が大き過ぎる場合スキップ
 		if ((rec->area_rate > 1.2f) && (rec->contour.size() > 6)) continue;
-//		if (rec->area_rate > 1.5f) continue;
-//		if (rec->area_rate > 1.75f) continue;
-//		if (rec->area_rate > 2.0f) continue;
 		if (param.show_detects) {
 			cv::polylines(result_frame, rec->contour, true, COLOR_ACUA, 2);
 		}
-//#if CALC_COEFFS
-//		// 細線化して3次スプライン近似
-//		if (calcCoeffs(work, rec->contour, rec->coeffs)) continue;
-//		if (param.show_detects) {
-//			drawSpline(result_frame);
-//		}
-//#endif
 		// 輪郭のHu momentを計算
 		cv::HuMoments(rec->moments, hu_moments);
 		// 基準値と比較, メソッド1は時々一致しない, メソッド2,3だとほとんど一致しない, 完全一致なら0が返る
@@ -138,43 +123,3 @@ int IPDetectorLine::detect(
 
 	RETURN(0, int);
 }
-
-//********************************************************************************
-// 線分の検出処理(昔のテストコード)
-//********************************************************************************
-#if 0
-	std::vector<cv::Vec4i> lines;
-#if 1
-	// 確率的ハフ変換による直線検出
-	cv::HoughLinesP(src, lines,
-		2,			// 距離分解能[ピクセル]
-		CV_PI/180,	// 角度分解能[ラジアン]
-		70,			// Accumulatorのしきい値
-		20,			// 最小長さ[ピクセル]
-		20			// 2点が同一線上にあるとみなす最大距離[ピクセル]
-	);
-	// 検出結果をresultに書き込み
-	if (param.show_detects) {
-		for (size_t i = 0; i < lines.size(); i++ ) {
-			cv::Vec4i l = lines[i];
-			cv::line(bk_result, cv::Point(l[0], l[1]), cv::Point(l[2], l[3]), COLOR_RED, 3, 8);
-		}
-	}
-#else
-	// ハフ変換による直線検出
-	std::vector<cv::Vec2i> lines;
-	cv::HoughLines(src, lines, 1, CV_PI/180, 100);
-	// 検出結果をresultに書き込み
-	if (param.show_detects) {
-		for (size_t i = 0; i < lines.size(); i++ ) {
-			float rho = lines[i][0];
-			float theta = lines[i][1];
-			double a = cos(theta), b = sin(theta);
-			double x0 = a*rho, y0 = b*rho;
-			cv::Point pt1(cvRound(x0 + 1000*(-b)), cvRound(y0 + 1000*(a)));
-			cv::Point pt2(cvRound(x0 - 1000*(-b)), cvRound(y0 - 1000*(a)));
-			cv::line(bk_result, pt1, pt2, COLOR_RED, 3, 8 );
-		}
-	}
-#endif
-#endif

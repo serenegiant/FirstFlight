@@ -29,21 +29,12 @@ typedef enum DetectType {
 	TYPE_NON = -1,
 	TYPE_LINE = 0,
 	TYPE_CURVE = 1,
-//	TYPE_CORNER = 2,
 } DetectType_t;
 
 typedef enum ApproxType {
 	APPROX_ABS = 0,		// mApproxFactorの値は絶対値[ピクセル]
 	APPROX_RELATIVE,	// mApproxFactorの値は輪郭周長に対する割合
 } ApproxType_t;
-
-//typedef enum SmoothType {
-//	SMOOTH_NON = 0,
-//	SMOOTH_GAUSSIAN,
-//	SMOOTH_MEDIAN,
-//	SMOOTH_BLUR,
-//	SMOOTH_DILATION,
-//} SmoothType_t;
 
 typedef struct DetectRec DetectRec_t;
 struct DetectRec {
@@ -147,17 +138,10 @@ struct DetectParam {
 public:
 	bool changed;
 	int mResultFrameType;
-//	bool mEnableExtract;
-//	SmoothType_t mSmoothType;
-//	bool mEnableCanny;
-//	int mMaxThinningLoop;	// 画像全体に対して細線化
 	bool mFillInnerContour;	// 大きな輪郭内の空隙を塗りつぶす
 	ApproxType_t mApproxType;
 	double mApproxFactor;
-//	double mCannyThreshold1;
-//	double mCannyThreshold2;
 	float mMaxAnalogous;
-//	int extractColorHSV[6];	// 抽出色(HSV上下限, 0,1,2: HSV下限, 3,4,5:HSV上限)
 	double mTrapeziumRate;	// 台形歪率, 0:歪なし, 正:下辺が長い, 負:上限が長い
 	float mAreaLimitMin;	// 輪郭検出時の最小面積
 	float mAreaLimitMax;	// 輪郭検出時の最大面積
@@ -175,17 +159,10 @@ public:
 	/** 値をセットして更新, src#changed=trueの時のみ */
 	void set(const DetectParam_t &src) {
 		mResultFrameType = src.mResultFrameType;
-//		mEnableExtract = src.mEnableExtract;
-//		mSmoothType = src.mSmoothType;
-//		mEnableCanny = src.mEnableCanny;
-//		mMaxThinningLoop = src.mMaxThinningLoop;
 		mFillInnerContour = src.mFillInnerContour;
 		mApproxType = src.mApproxType;
 		mApproxFactor = src.mApproxFactor;
-//		mCannyThreshold1 = src.mCannyThreshold1;
-//		mCannyThreshold2 = src.mCannyThreshold2;
 		mMaxAnalogous = src.mMaxAnalogous;
-//		memcpy(extractColorHSV, src.extractColorHSV, sizeof(int) * 6);
 		mAreaLimitMin = src.mAreaLimitMin;
 		mAreaLimitMax = src.mAreaLimitMax;
 		mAreaErrLimit1 = src.mAreaErrLimit1;
@@ -226,11 +203,6 @@ protected:
 		std::vector<cv::Vec4i> &hierarchy,
 		const cv::RetrievalModes &mode = cv::RETR_EXTERNAL,
 		const cv::ContourApproximationModes &method = cv::CHAIN_APPROX_NONE);
-//	int colorExtraction(const cv::Mat &src, cv::Mat *dst,
-//	    int convert_code,	// cv:cvtColorの第3引数, カラー変換方法
-//	    int method,
-//		const int lower[], const int upper[]
-//	);
 	static void clear_stringstream(std::stringstream &ss);
 	// RotatedRectを指定線色で描画する
 	static void draw_rect(cv::Mat img, cv::RotatedRect rect, cv::Scalar color);

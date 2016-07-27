@@ -9,25 +9,14 @@
 #include <algorithm>
 #include <iomanip>
 
-//#include "thinning.h"
-//#include "CubicSpline.h"
-
 #include "IPBase.h"
-
-//#define CALC_COEFFS 0
 
 class IPDetector : virtual public IPBase {
 private:
 	int mWidth, mHeight;
 protected:
-//#if CALC_COEFFS
-//	Thinning mThinning;
-//	CubicSpline<cv::Point> mCubicSpline;
-//#endif
 	inline const int width() const { return mWidth; };
 	inline const int height() const { return mHeight; };
-//	int calcCoeffs(cv::Mat &work, const std::vector< cv::Point> &contour, std::vector<Coeff4_t> &coeffs);
-//	void drawSpline(cv::Mat &dst);
 public:
 	IPDetector();
 	virtual ~IPDetector();
