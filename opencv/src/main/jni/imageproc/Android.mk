@@ -1,18 +1,16 @@
 LOCAL_PATH := $(call my-dir)
-
 include $(CLEAR_VARS)
 
 OPENCV_CAMERA_MODULES:=off
 OPENCV_INSTALL_MODULES:=on
 OPENCV_LIB_TYPE:=SHARED
 
-LOCAL_C_INCLUDES := \
-	$(LOCAL_PATH)/ \
-
-# OpenCV3 (3.10)を使う時
+# OpenCV3 (3.10)を使う
 include $(LOCAL_PATH)/../opencv3/OpenCV.mk
-LOCAL_SHARED_LIBRARIES := libopencv_java3
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/../opencv3/include \
+LOCAL_SHARED_LIBRARIES += opencv_java3
+
+LOCAL_C_INCLUDES += \
+	$(LOCAL_PATH)/ \
 
 LOCAL_EXPORT_C_INCLUDES := $(LOCAL_C_INCLUDES)
 
@@ -27,9 +25,7 @@ LOCAL_CFLAGS += -DLOG_NDEBUG						# デバッグメッセージを出さない�
 LOCAL_CFLAGS += -Wl,--version-script,ImageProcessor.map
 
 LOCAL_LDLIBS += -L$(SYSROOT)/usr/lib -ldl	# to avoid NDK issue(no need for static library)
-LOCAL_LDLIBS += -ldl
 LOCAL_LDLIBS += -llog
-#LOCAL_LDLIBS += -landroid					# Android native related library(when you use nativeActivity etc.)
 LOCAL_LDLIBS += -lz							# zlib これを入れとかんとOpenCVのリンクに失敗する
 LOCAL_LDLIBS += -lm
 #LOCAL_LDLIBS += -lEGL -lGLESv1_CM			# OpenGL|ES 1.1ライブラリ

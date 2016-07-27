@@ -16,11 +16,6 @@ LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/ \
 
 LOCAL_EXPORT_C_INCLUDES := $(LOCAL_C_INCLUDES)
-#LOCAL_EXPORT_C_INCLUDES := \
-#	$(LOCAL_PATH)/../ \
-#	$(LOCAL_PATH)/ \
-
-LOCAL_CFLAGS := $(LOCAL_C_INCLUDES:%=-I%)
 
 LOCAL_SRC_FILES := \
 	common_utils.cpp \
@@ -28,37 +23,6 @@ LOCAL_SRC_FILES := \
 	JniConstants.cpp \
 	Timers.cpp \
 
-#	AAtomizer.cpp \
-#	ABuffer.cpp \
-#	AMessage.cpp \
-#	AString.cpp \
-#	base64.cpp \
-#	hexdump.cpp \
-#	url_escape.cpp \
-#	Threads.cpp \
-#	charutils.cpp \
-#	binutils.cpp \
-#	crc32.cpp \
-#	frame_conv.cpp \
-#	matrix.cpp \
-#	time_utc.cpp \
-#	VectorImpl.cpp \
-#	SharedBuffer.cpp \
-#	gloffscreen.cpp \
-#	glProgram.cpp \
-#	glrenderer.cpp \
-#	gltexture.cpp \
-#	eglbase.cpp \
-#	eglwindow.cpp \
-#	assets.cpp \
-#	glutils.cpp \
-#	RefBase.cpp \
-
-#	matrix.cpp \
-#	glutstuff.cpp \
-#	gltexsurfaceoffscreen.cpp \
-
-#EXPORT_C_INCLUDES := $(LOCAL_C_INCLUDES)
 LOCAL_CFLAGS := $(LOCAL_C_INCLUDES:%=-I%)
 #マクロ定義
 LOCAL_CFLAGS += -DANDROID_NDK
@@ -80,16 +44,8 @@ LOCAL_CFLAGS += -DAVOID_TABLES
 LOCAL_CFLAGS += -O3 -fstrict-aliasing
 LOCAL_CFLAGS += -fprefetch-loop-arrays
 
-#アセンブラのソース(リスティングファイル)を出力させる(遅くなるけど)
-#LOCAL_CFLAGS += -fverbose-asm
-#LOCAL_CFLAGS +=-save-temps					# このオプションをつけると中間ファイルを削除しない(プロジェクトルートに残る)
-#LOCAL_FILTER_ASM := python -c 'import sys; import shutil; src = open(sys.argv[1], "rb"); dst = open(sys.argv[2], "wb"); shutil.copyfileobj(src,dst);'
-
 LOCAL_EXPORT_LDLIBS := -L$(SYSROOT)/usr/lib -ldl	# to avoid NDK issue(no need for static library)
 LOCAL_EXPORT_LDLIBS += -llog						# log output library
-LOCAL_EXPORT_LDLIBS += -landroid					# Android native related library(when you use nativeActivity etc.)
-#LOCAL_EXPORT_LDLIBS += -lEGL -lGLESv1_CM			# OpenGL|ES 1.1ライブラリ
-LOCAL_EXPORT_LDLIBS += -lEGL -lGLESv2				# OpenGL|ES 2.0ライブラリ
 
 LOCAL_ARM_MODE := arm
 
@@ -99,7 +55,6 @@ include $(BUILD_STATIC_LIBRARY)
 # libcommon.so
 ######################################################################
 include $(CLEAR_VARS)
-LOCAL_MODULE_TAGS := optional
 LOCAL_EXPORT_LDLIBS += -llog
 LOCAL_EXPORT_C_INCLUDES := \
 	$(LOCAL_PATH)/ \

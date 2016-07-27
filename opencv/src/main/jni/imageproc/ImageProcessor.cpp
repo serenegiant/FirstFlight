@@ -52,8 +52,8 @@ ImageProcessor::ImageProcessor(JNIEnv* env, jobject weak_thiz_obj, jclass clazz)
 	mParam.mFillInnerContour = false;
 	// 基準図形との類似性の最大値
 	mParam.mMaxAnalogous = 200.0;
-	// 台形補正
-	mParam.mTrapeziumRate = 0.0;
+//	// 台形補正
+//	mParam.mTrapeziumRate = 0.0;
 	// 輪郭検出時の最小/最大面積
 	mParam.mAreaLimitMin = 1000.0f;
 	mParam.mAreaLimitMax = 120000.0f;

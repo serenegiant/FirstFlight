@@ -42,14 +42,15 @@ int IPPreprocess::pre_process(cv::Mat &frame, cv::Mat &src, cv::Mat &result, con
 	std::vector<std::vector< cv::Point>> outlines;	// これも上位から渡さないかんかなぁ
 
 	try {
-		// 台形補正
-		if (param.mTrapeziumRate) {
-			cv::warpPerspective(frame, frame, param.perspectiveTransform, cv::Size(src.cols, src.rows));
-		}
-		// RGBAのままだとHSVに変換できないので一旦BGRに変える
-		cv::cvtColor(frame, src, cv::COLOR_RGBA2BGR, 1);
-		// グレースケールに変換(RGBA->Y)
-		cv::cvtColor(src, src, cv::COLOR_BGR2GRAY, 1);
+//		// 台形補正
+//		if (param.mTrapeziumRate) {
+//			cv::warpPerspective(frame, frame, param.perspectiveTransform, cv::Size(src.cols, src.rows));
+//		}
+//		// RGBAのままだとHSVに変換できないので一旦BGRに変える
+//		cv::cvtColor(frame, src, cv::COLOR_RGBA2BGR, 1);
+//		// グレースケールに変換(RGBA->Y)
+//		cv::cvtColor(src, src, cv::COLOR_BGR2GRAY, 1);
+		cv::cvtColor(frame, src, cv::COLOR_RGBA2GRAY, 1);
 		// 輪郭内の塗りつぶし(色抽出してなければ全面塗りつぶされる)
 		if (param.mFillInnerContour) {
 			findContours(src, outlines, cv::RETR_EXTERNAL);
