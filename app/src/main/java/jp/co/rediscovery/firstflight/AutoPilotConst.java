@@ -23,7 +23,7 @@ public class AutoPilotConst {
 	public static final String KEY_BRIGHTNESS = "KEY_BRIGHTNESS";
 	public static final float DEFAULT_BRIGHTNESS = 0.0f;
 	public static final String KEY_BINARIZE_THRESHOLD = "KEY_BINARIZE_THRESHOLD";
-	public static final float DEFAULT_BINARIZE_THRESHOLD = 0.5f;
+	public static final float DEFAULT_BINARIZE_THRESHOLD = 0.25f;
 
 	public static final String KEY_AREA_LIMIT_MIN = "KEY_AREA_LIMIT_MIN";
 	public static final float DEFAULT_AREA_LIMIT_MIN = 500.0f;

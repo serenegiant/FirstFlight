@@ -270,7 +270,7 @@ void ImageProcessor::do_process(JNIEnv *env) {
 				if (UNLIKELY(!mIsRunning)) break;
 //--------------------------------------------------------------------------------
 // 輪郭の検出処理
-// 最大で直線・円弧・コーナーの3つの処理が走るので近似輪郭検出と最低限のチェック(面積とか)は1回だけ先に済ましておく
+// 直線・円弧の２つの処理が走るので近似輪郭検出と最低限のチェック(面積とか)の共通処理は1回だけ先に済ましておく
 				findPossibleContours(src, bk_result, contours, approxes, param);
 				if (UNLIKELY(!mIsRunning)) break;
 				{	// vectorの余分なメモリーを開放する
@@ -282,15 +282,15 @@ void ImageProcessor::do_process(JNIEnv *env) {
 				result = bk_result;	// 結果用画像を初期化
 				mLineDetector.detect(src, approxes, work, result, line, param);
 				if (UNLIKELY(!mIsRunning)) break;
-// 円弧の検出処理
+// 円弧ラインの検出処理
 				mCurveDetector.detect(src, approxes, work, result, curve, param);
 				if (UNLIKELY(!mIsRunning)) break;
 //================================================================================
 				{	// vectorの余分なメモリーを開放する
-					std::vector<const DetectRec_t *> temp2;
-					std::vector<DetectRec_t> temp3;
-					work.swap(temp2);
-					approxes.swap(temp3);
+					std::vector<const DetectRec_t *> temp1;
+					std::vector<DetectRec_t> temp2;
+					work.swap(temp1);
+					approxes.swap(temp2);
 				}
 				// 面積の大きい方を選択する FIXME 得点化してソート
 				const float a = curve.type != TYPE_NON ? curve.area : 0.0f;

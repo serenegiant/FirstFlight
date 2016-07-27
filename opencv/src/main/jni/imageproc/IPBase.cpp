@@ -33,6 +33,7 @@ void IPBase::findContours(cv::Mat &src, std::vector<std::vector< cv::Point>> &co
 
 	ENTER();
 
+	// 輪郭が画面の左端または上端からはみ出していると正しく計算出来ない(要するに座標が負になるとあかん)のでそうならないようにする
 	// 一回り大きな画像を用意,黒で塗りつぶす
 	cv::Mat new_src = cv::Mat::zeros(cv::Size(src.cols + 16, src.rows + 16), CV_8UC3);
 	// 移動行列(8ピクセルずつずらす)
@@ -54,6 +55,7 @@ void IPBase::findContours(cv::Mat &src, std::vector<std::vector< cv::Point>> &co
 
 	ENTER();
 
+	// 輪郭が画面の左端または上端からはみ出していると正しく計算出来ない(要するに座標が負になるとあかん)のでそうならないようにする
 	// 一回り大きな画像を用意,黒で塗りつぶす
 	cv::Mat new_src = cv::Mat::zeros(cv::Size(src.cols + 16, src.rows + 16), CV_8UC3);
 	// 移動行列(8ピクセルずつずらす)

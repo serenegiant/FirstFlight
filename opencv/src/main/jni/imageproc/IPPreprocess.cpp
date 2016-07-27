@@ -128,7 +128,7 @@ int IPPreprocess::findPossibleContours(cv::Mat &src, cv::Mat &result,
 		cv::approxPolyDP(*contour, approx, epsilon, true);	// 閉曲線にする
 		// 最小矩形の面積が凸包図形面積より指定値以上大きければスキップ=凹凸が激しい
 		if (a / area_convex > param.mAreaErrLimit1) {
-			// 輪郭の面積を計算・・・XXX 輪郭が画面の左端または上端からはみ出していると正しく計算出来ないみたい
+			// 輪郭の面積を計算
 			const float area = (float)cv::contourArea(approx);
 			if (param.show_detects) {
 				clear_stringstream(ss);
