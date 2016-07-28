@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-	compileSdkVersion 23
-	buildToolsVersion "23.0.3"
+	compileSdkVersion versionCompiler
+	buildToolsVersion versionBuildTool
 
 	defaultConfig {
 		applicationId "jp.co.rediscovery.firstflight"
 		minSdkVersion 18
-		targetSdkVersion 22
+		targetSdkVersion versionTarget
 		versionCode 1
 		versionName "1.0"
 	}
