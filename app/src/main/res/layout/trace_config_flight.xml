@@ -19,6 +19,7 @@
 		android:id="@+id/max_altitude_seekbar"
 		android:layout_gravity="center_horizontal"
 		android:paddingBottom="@dimen/min_padding"
+		android:thumb="@drawable/custom_thumb"
 		android:minHeight="@dimen/text_sz_trace_config_list"/>
 
 	<TextView
@@ -35,6 +36,7 @@
 		android:id="@+id/max_tilt_seekbar"
 		android:layout_gravity="center_horizontal"
 		android:paddingBottom="@dimen/min_padding"
+		android:thumb="@drawable/custom_thumb"
 		android:minHeight="@dimen/text_sz_trace_config_list"/>
 
 	<TextView
@@ -50,6 +52,7 @@
 		android:layout_height="wrap_content"
 		android:id="@+id/max_vertical_speed_seekbar"
 		android:paddingBottom="@dimen/min_padding"
+		android:thumb="@drawable/custom_thumb"
 		android:minHeight="@dimen/text_sz_trace_config_list"/>
 
 	<TextView

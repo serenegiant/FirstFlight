@@ -21,6 +21,7 @@
 			android:id="@+id/trace_flight_reverse_bias_seekbar"
 			android:layout_gravity="center_horizontal"
 			android:paddingBottom="@dimen/min_padding"
+			android:thumb="@drawable/custom_thumb"
 			android:minHeight="@dimen/text_sz_trace_config_list"/>
 		<!-- 移動平均数 -->
 		<TextView
@@ -36,6 +37,7 @@
 			android:id="@+id/trace_flight_moving_ave_tap_seekbar"
 			android:layout_gravity="center_horizontal"
 			android:paddingBottom="@dimen/min_padding"
+			android:thumb="@drawable/custom_thumb"
 			android:minHeight="@dimen/text_sz_trace_config_list"/>
 		<!-- 減衰率 -->
 		<TextView
@@ -51,6 +53,7 @@
 			android:id="@+id/trace_flight_decay_rate_seekbar"
 			android:layout_gravity="center_horizontal"
 			android:paddingBottom="@dimen/min_padding"
+			android:thumb="@drawable/custom_thumb"
 			android:minHeight="@dimen/text_sz_trace_config_list"/>
 		<!-- 制御感度 -->
 		<TextView
@@ -66,6 +69,7 @@
 			android:id="@+id/trace_flight_sensitivity_seekbar"
 			android:layout_gravity="center_horizontal"
 			android:paddingBottom="@dimen/min_padding"
+			android:thumb="@drawable/custom_thumb"
 			android:minHeight="@dimen/text_sz_trace_config_list"/>
 	</LinearLayout>
 </ScrollView>

@@ -20,6 +20,7 @@
 			android:layout_height="wrap_content"
 			android:id="@+id/area_limit_min_seekbar"
 			android:paddingBottom="@dimen/min_padding"
+			android:thumb="@drawable/custom_thumb"
 			android:minHeight="@dimen/text_sz_trace_config_list"/>
 		<!-- ライン検出時の最大面積誤差1 -->
 		<TextView
@@ -34,6 +35,7 @@
 			android:layout_height="wrap_content"
 			android:id="@+id/area_err_limit1_seekbar"
 			android:paddingBottom="@dimen/min_padding"
+			android:thumb="@drawable/custom_thumb"
 			android:minHeight="@dimen/text_sz_trace_config_list"/>
 		<!-- ライン検出時の最大面積誤差1 -->
 		<TextView
@@ -48,6 +50,7 @@
 			android:layout_height="wrap_content"
 			android:id="@+id/area_err_limit2_seekbar"
 			android:paddingBottom="@dimen/min_padding"
+			android:thumb="@drawable/custom_thumb"
 			android:minHeight="@dimen/text_sz_trace_config_list"/>
 		<!-- ライン検出時の最小アスペクト比 -->
 		<TextView
@@ -62,6 +65,7 @@
 			android:layout_height="wrap_content"
 			android:id="@+id/aspect_limit_min_seekbar"
 			android:paddingBottom="@dimen/min_padding"
+			android:thumb="@drawable/custom_thumb"
 			android:minHeight="@dimen/text_sz_trace_config_list"/>
 	</LinearLayout>
 </ScrollView>

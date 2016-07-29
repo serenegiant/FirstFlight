@@ -7,17 +7,6 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:orientation="vertical">
-		<!-- ホワイトバランス -->
-<!--	<Switch
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:text="@string/trace_camera_white_blance"
-			android:textColor="@color/trace_config"
-			android:textSize="@dimen/text_sz_trace_config_list"
-			android:textOn="@string/trace_white_blance_auto"
-			android:textOff="@string/trace_white_blance_manual"
-			android:paddingBottom="@dimen/min_padding"
-			android:id="@+id/white_balance_sw"/> -->
 		<!-- 露出 -->
 		<TextView
 			android:id="@+id/exposure_textview"
@@ -31,6 +20,7 @@
 			android:layout_height="wrap_content"
 			android:id="@+id/exposure_seekbar"
 			android:paddingBottom="@dimen/min_padding"
+			android:thumb="@drawable/custom_thumb"
 			android:minHeight="@dimen/text_sz_trace_config_list"/>
 		<!-- 彩度 -->
 		<TextView
@@ -45,6 +35,7 @@
 			android:layout_height="wrap_content"
 			android:id="@+id/saturation_seekbar"
 			android:paddingBottom="@dimen/min_padding"
+			android:thumb="@drawable/custom_thumb"
 			android:minHeight="@dimen/text_sz_trace_config_list"/>
 		<!-- 明るさ -->
 		<TextView
@@ -59,32 +50,8 @@
 			android:layout_height="wrap_content"
 			android:id="@+id/brightness_seekbar"
 			android:paddingBottom="@dimen/min_padding"
+			android:thumb="@drawable/custom_thumb"
 			android:minHeight="@dimen/text_sz_trace_config_list"/>
-		<!-- ポスタライズ  -->
-<!--	<Switch
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:textColor="@color/trace_config"
-			android:text="@string/trace_use_posterize"
-			android:visibility="gone"
-			android:paddingBottom="@dimen/min_padding"
-			android:id="@+id/use_posterize_sw"/>
-		<TextView
-			android:id="@+id/posterize_textview"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textColor="@color/trace_config"
-			android:textSize="@dimen/text_sz_trace_config_list"
-			android:text="@string/trace_use_brightness"
-			android:paddingBottom="@dimen/min_padding"
-			android:visibility="gone" />
-		<SeekBar
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:visibility="gone"
-			android:id="@+id/posterize_seekbar"
-			android:paddingBottom="@dimen/min_padding"
-			android:minHeight="@dimen/text_sz_trace_config_list"/> -->
 		<!-- 二値化閾値  -->
 		<TextView
 			android:id="@+id/binarize_threshold_textview"
@@ -98,20 +65,7 @@
 			android:layout_height="wrap_content"
 			android:id="@+id/binarize_threshold_seekbar"
 			android:paddingBottom="@dimen/min_padding"
+			android:thumb="@drawable/custom_thumb"
 			android:minHeight="@dimen/text_sz_trace_config_list"/>
-		<!-- 台形補正係数  -->
-<!--	<TextView
-			android:id="@+id/trapezium_rate_textview"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textColor="@color/trace_config"
-			android:textSize="@dimen/text_sz_trace_config_list"
-			android:text="@string/trace_trapezium_rate"/>
-		<SeekBar
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:id="@+id/trapezium_rate_seekbar"
-			android:paddingBottom="@dimen/min_padding"
-			android:minHeight="@dimen/text_sz_trace_config_list"/> -->
 	</LinearLayout>
 </ScrollView>

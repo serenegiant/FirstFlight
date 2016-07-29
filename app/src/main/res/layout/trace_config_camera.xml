@@ -35,6 +35,7 @@
 			android:layout_height="wrap_content"
 			android:id="@+id/camera_exposure_seekbar"
 			android:paddingBottom="@dimen/min_padding"
+			android:thumb="@drawable/custom_thumb"
 			android:minHeight="@dimen/text_sz_trace_config_list"/>
 		<!-- 彩度 -->
 		<TextView
@@ -49,6 +50,7 @@
 			android:layout_height="wrap_content"
 			android:id="@+id/camera_saturation_seekbar"
 			android:paddingBottom="@dimen/min_padding"
+			android:thumb="@drawable/custom_thumb"
 			android:minHeight="@dimen/text_sz_trace_config_list"/>
 		<!-- パン -->
 		<TextView
@@ -63,6 +65,7 @@
 			android:layout_height="wrap_content"
 			android:id="@+id/camera_pan_seekbar"
 			android:paddingBottom="@dimen/min_padding"
+			android:thumb="@drawable/custom_thumb"
 			android:minHeight="@dimen/text_sz_trace_config_list"/>
 		<!-- チルト -->
 		<TextView
@@ -77,6 +80,7 @@
 			android:layout_height="wrap_content"
 			android:id="@+id/camera_tilt_seekbar"
 			android:paddingBottom="@dimen/min_padding"
+			android:thumb="@drawable/custom_thumb"
 			android:minHeight="@dimen/text_sz_trace_config_list"/>
 	</LinearLayout>
 </ScrollView>

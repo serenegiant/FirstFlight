@@ -13,15 +13,6 @@
 		android:textColor="@color/trace_config"
 		android:text="@string/trace_config_extract_use"
 		android:id="@+id/use_extract_sw"/>
-	<!-- 色抽出(OpenCV) -->
-<!--<Switch
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:paddingBottom="@dimen/min_padding"
-		android:textSize="@dimen/text_sz_trace_config_list"
-		android:textColor="@color/trace_config"
-		android:text="@string/trace_config_extract_use_opencv"
-		android:id="@+id/use_native_extract_sw"/> -->
 	<!-- 抽出色更新 -->
 	<LinearLayout
 		android:orientation="horizontal"
@@ -61,6 +52,7 @@
 		android:layout_height="wrap_content"
 		android:id="@+id/extract_range_h_seekbar"
 		android:paddingBottom="@dimen/min_padding"
+		android:thumb="@drawable/custom_thumb"
 		android:minHeight="@dimen/text_sz_trace_config_list"/>
 	<!-- 抽出色の範囲(S) -->
 	<TextView
@@ -75,6 +67,7 @@
 		android:layout_height="wrap_content"
 		android:id="@+id/extract_range_s_seekbar"
 		android:paddingBottom="@dimen/min_padding"
+		android:thumb="@drawable/custom_thumb"
 		android:minHeight="@dimen/text_sz_trace_config_list"/>
 	<!-- 抽出色の範囲(V) -->
 	<TextView
@@ -89,5 +82,6 @@
 		android:layout_height="wrap_content"
 		android:id="@+id/extract_range_v_seekbar"
 		android:paddingBottom="@dimen/min_padding"
+		android:thumb="@drawable/custom_thumb"
 		android:minHeight="@dimen/text_sz_trace_config_list"/>
 </LinearLayout>
