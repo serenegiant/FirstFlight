@@ -1616,7 +1616,7 @@ public abstract class DeviceController implements IDeviceController {
 	/**
 	 * 充電速度を設定
 	 * 急速充電すると電池寿命が短くなる可能性が高いからよう考えて設定するんやで
-	 * Bebop/Beop2/スカイコントローラーの場合は本体では充電できへんから実装されてない
+	 * Bebop/Bebop2/スカイコントローラーの場合は本体では充電できへんから実装されてない
 	 * @param rate 0:最大512mA(通常のUSB1/1.1/2.0規格用), 1, 2:高速充電用, 1より2の方が速い
 	 * @return
 	 */
