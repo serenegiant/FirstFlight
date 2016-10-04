@@ -1,1 +1,1 @@
-include ':app', ':opencv', ':arflight', ':common'
+include ':app', ':opencv', ':arflight'

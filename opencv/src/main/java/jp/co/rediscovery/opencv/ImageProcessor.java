@@ -5,11 +5,15 @@ import android.graphics.Color;
 import android.graphics.SurfaceTexture;
 import android.media.effect.EffectContext;
 import android.opengl.GLES20;
+import android.opengl.Matrix;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 import android.view.Surface;
 
+import com.serenegiant.glutils.GLDrawer2D;
+import com.serenegiant.glutils.GLHelper;
+import com.serenegiant.glutils.ShaderConst;
 import com.serenegiant.mediaeffect.IEffect;
 import com.serenegiant.mediaeffect.MediaEffectAutoFix;
 import com.serenegiant.mediaeffect.MediaEffectBrightness;
@@ -27,8 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.serenegiant.glutils.EglTask;
-import com.serenegiant.glutils.FullFrameRect;
-import com.serenegiant.glutils.Texture2dProgram;
 import com.serenegiant.utils.BuildCheck;
 import com.serenegiant.utils.FpsCounter;
 
@@ -519,7 +521,7 @@ public class ImageProcessor {
 		private int mVideoWidth, mVideoHeight;
 		// プレフィルタ処理用
 		private EffectContext mEffectContext;
-		private FullFrameRect mSrcDrawer;
+		private GLDrawer2D mSrcDrawer;
 		private MediaEffectExtraction mExtraction;
 		private MediaEffectDilation mDilation;
 		private MediaEffectErosion mErosion;
@@ -544,15 +546,20 @@ public class ImageProcessor {
 			return mSourceTexture;
 		}
 
+		private float mTexWidth;
+		private float mTexHeight;
+		private float[] mTexOffset;
+		private int muTexOffsetLoc;			// テクスチャオフセット(カーネル行列用)
 		@SuppressLint("NewApi")
 		@Override
 		protected void onStart() {
 			// ソース映像の描画用
-			mSrcDrawer = new FullFrameRect(new Texture2dProgram(Texture2dProgram.ProgramType.TEXTURE_EXT_FILT3x3));
-			mSrcDrawer.getProgram().setTexSize(WIDTH, HEIGHT);
-			mSrcDrawer.flipMatrix(true);	// 上下入れ替え
+			mSrcDrawer = new GLDrawer2D(true);
+			mSrcDrawer.updateShader(ShaderConst.FRAGMENT_SHADER_EXT_FILT3x3);
+			setTexSize(WIDTH, HEIGHT);
+			flipMatrix(true);	// 上下入れ替え
 //			mSrcDrawer.getProgram().setKernel(Texture2dProgram.KERNEL_GAUSSIAN, 0.0f);		// ガウシアン(平滑化)
-			mTexId = mSrcDrawer.createTextureObject();
+			mTexId = GLHelper.initTex(ShaderConst.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_NEAREST);
 			mSourceTexture = new SurfaceTexture(mTexId);
 			mSourceTexture.setDefaultBufferSize(WIDTH, HEIGHT);
 			mSourceSurface = new Surface(mSourceTexture);
@@ -601,6 +608,38 @@ public class ImageProcessor {
 			mResultFps.reset();
 		}
 
+		private void setTexSize(final int width, final int height) {
+			mTexHeight = height;
+			mTexWidth = width;
+			final float rw = 1.0f / width;
+			final float rh = 1.0f / height;
+
+			// Don't need to create a new array here, but it's syntactically convenient.
+			mTexOffset = new float[] {
+				-rw, -rh,   0f, -rh,    rw, -rh,
+				-rw, 0f,    0f, 0f,     rw, 0f,
+				-rw, rh,    0f, rh,     rw, rh
+			};
+			muTexOffsetLoc = mSrcDrawer.glGetUniformLocation("uTexOffset");
+			// テクセルオフセット
+			if ((muTexOffsetLoc >= 0) && (mTexOffset != null)) {
+				GLES20.glUniform2fv(muTexOffsetLoc, ShaderConst.KERNEL_SIZE3x3, mTexOffset, 0);
+			}
+		}
+
+		private void flipMatrix(final boolean verticalFlip) {
+			final float[] mat = new float[32];
+			final float[] mvpMatrix = mSrcDrawer.getMvpMatrix();
+			System.arraycopy(mvpMatrix, 0, mat, 16, 16);
+			Matrix.setIdentityM(mat, 0);
+			if (verticalFlip) {
+				Matrix.scaleM(mat, 0, 1f, -1f, 1f);
+			} else {
+				Matrix.scaleM(mat, 0, -1f, 1f, 1f);
+			}
+			Matrix.multiplyMM(mvpMatrix, 0, mat, 0, mat, 16);
+		}
+
 		@Override
 		protected void onStop() {
 			synchronized (mSync) {
@@ -643,7 +682,7 @@ public class ImageProcessor {
 		}
 
 		@Override
-		protected boolean processRequest(final int request, final int arg1, final int arg2, final Object obj) {
+		protected Object processRequest(final int request, final int arg1, final int arg2, final Object obj) {
 			switch (request) {
 			case REQUEST_DRAW:
 				handleDraw();
@@ -652,7 +691,7 @@ public class ImageProcessor {
 				handleResize(arg1, arg2);
 				break;
 			}
-			return false;
+			return null;
 		}
 
 		@Override

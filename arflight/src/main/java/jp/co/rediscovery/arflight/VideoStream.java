@@ -19,9 +19,9 @@ import java.nio.ByteBuffer;
 
 import com.serenegiant.glutils.EGLBase;
 import com.serenegiant.glutils.EglTask;
-import com.serenegiant.glutils.FullFrameRect;
+import com.serenegiant.glutils.GLDrawer2D;
 import com.serenegiant.glutils.GLHelper;
-import com.serenegiant.glutils.Texture2dProgram;
+import com.serenegiant.glutils.ShaderConst;
 import com.serenegiant.utils.FpsCounter;
 
 /** ライブ映像処理用のヘルパークラス */
@@ -397,7 +397,7 @@ public class VideoStream {
 		/** 映像の分配描画先を保持&描画するためのホルダークラス */
 		private static final class RendererSurfaceRec {
 			private Object mSurface;
-			private EGLBase.EglSurface mTargetSurface;
+			private EGLBase.IEglSurface mTargetSurface;
 			final float[] mMvpMatrix = new float[16];
 
 			public RendererSurfaceRec(final EGLBase egl, final Object surface) {
@@ -421,7 +421,7 @@ public class VideoStream {
 		/** 分配描画先 */
 		private final SparseArray<RendererSurfaceRec> mClients = new SparseArray<RendererSurfaceRec>();
 
-		private FullFrameRect mDrawer;
+		private GLDrawer2D mDrawer;
 		/** MediaCodecでデコードした映像を受け取るためのテクスチャのテクスチャ名(SurfaceTexture生成時/分配描画に使用) */
 		private int mTexId;
 		/** MediaCodecでデコードした映像を受け取るためのSurfaceTexture */
@@ -444,12 +444,17 @@ public class VideoStream {
 			mVideoHeight = VIDEO_HEIGHT;
 		}
 
+		private float mTexWidth;
+		private float mTexHeight;
+		private float[] mTexOffset;
+		private int muTexOffsetLoc;			// テクスチャオフセット(カーネル行列用)
 		@Override
 		protected void onStart() {
-			mDrawer = new FullFrameRect(new Texture2dProgram(Texture2dProgram.ProgramType.TEXTURE_EXT_FILT3x3));
-			mDrawer.getProgram().setTexSize(mVideoWidth, mVideoHeight);
+			mDrawer = new GLDrawer2D(true);
+			mDrawer.updateShader(ShaderConst.FRAGMENT_SHADER_EXT_FILT3x3);
+			setTexSize(mVideoWidth, mVideoHeight);
 
-			mTexId = GLHelper.initTex(GLHelper.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_NEAREST);
+			mTexId = GLHelper.initTex(ShaderConst.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_NEAREST);
 			mMasterTexture = new SurfaceTexture(mTexId);
 			mMasterSurface = new Surface(mMasterTexture);
 			mMasterTexture.setDefaultBufferSize(mVideoWidth, mVideoHeight);
@@ -459,6 +464,25 @@ public class VideoStream {
 				mParent.mSync.notifyAll();
 			}
 			mParent.mFps.reset();
+		}
+
+		private void setTexSize(final int width, final int height) {
+			mTexHeight = height;
+			mTexWidth = width;
+			final float rw = 1.0f / width;
+			final float rh = 1.0f / height;
+
+			// Don't need to create a new array here, but it's syntactically convenient.
+			mTexOffset = new float[] {
+				-rw, -rh,   0f, -rh,    rw, -rh,
+				-rw, 0f,    0f, 0f,     rw, 0f,
+				-rw, rh,    0f, rh,     rw, rh
+			};
+			muTexOffsetLoc = mDrawer.glGetUniformLocation("uTexOffset");
+			// テクセルオフセット
+			if ((muTexOffsetLoc >= 0) && (mTexOffset != null)) {
+				GLES20.glUniform2fv(muTexOffsetLoc, ShaderConst.KERNEL_SIZE3x3, mTexOffset, 0);
+			}
 		}
 
 		@Override
@@ -481,7 +505,7 @@ public class VideoStream {
 		}
 
 		@Override
-		protected boolean processRequest(int request, int arg1, int arg2, Object obj) {
+		protected Object processRequest(int request, int arg1, int arg2, Object obj) {
 			switch (request) {
 			case REQUEST_DRAW:
 				handleDraw();
@@ -496,7 +520,7 @@ public class VideoStream {
 				handleRemoveSurface(arg1);
 				break;
 			}
-			return false;
+			return null;
 		}
 
 		/** 映像受け取り用Surfaceを取得 */

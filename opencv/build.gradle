@@ -56,5 +56,7 @@ clean.dependsOn 'ndkClean'
 
 dependencies {
 	compile fileTree(dir: 'libs', include: ['*.jar'])
-	compile project(':common')
+	compile('com.serenegiant:common:1.0.2') {
+		exclude module: 'support-v4'
+	}
 }

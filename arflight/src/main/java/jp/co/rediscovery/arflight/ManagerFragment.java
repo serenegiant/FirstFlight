@@ -618,7 +618,7 @@ public class ManagerFragment extends Fragment {
 			localBroadcastMgr.registerReceiver(mDevicesListUpdatedReceiver,
 				new IntentFilter(ARDiscoveryService.kARDiscoveryServiceNotificationServicesDevicesListUpdated));
 			if (mNetworkChangedReceiver == null) {
-				mNetworkChangedReceiver = NetworkChangedReceiver.registerNetworkChangedReceiver(getActivity(), mOnNetworkChangedListener);
+				mNetworkChangedReceiver = NetworkChangedReceiver.registerGlobal(getActivity(), mOnNetworkChangedListener);
 			}
 		}
 	}
@@ -630,7 +630,7 @@ public class ManagerFragment extends Fragment {
 			getActivity().getApplicationContext());
 		localBroadcastMgr.unregisterReceiver(mDevicesListUpdatedReceiver);
 		if (mNetworkChangedReceiver != null) {
-			NetworkChangedReceiver.unregisterNetworkChangedReceiver(getActivity(), mNetworkChangedReceiver);
+			NetworkChangedReceiver.unregisterGlobal(getActivity(), mNetworkChangedReceiver);
 			mNetworkChangedReceiver = null;
 		}
 	}
