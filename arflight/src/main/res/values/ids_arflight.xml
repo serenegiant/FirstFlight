@@ -4,4 +4,5 @@
 	<item type="id" name="thumbnail" />
 	<item type="id" name="title" />
 	<item type="id" name="state" />
+	<item type="id" name="container" />
 </resources>

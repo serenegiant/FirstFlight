@@ -20,7 +20,7 @@
 		android:layout_height="match_parent"
 		android:layout_above="@+id/bottom_panel">
 		<TextView
-			android:id="@+id/instructions"
+			android:id="@+id/instructions_textview"
 			android:text="@string/instruction1"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"

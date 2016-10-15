@@ -1,18 +1,14 @@
 package jp.co.rediscovery.firstflight;
 
-import android.animation.Animator;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.View;
 
 import com.parrot.arsdk.ARSDK;
 import com.parrot.arsdk.arsal.ARSALPrint;
@@ -20,10 +16,8 @@ import com.parrot.arsdk.arsal.ARSAL_PRINT_LEVEL_ENUM;
 import com.serenegiant.gamepad.Joystick;
 
 import jp.co.rediscovery.arflight.ManagerFragment;
-import jp.co.rediscovery.widget.DroneNoticeView;
 
 import com.serenegiant.net.NetworkChangedReceiver;
-import com.serenegiant.utils.ViewAnimationHelper;
 
 public class MainActivity extends AppCompatActivity {
 	private static final boolean DEBUG = false;    // FIXME 実働時はfalseにすること
@@ -36,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	/*package*/Joystick mJoystick;
-	private DroneNoticeView mDroneNoticeView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,23 +38,12 @@ public class MainActivity extends AppCompatActivity {
 		NetworkChangedReceiver.enable(getApplicationContext());
 		final ManagerFragment manager = ManagerFragment.getInstance(this);
 		if (savedInstanceState == null) {
-			final SharedPreferences pref = getSharedPreferences(AppConst.PREF_NAME, 0);
-			final boolean firstTime = pref.getBoolean(AppConst.APP_KEY_FIRST_TIME, true);
-			if (firstTime) {
-				final Fragment fragment = InstructionsFragment.newInstance();
-				getFragmentManager().beginTransaction()
-					.add(R.id.instructions, fragment)
-					.commit();
-			} else {
-				final Fragment fragment = ConnectionFragment.newInstance();
-				getFragmentManager().beginTransaction()
-					.add(R.id.container, fragment)
-					.commit();
-			}
+			final Fragment fragment = MyInstructionsFragment.newInstance();
+			getFragmentManager().beginTransaction()
+				.add(R.id.container, fragment)
+				.commit();
 		}
 		mJoystick = Joystick.getInstance(this);
-		mDroneNoticeView = (DroneNoticeView)findViewById(R.id.drone_notice_view);
-		mDroneNoticeView.setOnClickListener(mOnClickListener);
 	}
 
 	@Override
@@ -90,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
 		if (mJoystick != null) {
 			mJoystick.register();
 		}
-		showNoticeView();
 	}
 
 	@Override
@@ -160,50 +141,4 @@ public class MainActivity extends AppCompatActivity {
 		});
 	}
 
-	private void showNoticeView() {
-		final Fragment instructions = getFragmentManager().findFragmentById(R.id.instructions);
-		if (instructions != null) {
-			mDroneNoticeView.setVisibility(View.GONE);
-		} else {
-			mDroneNoticeView.setVisibility(View.VISIBLE);
-			// 自動で切り替えないように切替時間を0にセット
-			mDroneNoticeView.setAutoNextDuration(0);
-			mDroneNoticeView.next();
-			// 10秒後にフェードアウトさせる
-			ViewAnimationHelper.fadeOut(mDroneNoticeView, 0, 10000, mViewAnimationListener);
-		}
-	}
-
-	private final View.OnClickListener mOnClickListener
-		= new View.OnClickListener() {
-		@Override
-		public void onClick(final View view) {
-			switch (view.getId()) {
-			case R.id.drone_notice_view:
-				// 直ぐにフェードアウトさせる
-				ViewAnimationHelper.fadeOut(view, 0, 0, mViewAnimationListener);
-				break;
-			}
-		}
-	};
-
-	private final ViewAnimationHelper.ViewAnimationListener
-		mViewAnimationListener = new ViewAnimationHelper.ViewAnimationListener() {
-		@Override
-		public void onAnimationStart(@NonNull final Animator animator, @NonNull final View target, final int animationType) {
-		}
-
-		@Override
-		public void onAnimationEnd(@NonNull final Animator animator, @NonNull final View target, final int animationType) {
-			switch(target.getId()) {
-			case R.id.drone_notice_view:
-				target.setVisibility(View.GONE);
-				break;
-			}
-		}
-
-		@Override
-		public void onAnimationCancel(@NonNull final Animator animator, @NonNull final View target, final int animationType) {
-		}
-	};
 }

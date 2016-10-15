@@ -26,7 +26,6 @@ android {
 
 repositories {
     maven { url 'http://raw.github.com/saki4510t/AndroGamepad/master/repository/' }
-	maven { url 'http://raw.github.com/saki4510t/dronenotice/master/repository/' }
 }
 
 dependencies {
@@ -35,5 +34,4 @@ dependencies {
 	compile project(':arflight')
 	compile project(':opencv')
 	compile 'com.serenegiant:gamepad:0.1.1'
-	compile 'jp.co.rediscovery.widget:drone-notice-view:1.1.0'
 }

@@ -29,6 +29,7 @@ dependencies {
 	compile("com.serenegiant:common:${commonLibVersion}") {
 		exclude module: 'support-v4'
 	}
+	compile 'jp.co.rediscovery.widget:drone-notice-view:1.1.1'
 }
 
 def repo = new File(rootDir, "repository")
