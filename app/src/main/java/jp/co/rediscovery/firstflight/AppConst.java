@@ -1,6 +1,9 @@
 package jp.co.rediscovery.firstflight;
 
 public class AppConst {
+	public static final String PREF_NAME = "FirstFlight";
+	public static final String APP_KEY_FIRST_TIME = "app_key_first_time";
+
 	public static final String APP_EXTRA_DEVICE_SERVICE = "APP_EXTRA_DEVICE_SERVICE";
 	public static final String APP_EXTRA_DEVICE_INFO = "APP_EXTRA_DEVICE_INFO";
 

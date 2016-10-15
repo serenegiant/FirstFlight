@@ -22,4 +22,11 @@
 	<string name="select">選択</string>
 	<string name="not_selected">未選択</string>
 	<string name="parent_dir">上へ…</string>
+
+	<string name="instructions">注意事項</string>
+	<string name="agree">同意する</string>
+	<string name="disagree">同意しない</string>
+	<string name="prev">前へ</string>
+	<string name="next">次へ</string>
+	<string name="skip">スキップ</string>
 </resources>

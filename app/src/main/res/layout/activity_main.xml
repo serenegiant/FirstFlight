@@ -13,10 +13,4 @@
 		android:background="@null">
 
 	</FrameLayout>
-	<view
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		class="jp.co.rediscovery.widget.DroneNoticeView"
-		android:background="@color/ALICEBLUE"
-		android:id="@+id/drone_notice_view"/>
 </RelativeLayout>

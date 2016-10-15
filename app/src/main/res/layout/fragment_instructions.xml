@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:padding="@dimen/padding"
+	android:background="@color/ALICEBLUE">
+
+	<view
+		android:id="@+id/drone_notice_view"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		class="jp.co.rediscovery.widget.DroneNoticeView"
+		android:background="@color/ALICEBLUE"
+		android:layout_above="@+id/bottom_panel"/>
+	<ScrollView
+		android:id="@+id/instructions_view"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_above="@+id/bottom_panel">
+		<TextView
+			android:id="@+id/instructions"
+			android:text="@string/instruction1"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:textSize="24sp"/>
+	</ScrollView>
+
+	<RelativeLayout
+		android:id="@+id/bottom_panel"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="@dimen/half_padding"
+		android:layout_alignParentBottom="true">
+
+		<Button
+			android:id="@+id/skip_button"
+			tools:text="skip"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:layout_alignParentEnd="true"
+			/>
+		<Button
+			android:id="@+id/next_button"
+			tools:text="next"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_toLeftOf="@id/skip_button"
+			/>
+		<Button
+			android:id="@+id/prev_button"
+			tools:text="Prev"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_toLeftOf="@id/next_button"
+			/>
+	</RelativeLayout>
+
+</RelativeLayout>

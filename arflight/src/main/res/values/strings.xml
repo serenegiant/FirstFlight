@@ -22,4 +22,10 @@
 	<string name="not_selected">No file selected！</string>
 	<string name="parent_dir">Up…</string>
 
+	<string name="instructions">Instructions</string>
+	<string name="agree">Agree</string>
+	<string name="disagree">Disagree</string>
+	<string name="prev">Prev</string>
+	<string name="next">Next</string>
+	<string name="skip">Skip</string>
 </resources>
