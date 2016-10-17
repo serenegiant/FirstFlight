@@ -20,7 +20,7 @@ import com.serenegiant.utils.FpsCounter;
 public class VideoStream {
 	private static final String TAG = VideoStream.class.getSimpleName();
 
-	private static final String VIDEO_MIME_TYPE = "video/avc";
+	private static final String VIDEO_MIME_TYPE = "video/avc";	// h.264
 	private static final int VIDEO_INPUT_TIMEOUT_US = 33000;
 	private static final long VIDEO_OUTPUT_TIMEOUT_US = 20000;
 	public static final int VIDEO_WIDTH = 640;
@@ -122,7 +122,7 @@ public class VideoStream {
 
 	protected ByteBuffer[] onSpsPpsReady(final ByteBuffer sps, final ByteBuffer pps) {
 		mDecodeTask.initMediaCodec();
-		mDecodeTask.configureMediaCodec(sps, pps, mRendererHolder.getSurface()/*mRendererTask.getSurface()*/);
+		mDecodeTask.configureMediaCodec(sps, pps, mRendererHolder.getSurface());
 		return mDecodeTask.inputBuffers;
 	}
 
@@ -180,7 +180,7 @@ public class VideoStream {
 				if (!isCodecConfigured && isIFrame) {
 					final ByteBuffer csdBuffer = getCSD(frame, true/*isIFrame*/);
 					if (csdBuffer != null) {
-						configureMediaCodec(csdBuffer, mRendererHolder.getSurface()/*mRendererTask.getSurface()*/);
+						configureMediaCodec(csdBuffer, mRendererHolder.getSurface());
 					} else {
 						Log.w(TAG, "CSDを取得できなかった");
 					}
@@ -232,6 +232,7 @@ public class VideoStream {
 			// デコーダーの初期化完了待ちループ
 			for ( ; isDecoderRunning && !isCodecConfigured ; ) {
 				try {
+					// mSyncで待ったほうがええかも
 					Thread.sleep(VIDEO_OUTPUT_TIMEOUT_US / 1000);
 				} catch (final InterruptedException e) {
 					break;
@@ -247,7 +248,7 @@ public class VideoStream {
 						outIndex = mediaCodec.dequeueOutputBuffer(info, VIDEO_OUTPUT_TIMEOUT_US);
 						if (outIndex >= 0) {
 							// これを呼び出すとSurfaceへの書き込み要求が発行される.
-							// これより未来のどこかわからへん時に実際の描画が行われる
+							// これより未来のどっかで実際の描画が行われる
 							mediaCodec.releaseOutputBuffer(outIndex, true/*render*/);
 							mFps.count();
 						}
