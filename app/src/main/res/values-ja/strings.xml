@@ -99,4 +99,9 @@
 	<string name="media_title_galley">メディア一覧</string>
 	<string name="media_empty">メディアファイルがありません</string>
 	<string name="media_free_space">%s 空き</string>
+
+	<string name="permission_location">位置情報へのアクセス許可がありません。</string>
+	<string name="permission_location_finish">位置情報へのアクセス許可がありません。\n終了します。</string>
+	<string name="permission_location_reason">ドローンを検出するためには位置情報へのアクセス許可が必要です。</string>
+	<string name="permission_location_request">ドローンを検出するためには位置情報へのアクセス許可が必要です。</string>
 </resources>

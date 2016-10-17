@@ -451,7 +451,7 @@ public class BaseFragment extends Fragment implements MessageDialogFragment.Mess
 	protected boolean checkPermissionLocation() {
 		if (!PermissionCheck.hasAccessLocation(getActivity())) {
 			MessageDialogFragment.showDialog(this, REQUEST_PERMISSION_LOCATION,
-				R.string.permission_title, R.string.permission_location,
+				R.string.permission_title, R.string.permission_location_request,
 				new String[] { Manifest.permission.ACCESS_COARSE_LOCATION,
 							  Manifest.permission.ACCESS_FINE_LOCATION});
 			return false;
@@ -467,7 +467,7 @@ public class BaseFragment extends Fragment implements MessageDialogFragment.Mess
 	protected boolean checkPermissionLocationCoarse() {
 		if (!PermissionCheck.hasAccessLocation(getActivity())) {
 			MessageDialogFragment.showDialog(this, REQUEST_PERMISSION_LOCATION,
-				R.string.permission_title, R.string.permission_location,
+				R.string.permission_title, R.string.permission_location_request,
 				new String[] { Manifest.permission.ACCESS_COARSE_LOCATION});
 			return false;
 		}
@@ -482,7 +482,7 @@ public class BaseFragment extends Fragment implements MessageDialogFragment.Mess
 	protected boolean checkPermissionLocationFine() {
 		if (!PermissionCheck.hasAccessLocation(getActivity())) {
 			MessageDialogFragment.showDialog(this, REQUEST_PERMISSION_LOCATION,
-				R.string.permission_title, R.string.permission_location,
+				R.string.permission_title, R.string.permission_location_request,
 				new String[] { Manifest.permission.ACCESS_FINE_LOCATION});
 			return false;
 		}

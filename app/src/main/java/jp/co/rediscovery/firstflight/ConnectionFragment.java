@@ -54,9 +54,11 @@ public class ConnectionFragment extends BaseFragment {
 	public void onResume() {
 		super.onResume();
 		if (DEBUG) Log.d(TAG, "onResume:");
-		final ManagerFragment manager = ManagerFragment.getInstance(getActivity());
-		manager.addCallback(mManagerCallback);
-		manager.startDiscovery();
+		if (checkPermissionLocation()) {
+			final ManagerFragment manager = ManagerFragment.getInstance(getActivity());
+			manager.addCallback(mManagerCallback);
+			manager.startDiscovery();
+		}
 		updateButtons(false);
 	}
 
