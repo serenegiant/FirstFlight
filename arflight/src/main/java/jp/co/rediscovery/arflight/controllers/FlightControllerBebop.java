@@ -57,7 +57,7 @@ import jp.co.rediscovery.arflight.attribute.AttributeMotor;
 import jp.co.rediscovery.arflight.attribute.AttributePosition;
 
 public class FlightControllerBebop extends FlightController implements ICameraController, IWiFiController {
-	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること
+	private static final boolean DEBUG = true;	// FIXME 実働時はfalseにすること
 	private final String TAG = "FlightControllerBebop:" + getClass().getSimpleName();
 
 	private final Object mVideoSync = new Object();
@@ -939,7 +939,8 @@ public class FlightControllerBebop extends FlightController implements ICameraCo
 		if (DEBUG) Log.v (TAG, "sendCameraOrientation:");
 		ARCONTROLLER_ERROR_ENUM result = ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_ERROR;
 		if (isConnected()) {
-			result = mARDeviceController.getFeatureARDrone3().sendCameraOrientation((byte)tilt, (byte)pan);
+//			result = mARDeviceController.getFeatureARDrone3().sendCameraOrientation((byte)tilt, (byte)pan);
+			result = mARDeviceController.getFeatureARDrone3().setCameraOrientation((byte)tilt, (byte)pan);
 		}
 		if (result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK) {
 			Log.e(TAG, "#sendCameraOrientation failed:" + result);
