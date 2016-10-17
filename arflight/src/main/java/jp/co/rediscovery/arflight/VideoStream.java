@@ -30,10 +30,8 @@ public class VideoStream {
 	public static final int VIDEO_HEIGHT_HALF = VIDEO_HEIGHT >>> 1;
 
 	private final Object mSync = new Object();
-//	private volatile boolean isRendererRunning;
 	private volatile boolean isDecoderRunning;
 
-//	private final RendererTask mRendererTask;
 	private final RendererHolder mRendererHolder;
 	private final DecodeTask mDecodeTask;
 	private final FpsCounter mFps = new FpsCounter();
@@ -41,12 +39,9 @@ public class VideoStream {
 	public VideoStream() {
 		mDecodeTask = new DecodeTask();
 		new Thread(mDecodeTask, "VideoStream#decodeTask").start();
-//		mRendererTask = new RendererTask(this);
-//		new Thread(mRendererTask, "VideoStream$rendererTask").start();
-//		mRendererTask.waitReady();
 		mRendererHolder = new RendererHolder(VIDEO_WIDTH, VIDEO_HEIGHT, null);
 		synchronized (mSync) {
-			for ( ; /*!isRendererRunning ||*/ !isDecoderRunning ; ) {
+			for ( ; !isDecoderRunning ; ) {
 				try {
 					mSync.wait();
 				} catch (final InterruptedException e) {
@@ -61,10 +56,9 @@ public class VideoStream {
 	 */
 	public void release() {
 		synchronized (mSync) {
-			/*isRendererRunning =*/ isDecoderRunning = false;
+			isDecoderRunning = false;
 			mSync.notifyAll();
 		}
-//		mRendererTask.release();
 		mRendererHolder.release();
 	}
 
@@ -75,7 +69,6 @@ public class VideoStream {
 	 * @param surface
 	 */
 	public void addSurface(final int id, final Surface surface) {
-//		mRendererTask.addSurface(id, surface);
 		mRendererHolder.addSurface(id, surface, false);
 	}
 
@@ -84,7 +77,6 @@ public class VideoStream {
 	 * @param id
 	 */
 	public void removeSurface(final int id) {
-//		mRendererTask.removeSurface(id);
 		mRendererHolder.removeSurface(id);
 	}
 
@@ -386,327 +378,4 @@ public class VideoStream {
 		}
 	}
 
-//	private static final int REQUEST_DRAW = 1;
-//	private static final int REQUEST_UPDATE_SIZE = 2;
-//	private static final int REQUEST_ADD_SURFACE = 3;
-//	private static final int REQUEST_REMOVE_SURFACE = 4;
-//
-//	/** デコードした映像をワーカースレッド上でOpenGL|ESでSurface全面に表示するためのタスク */
-//	private static final class RendererTask extends EglTask {
-//		/** 映像の分配描画先を保持&描画するためのホルダークラス */
-//		private static final class RendererSurfaceRec {
-//			private Object mSurface;
-//			private EGLBase.IEglSurface mTargetSurface;
-//			final float[] mMvpMatrix = new float[16];
-//
-//			public RendererSurfaceRec(final EGLBase egl, final Object surface) {
-//				mSurface = surface;
-//				mTargetSurface = egl.createFromSurface(surface);
-//				Matrix.setIdentityM(mMvpMatrix, 0);
-//			}
-//
-//			public void release() {
-//				if (mTargetSurface != null) {
-//					mTargetSurface.release();
-//					mTargetSurface = null;
-//				}
-//				mSurface = null;
-//			}
-//		}
-//
-//		private final VideoStream mParent;
-//		/** 受け取った映像の分配描画の排他制御用 */
-//		private final Object mClientSync = new Object();
-//		/** 分配描画先 */
-//		private final SparseArray<RendererSurfaceRec> mClients = new SparseArray<RendererSurfaceRec>();
-//
-//		private GLDrawer2D mDrawer;
-//		/** MediaCodecでデコードした映像を受け取るためのテクスチャのテクスチャ名(SurfaceTexture生成時/分配描画に使用) */
-//		private int mTexId;
-//		/** MediaCodecでデコードした映像を受け取るためのSurfaceTexture */
-//		private SurfaceTexture mMasterTexture;
-//		/** mMasterTextureのテクスチャ変換行列 */
-//		final float[] mTexMatrix = new float[16];
-//		/** MediaCodecでデコードした映像を受け取るためのSurfaceTextureから取得したSurface */
-//		private Surface mMasterSurface;
-//		/** 映像サイズ */
-//		private int mVideoWidth, mVideoHeight;
-//
-//		/**
-//		 * コンストラクタ
-//		 * @param parent
-//		 */
-//		public RendererTask(final VideoStream parent) {
-//			super(null, EglTask.EGL_FLAG_RECORDABLE);
-//			mParent = parent;
-//			mVideoWidth = VIDEO_WIDTH;
-//			mVideoHeight = VIDEO_HEIGHT;
-//		}
-//
-//		private float mTexWidth;
-//		private float mTexHeight;
-//		private float[] mTexOffset;
-//		private int muTexOffsetLoc;			// テクスチャオフセット(カーネル行列用)
-//		@Override
-//		protected void onStart() {
-//			mDrawer = new GLDrawer2D(true);
-//			mDrawer.updateShader(ShaderConst.FRAGMENT_SHADER_EXT_FILT3x3);
-//			setTexSize(mVideoWidth, mVideoHeight);
-//
-//			mTexId = GLHelper.initTex(ShaderConst.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_NEAREST);
-//			mMasterTexture = new SurfaceTexture(mTexId);
-//			mMasterSurface = new Surface(mMasterTexture);
-//			mMasterTexture.setDefaultBufferSize(mVideoWidth, mVideoHeight);
-//			mMasterTexture.setOnFrameAvailableListener(mOnFrameAvailableListener);
-//			synchronized (mParent.mSync) {
-//				mParent.isRendererRunning = true;
-//				mParent.mSync.notifyAll();
-//			}
-//			mParent.mFps.reset();
-//		}
-//
-//		private void setTexSize(final int width, final int height) {
-//			mTexHeight = height;
-//			mTexWidth = width;
-//			final float rw = 1.0f / width;
-//			final float rh = 1.0f / height;
-//
-//			// Don't need to create a new array here, but it's syntactically convenient.
-//			mTexOffset = new float[] {
-//				-rw, -rh,   0f, -rh,    rw, -rh,
-//				-rw, 0f,    0f, 0f,     rw, 0f,
-//				-rw, rh,    0f, rh,     rw, rh
-//			};
-//			muTexOffsetLoc = mDrawer.glGetUniformLocation("uTexOffset");
-//			// テクセルオフセット
-//			if ((muTexOffsetLoc >= 0) && (mTexOffset != null)) {
-//				GLES20.glUniform2fv(muTexOffsetLoc, ShaderConst.KERNEL_SIZE3x3, mTexOffset, 0);
-//			}
-//		}
-//
-//		@Override
-//		protected void onStop() {
-//			synchronized (mParent.mSync) {
-//				mParent.isRendererRunning = false;
-//				mParent.mSync.notifyAll();
-//			}
-//			handleRemoveAll();
-//			makeCurrent();
-//			if (mDrawer != null) {
-//				mDrawer.release();
-//				mDrawer = null;
-//			}
-//			mMasterSurface = null;
-//			if (mMasterTexture != null) {
-//				mMasterTexture.release();
-//				mMasterTexture = null;
-//			}
-//		}
-//
-//		@Override
-//		protected Object processRequest(int request, int arg1, int arg2, Object obj) {
-//			switch (request) {
-//			case REQUEST_DRAW:
-//				handleDraw();
-//				break;
-//			case REQUEST_UPDATE_SIZE:
-//				handleResize(arg1, arg2);
-//				break;
-//			case REQUEST_ADD_SURFACE:
-//				handleAddSurface(arg1, obj);
-//				break;
-//			case REQUEST_REMOVE_SURFACE:
-//				handleRemoveSurface(arg1);
-//				break;
-//			}
-//			return null;
-//		}
-//
-//		/** 映像受け取り用Surfaceを取得 */
-//		public Surface getSurface() {
-//			return mMasterSurface;
-//		}
-//
-//		/** 映像受け取り用SurfaceTextureを取得 */
-//		public SurfaceTexture getSurfaceTexture() {
-//			return mMasterTexture;
-//		}
-//
-//		/**
-//		 * 分配描画用のSurfaceを追加
-//		 * @param id
-//		 * @param surface Surface/SurfaceHolder/SurfaceTexture
-//		 */
-//		public void addSurface(final int id, final Object surface) {
-//			synchronized (mClientSync) {
-//				if ((surface != null) && (mClients.get(id) == null)) {
-//					offer(REQUEST_ADD_SURFACE, id, surface);
-//					try {
-//						mClientSync.wait();
-//					} catch (final InterruptedException e) {
-//						// ignore
-//					}
-//				}
-//			}
-//		}
-//
-//		/***
-//		 * 分配描画用のSurfaceを削除
-//		 * @param id
-//		 */
-//		public void removeSurface(final int id) {
-//			synchronized (mClientSync) {
-//				if (mClients.get(id) != null) {
-//					offer(REQUEST_REMOVE_SURFACE, id);
-//					try {
-//						mClientSync.wait();
-//					} catch (final InterruptedException e) {
-//						// ignore
-//					}
-//				}
-//			}
-//		}
-//
-//		/***
-//		 * 描画映像サイズを変更
-//		 * @param width
-//		 * @param height
-//		 */
-//		public void resize(final int width, final int height) {
-//			if ((mVideoWidth != width) || (mVideoHeight != height)) {
-//				offer(REQUEST_UPDATE_SIZE, width, height);
-//			}
-//		}
-//
-//		/**
-//		 * 実際の描画処理(ワーカースレッド上で実行)
-//		 */
-//		private void handleDraw() {
-//			mParent.mFps.count();
-//			try {
-//				makeCurrent();
-//				mMasterTexture.updateTexImage();
-//				mMasterTexture.getTransformMatrix(mTexMatrix);
-//			} catch (final Exception e) {
-//				Log.e(TAG, "draw:thread id =" + Thread.currentThread().getId(), e);
-//				return;
-//			}
-//			// 各Surfaceへ描画する
-//			synchronized (mClientSync) {
-//				final int n = mClients.size();
-//				RendererSurfaceRec client;
-//				for (int i = 0; i < n; i++) {
-//					client = mClients.valueAt(i);
-//					if (client != null) {
-//						client.mTargetSurface.makeCurrent();
-//						mDrawer.draw(mTexId, mTexMatrix, 0);
-//						client.mTargetSurface.swap();
-//					}
-//				}
-//			}
-//			GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-//			GLES20.glFlush();
-//		}
-//
-//		/**
-//		 * 分配描画用Surfaceを追加(ワーカースレッド上で実行)
-//		 * @param id
-//		 * @param surface
-//		 */
-//		private void handleAddSurface(final int id, final Object surface) {
-//			checkSurface();
-//			synchronized (mClientSync) {
-//				RendererSurfaceRec client = mClients.get(id);
-//				if (client == null) {
-//					try {
-//						client = new RendererSurfaceRec(getEgl(), surface);
-//						mClients.append(id, client);
-//					} catch (final Exception e) {
-//						Log.w(TAG, "invalid surface: surface=" + surface);
-//					}
-//				} else {
-//					Log.w(TAG, "surface is already added: id=" + id);
-//				}
-//				mClientSync.notifyAll();
-//			}
-//		}
-//
-//		/**
-//		 * 分配描画用Surfaceを取り除く(ワーカースレッド上で実行)
-//		 * @param id
-//		 */
-//		private void handleRemoveSurface(final int id) {
-//			synchronized (mClientSync) {
-//				final RendererSurfaceRec client = mClients.get(id);
-//				if (client != null) {
-//					mClients.remove(id);
-//					client.release();
-//				}
-//				checkSurface();
-//				mClientSync.notifyAll();
-//			}
-//		}
-//
-//		/**
-//		 * 分配描画用のSurfaceをすべて破棄する
-//		 */
-//		private void handleRemoveAll() {
-//			synchronized (mClientSync) {
-//				final int n = mClients.size();
-//				RendererSurfaceRec client;
-//				for (int i = 0; i < n; i++) {
-//					client = mClients.valueAt(i);
-//					if (client != null) {
-//						makeCurrent();
-//						client.release();
-//					}
-//				}
-//				mClients.clear();
-//			}
-//		}
-//
-//		/**
-//		 * 保持している分配描画用Surfaceが有効かどうかを確認して無効なものを削除する
-//		 */
-//		private void checkSurface() {
-//			synchronized (mClientSync) {
-//				final int n = mClients.size();
-//				for (int i = 0; i < n; i++) {
-//					final RendererSurfaceRec client = mClients.valueAt(i);
-//					if (client != null && client.mSurface instanceof Surface) {
-//						if (!((Surface)client.mSurface).isValid()) {
-//							final int id = mClients.keyAt(i);
-//							Log.i(TAG, "checkSurface:found invalid surface:id=" + id);
-//							mClients.valueAt(i).release();
-//							mClients.remove(id);
-//						}
-//					}
-//				}
-//			}
-//		}
-//
-//		/**
-//		 * 映像サイズ変更処理(ワーカースレッド上で実行)
-//		 * @param width
-//		 * @param height
-//		 */
-//		private void handleResize(final int width, final int height) {
-//			mVideoWidth = width;
-//			mVideoHeight = height;
-//			mMasterTexture.setDefaultBufferSize(mVideoWidth, mVideoHeight);
-//		}
-//
-//		/**
-//		 * TextureSurfaceで映像を受け取った際のコールバックリスナー
-//		 * TextureSurface#setOnFrameAvailableListenerで割り当てる際にHandlerを指定していないので任意スレッド上で実行される
-//		 */
-//		private final SurfaceTexture.OnFrameAvailableListener
-//			mOnFrameAvailableListener = new SurfaceTexture.OnFrameAvailableListener() {
-//
-//			@Override
-//			public void onFrameAvailable(final SurfaceTexture surfaceTexture) {
-//				offer(REQUEST_DRAW);
-//			}
-//		};
-//	}
 }
