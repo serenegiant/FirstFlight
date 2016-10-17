@@ -203,8 +203,11 @@ public abstract class InstructionsFragment extends Fragment {
 	}
 
 	protected abstract Fragment getConnectionFragment();
+
 	private void finishInstructions() {
-		final SharedPreferences pref = getActivity().getSharedPreferences(PREF_NAME, 0);
+		final Activity activity = getActivity();
+		if ((activity == null) || activity.isFinishing()) return;
+		final SharedPreferences pref = activity.getSharedPreferences(PREF_NAME, 0);
 		pref.edit().putBoolean(PREF_KEY_FIRST_TIME, false).apply();
 		final Fragment fragment = getConnectionFragment();
 		getFragmentManager().beginTransaction()
@@ -216,6 +219,8 @@ public abstract class InstructionsFragment extends Fragment {
 	private void finishApp() {
 		final Activity activity = getActivity();
 		if ((activity != null) && !activity.isFinishing()) {
+			final SharedPreferences pref = activity.getSharedPreferences(PREF_NAME, 0);
+			pref.edit().remove(PREF_KEY_FIRST_TIME).apply();
 			activity.finish();
 		}
 	}
