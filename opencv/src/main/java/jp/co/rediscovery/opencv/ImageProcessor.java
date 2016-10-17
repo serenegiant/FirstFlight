@@ -511,10 +511,10 @@ public class ImageProcessor {
 		private int mTexId;
 		/** 映像を受け取るtsめのSurfaceTexture */
 		private SurfaceTexture mSourceTexture;
-		/** mMasterTextureのテクスチャ変換行列 */
-		final float[] mTexMatrix = new float[16];
-		/** 映像を受け取るためのSurfaceTextureから取得したSurface */
+		/** 映像を受け取るためのmSourceTextureから生成したSurface */
 		private Surface mSourceSurface;
+		/** mSourceTextureのテクスチャ変換行列 */
+		final float[] mTexMatrix = new float[16];
 		/** ソース映像サイズ */
 		private final int WIDTH, HEIGHT;
 		/** 映像サイズ */
@@ -546,17 +546,17 @@ public class ImageProcessor {
 			return mSourceTexture;
 		}
 
-		private float mTexWidth;
-		private float mTexHeight;
-		private float[] mTexOffset;
-		private int muTexOffsetLoc;			// テクスチャオフセット(カーネル行列用)
+//		private float mTexWidth;
+//		private float mTexHeight;
+//		private float[] mTexOffset;
+//		private int muTexOffsetLoc;			// テクスチャオフセット(カーネル行列用)
 		@SuppressLint("NewApi")
 		@Override
 		protected void onStart() {
 			// ソース映像の描画用
-			mSrcDrawer = new GLDrawer2D(true);
-			mSrcDrawer.updateShader(ShaderConst.FRAGMENT_SHADER_EXT_FILT3x3);
-			setTexSize(WIDTH, HEIGHT);
+			mSrcDrawer = new GLDrawer2D(true/*isOES*/);	// GL_TEXTURE_EXTERNAL_OESを使う
+//			mSrcDrawer.updateShader(ShaderConst.FRAGMENT_SHADER_EXT_FILT3x3);
+//			setTexSize(WIDTH, HEIGHT);
 			flipMatrix(true);	// 上下入れ替え
 //			mSrcDrawer.getProgram().setKernel(Texture2dProgram.KERNEL_GAUSSIAN, 0.0f);		// ガウシアン(平滑化)
 			mTexId = GLHelper.initTex(ShaderConst.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_NEAREST);
@@ -608,24 +608,24 @@ public class ImageProcessor {
 			mResultFps.reset();
 		}
 
-		private void setTexSize(final int width, final int height) {
-			mTexHeight = height;
-			mTexWidth = width;
-			final float rw = 1.0f / width;
-			final float rh = 1.0f / height;
-
-			// Don't need to create a new array here, but it's syntactically convenient.
-			mTexOffset = new float[] {
-				-rw, -rh,   0f, -rh,    rw, -rh,
-				-rw, 0f,    0f, 0f,     rw, 0f,
-				-rw, rh,    0f, rh,     rw, rh
-			};
-			muTexOffsetLoc = mSrcDrawer.glGetUniformLocation("uTexOffset");
-			// テクセルオフセット
-			if ((muTexOffsetLoc >= 0) && (mTexOffset != null)) {
-				GLES20.glUniform2fv(muTexOffsetLoc, ShaderConst.KERNEL_SIZE3x3, mTexOffset, 0);
-			}
-		}
+//		private void setTexSize(final int width, final int height) {
+//			mTexHeight = height;
+//			mTexWidth = width;
+//			final float rw = 1.0f / width;
+//			final float rh = 1.0f / height;
+//
+//			// Don't need to create a new array here, but it's syntactically convenient.
+//			mTexOffset = new float[] {
+//				-rw, -rh,   0f, -rh,    rw, -rh,
+//				-rw, 0f,    0f, 0f,     rw, 0f,
+//				-rw, rh,    0f, rh,     rw, rh
+//			};
+//			muTexOffsetLoc = mSrcDrawer.glGetUniformLocation("uTexOffset");
+//			// テクセルオフセット
+//			if ((muTexOffsetLoc >= 0) && (mTexOffset != null)) {
+//				GLES20.glUniform2fv(muTexOffsetLoc, ShaderConst.KERNEL_SIZE3x3, mTexOffset, 0);
+//			}
+//		}
 
 		private void flipMatrix(final boolean verticalFlip) {
 			final float[] mat = new float[32];
