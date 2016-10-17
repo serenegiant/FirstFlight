@@ -197,38 +197,46 @@ public class ConnectionFragment extends BaseFragment {
 		Fragment fragment = null;
 		switch (view.getId()) {
 		case R.id.pilot_button:
-			fragment = getFragment(position, true);
+			if (checkPermissionLocation()) {
+				fragment = getFragment(position, true);
+			}
 			break;
 		case R.id.download_button:
-			fragment = getFragment(position, false);
+			if (checkPermissionWriteExternalStorage()) {
+				fragment = getFragment(position, false);
+			}
 			break;
 		case R.id.gallery_button:
-			fragment = GalleyFragment.newInstance();
+			if (checkPermissionWriteExternalStorage()) {
+				fragment = GalleyFragment.newInstance();
+			}
 			break;
 		case R.id.auto_button:
 		{
-//			final ManagerFragment manager = ManagerFragment.getInstance(getActivity());
-			final ARDeviceServiceAdapter adapter = (ARDeviceServiceAdapter)mDeviceListView.getAdapter();
-//			final String itemValue = adapter.getItemName(position);
-//			final ARDiscoveryDeviceService device = manager.getDevice(itemValue);
-			final ARDiscoveryDeviceService device = adapter.getItem(position);
-			if (device != null) {
-				// 製品名を取得
-				final ARDISCOVERY_PRODUCT_ENUM product = ARDiscoveryService.getProductFromProductID(device.getProductID());
+			if (checkPermissionLocation()) {
+//				final ManagerFragment manager = ManagerFragment.getInstance(getActivity());
+				final ARDeviceServiceAdapter adapter = (ARDeviceServiceAdapter)mDeviceListView.getAdapter();
+//				final String itemValue = adapter.getItemName(position);
+//				final ARDiscoveryDeviceService device = manager.getDevice(itemValue);
+				final ARDiscoveryDeviceService device = adapter.getItem(position);
+				if (device != null) {
+					// 製品名を取得
+					final ARDISCOVERY_PRODUCT_ENUM product = ARDiscoveryService.getProductFromProductID(device.getProductID());
 
-				switch (product) {
-				case ARDISCOVERY_PRODUCT_ARDRONE:	// Bebop
-					fragment = AutoPilotFragment.newInstance(device, null, "bebop", AutoPilotFragment.MODE_TRACE);
-					break;
-				case ARDISCOVERY_PRODUCT_BEBOP_2:	// Bebop2
-					fragment = AutoPilotFragment.newInstance(device, null, "bebop2", AutoPilotFragment.MODE_TRACE);
-					break;
-				case ARDISCOVERY_PRODUCT_SKYCONTROLLER:	// SkyControllerNewAPI
-					fragment = newBridgetFragment(device);
-					break;
-				default:
-					Toast.makeText(getActivity(), R.string.unsupported_product, Toast.LENGTH_SHORT).show();
-					break;
+					switch (product) {
+					case ARDISCOVERY_PRODUCT_ARDRONE:	// Bebop
+						fragment = AutoPilotFragment.newInstance(device, null, "bebop", AutoPilotFragment.MODE_TRACE);
+						break;
+					case ARDISCOVERY_PRODUCT_BEBOP_2:	// Bebop2
+						fragment = AutoPilotFragment.newInstance(device, null, "bebop2", AutoPilotFragment.MODE_TRACE);
+						break;
+					case ARDISCOVERY_PRODUCT_SKYCONTROLLER:	// SkyControllerNewAPI
+						fragment = newBridgetFragment(device);
+						break;
+					default:
+						Toast.makeText(getActivity(), R.string.unsupported_product, Toast.LENGTH_SHORT).show();
+						break;
+					}
 				}
 			}
 			break;

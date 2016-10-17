@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest package="jp.co.rediscovery.firstflight"
-	xmlns:android="http://schemas.android.com/apk/res/android">
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools">
 	<!--OpenGL GL|ES3を必須にする(ES3をサポートしない端末にはインストールできなくなる)-->
 	<uses-feature android:glEsVersion="0x00030000" android:required="true" />
 	<!--WiFi関係のパーミッション-->
@@ -19,6 +20,8 @@
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 	<!--長押し時のフィードバックを振動で行えるようにする-->
 	<uses-permission android:name="android.permission.VIBRATE" />
+	<!-- ARSDKを組み込みと勝手に付与されるPHONEのパーミッションを取り除くため -->
+	<uses-permission android:name="android.permission.READ_PHONE_STATE" tools:node="remove" />
 
 	<application
 		android:allowBackup="true"
