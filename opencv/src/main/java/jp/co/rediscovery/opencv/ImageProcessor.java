@@ -11,6 +11,7 @@ import android.os.HandlerThread;
 import android.util.Log;
 import android.view.Surface;
 
+import com.serenegiant.glutils.EglTask;
 import com.serenegiant.glutils.GLDrawer2D;
 import com.serenegiant.glutils.GLHelper;
 import com.serenegiant.glutils.ShaderConst;
@@ -23,16 +24,14 @@ import com.serenegiant.mediaeffect.MediaEffectExposure;
 import com.serenegiant.mediaeffect.MediaEffectExtraction;
 import com.serenegiant.mediaeffect.MediaEffectSaturate;
 import com.serenegiant.mediaeffect.MediaSource;
+import com.serenegiant.utils.BuildCheck;
+import com.serenegiant.utils.FpsCounter;
 
 import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.serenegiant.glutils.EglTask;
-import com.serenegiant.utils.BuildCheck;
-import com.serenegiant.utils.FpsCounter;
 
 public class ImageProcessor {
 //	private static final boolean DEBUG = false; // FIXME 実働時はfalseにすること
@@ -607,7 +606,7 @@ public class ImageProcessor {
 		private int mTexId;
 		/** 映像を受け取るtsめのSurfaceTexture */
 		private SurfaceTexture mSourceTexture;
-		/** 映像を受け取るためのmSourceTextureから生成したSurface */
+		/** 映像を受け取るためのSurfaceTextureから取得したSurface */
 		private Surface mSourceSurface;
 		/** mSourceTextureのテクスチャ変換行列 */
 		final float[] mTexMatrix = new float[16];
@@ -788,8 +787,8 @@ public class ImageProcessor {
 			}
 			// SurfaceTextureで受け取った画像をプレフィルター用にセット
 			mMediaSource.setSource(mSrcDrawer, mTexId, mTexMatrix);
+			// プレフィルター処理
 			synchronized (mSync) {
-				// プレフィルター処理
 				for (final IEffect effect: mEffects) {
 					if (effect.enabled()) {
 						mMediaSource.apply(effect);
