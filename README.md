@@ -1,3 +1,6 @@
+# FirstFlight
+
+
 By downloading, copying, installing or using the software you agree to this license.
 If you do not agree to this license, do not download, install,
 copy or use the software.
@@ -33,3 +36,22 @@ loss of use, data, or profits; or business interruption) however caused
 and on any theory of liability, whether in contract, strict liability,
 or tort (including negligence or otherwise) arising in any way out of
 the use of this software, even if advised of the possibility of such damage.
+
+### ビルド方法
+プロジェクト直下に`local.properties`というファイルを作成し、`sdk.dir`と`ndk.dir`を正しく設定してください。
+
+```
+sdk.dir={Android SDKへのパス}
+ndk.dir={Android NDKへのパス}
+```
+
+### リリースビルドするには
+プロジェクト直下に`local.properties`というファイルにリリース署名用の設定を追加してください。
+キーストアの作り方などはWebで^^;
+
+```
+STORE_PASSWORD={キーストアパスワード}
+KEYSTORE={キーストアファイルのパス}
+KEY_PASSWORD={エリアスのパスワード}
+ALIAS={エリアス名}
+```
