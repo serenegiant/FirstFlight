@@ -50,7 +50,7 @@ android {
 	defaultConfig {
 		minSdkVersion 16
 		targetSdkVersion versionTarget
-		versionCode 1
+		versionCode versionCodeValue
 		versionName versionNameString
 	}
 	buildTypes {
