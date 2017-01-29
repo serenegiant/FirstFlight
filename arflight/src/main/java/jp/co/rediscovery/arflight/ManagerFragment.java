@@ -68,7 +68,10 @@ import java.util.Map;
 
 import jp.co.rediscovery.arflight.controllers.FlightControllerBebop2;
 import jp.co.rediscovery.arflight.controllers.FlightControllerBebop;
+import jp.co.rediscovery.arflight.controllers.FlightControllerCargoDrone;
+import jp.co.rediscovery.arflight.controllers.FlightControllerMambo;
 import jp.co.rediscovery.arflight.controllers.FlightControllerMiniDrone;
+import jp.co.rediscovery.arflight.controllers.FlightControllerWingX;
 import jp.co.rediscovery.arflight.controllers.SkyController;
 import com.serenegiant.net.NetworkChangedReceiver;
 import com.serenegiant.utils.HandlerThreadHandler;
@@ -450,10 +453,18 @@ public class ManagerFragment extends Fragment {
 			case ARDISCOVERY_PRODUCT_JS_EVO_RACE:
 				break;
 			case ARDISCOVERY_PRODUCT_MINIDRONE:	// RollingSpider
+				result = new FlightControllerMiniDrone(getActivity(), device);
+				break;
 			case ARDISCOVERY_PRODUCT_MINIDRONE_EVO_LIGHT:
 			case ARDISCOVERY_PRODUCT_MINIDRONE_EVO_BRICK:
-//			case ARDISCOVERY_PRODUCT_MINIDRONE_EVO_HYDROFOIL: // ハイドロフォイルもいる?
-				result = new FlightControllerMiniDrone(getActivity(), device);
+			case ARDISCOVERY_PRODUCT_MINIDRONE_EVO_HYDROFOIL: // ハイドロフォイルもいる?
+				result = new FlightControllerCargoDrone(getActivity(), device);
+				break;
+			case ARDISCOVERY_PRODUCT_MINIDRONE_DELOS3:
+				result = new FlightControllerMambo(getActivity(), device);
+				break;
+			case ARDISCOVERY_PRODUCT_MINIDRONE_WINGX:
+				result = new FlightControllerWingX(getActivity(), device);
 				break;
 			}
 			if (result != null) {
