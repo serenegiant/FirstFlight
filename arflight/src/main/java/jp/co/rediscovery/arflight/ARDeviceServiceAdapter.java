@@ -98,6 +98,8 @@ public class ARDeviceServiceAdapter extends ArrayAdapter<ARDiscoveryDeviceServic
 			case ARDISCOVERY_PRODUCT_MINIDRONE_EVO_BRICK:
 			case ARDISCOVERY_PRODUCT_MINIDRONE_EVO_HYDROFOIL: // ハイドロフォイルもいる?
 			case ARDISCOVERY_PRODUCT_SKYCONTROLLER:	// SkyController
+			case ARDISCOVERY_PRODUCT_MINIDRONE_DELOS3:	// Mambo
+			case ARDISCOVERY_PRODUCT_MINIDRONE_WINGX:	// WingX
 //				holder.thumbnail.setImageResource(デバイスアイコンリソースID);
 				break;
 			}
