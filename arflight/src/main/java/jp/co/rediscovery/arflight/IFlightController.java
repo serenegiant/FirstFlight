@@ -44,10 +44,10 @@ import com.serenegiant.math.Vector;
 /** 飛行可能デバイス(ぶっちゃけドローン)用コントローラーの追加メソッド定義用のインターフェース */
 public interface IFlightController extends IDeviceController {
 	// フリップアクションの種類
-	public static final int FLIP_FRONT = 1;
-	public static final int FLIP_BACK = 2;
-	public static final int FLIP_RIGHT = 3;
-	public static final int FLIP_LEFT = 4;
+	public static final int FLIP_FRONT = 0;
+	public static final int FLIP_BACK = 1;
+	public static final int FLIP_RIGHT = 2;
+	public static final int FLIP_LEFT = 3;
 
 	// アニメーション動作の種類
 	public static final int ANIM_NON = -1;
