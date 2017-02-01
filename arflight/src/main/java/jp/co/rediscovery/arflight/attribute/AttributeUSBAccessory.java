@@ -9,7 +9,7 @@ package jp.co.rediscovery.arflight.attribute;
  *                For Open Source Computer Vision Library
  *                        (3-clause BSD License)
  *
- * Copyright (C) 2015-2016, saki t_saki@serenegiant.com
+ * Copyright (C) 2015-2017, saki t_saki@serenegiant.com
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -37,40 +37,32 @@ package jp.co.rediscovery.arflight.attribute;
  * the use of this software, even if advised of the possibility of such damage.
  */
 
-import java.util.Locale;
+public class AttributeUSBAccessory {
+	private int mLightState;
+	private int mClawState;
+	private int mGunState;
 
-/**
- * 浮動小数点の設定
- */
-public class AttributeFloat {
-	private float mCurrent;
-	private float mMin;
-	private float mMax;
-
-	public synchronized void set(final float current, final float min, final float max) {
-		mCurrent = current;
-		mMin = min;
-		mMax = max;
+	public synchronized void lightState(final int state) {
+		mLightState = state;
 	}
 
-	public synchronized void current(final float current) {
-		mCurrent = current;
+	public synchronized int lightState() {
+		return mLightState;
 	}
 
-	public synchronized float current() {
-		return mCurrent;
+	public synchronized void clawState(final int state) {
+		mClawState = state;
 	}
 
-	public synchronized float min() {
-		return mMin;
+	public synchronized int clawState() {
+		return mClawState;
 	}
 
-	public synchronized float max() {
-		return mMax;
+	public synchronized  void gunState(final int state) {
+		mGunState = state;
 	}
 
-	@Override
-	public String toString() {
-		return String.format(Locale.US, "AttributeFloat{%f/%f/%f)}", mMin, mCurrent, mMax);
+	public synchronized int gunState() {
+		return mGunState;
 	}
 }
