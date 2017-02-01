@@ -38,6 +38,7 @@ package jp.co.rediscovery.arflight.attribute;
  */
 
 public class AttributeUSBAccessory {
+	// FIXME 受信するステータスにidが付いているのでMapとかparseArrayにしないとダメかも
 	private int mLightState;
 	private int mClawState;
 	private int mGunState;

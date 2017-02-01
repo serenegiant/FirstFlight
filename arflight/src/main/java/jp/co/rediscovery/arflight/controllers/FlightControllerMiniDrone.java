@@ -270,20 +270,23 @@ public class FlightControllerMiniDrone extends FlightController {
 		}
 		case ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_LIGHTSTATE:
 		{	// ライトの状態を受信した時
-			// public static String ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_LIGHTSTATE_ID = ""; /**< Key of the argument </code>id</code> of event <code>UsbAccessoryStateLightState</code> in feature <code>MiniDrone</code> */
-			// public static String ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_LIGHTSTATE_STATE = ""; /**< Key of the argument </code>state</code> of event <code>UsbAccessoryStateLightState</code> in feature <code>MiniDrone</code> */
-			// public static String ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_LIGHTSTATE_INTENSITY = ""; /**< Key of the argument </code>intensity</code> of event <code>UsbAccessoryStateLightState</code> in feature <code>MiniDrone</code> */
+			final Object id = args.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_LIGHTSTATE_ID);
+			final Object state = args.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_LIGHTSTATE_STATE);
+			final Object intensity = args.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_LIGHTSTATE_INTENSITY);
+			if (DEBUG) Log.v(TAG, "onMiniDroneUSBAccessoryStateLightStateUpdate:id=" + id + ",state=" + state + ",intensity=" + intensity);
 			break;
 		}
 		case ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_CLAWSTATE:
 		{	// Mamboのアームの状態を受信した時
-			// public static String ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_CLAWSTATE_ID = ""; /**< Key of the argument </code>id</code> of event <code>UsbAccessoryStateClawState</code> in feature <code>MiniDrone</code> */
-			// public static String ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_CLAWSTATE_STATE = ""; /**< Key of the argument </code>state</code> of event <code>UsbAccessoryStateClawState</code> in feature <code>MiniDrone</code> */
+			final Object id = args.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_CLAWSTATE_ID);
+			final Object state = args.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_CLAWSTATE_STATE);
+			if (DEBUG) Log.v(TAG, "onMiniDroneUSBAccessoryStateClawStateUpdate:id=" + id + ",state=" + state);
 		}
 		case ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_GUNSTATE:
 		{	// Mamboのキャノンの状態を受信した時
-			// public static String ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_GUNSTATE_ID = ""; /**< Key of the argument </code>id</code> of event <code>UsbAccessoryStateGunState</code> in feature <code>MiniDrone</code> */
-			// public static String ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_GUNSTATE_STATE = ""; /**< Key of the argument </code>state</code> of event <code>UsbAccessoryStateGunState</code> in feature <code>MiniDrone</code> */
+			final Object id = args.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_GUNSTATE_ID);
+			final Object state = args.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_GUNSTATE_STATE);
+			if (DEBUG) Log.v(TAG, "onMiniDroneUSBAccessoryStateClawStateUpdate:id=" + id + ",state=" + state);
 		}
 		default:
 			break;
