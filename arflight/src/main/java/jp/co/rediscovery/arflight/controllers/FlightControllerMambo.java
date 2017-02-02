@@ -45,4 +45,67 @@ public class FlightControllerMambo extends FlightControllerMiniDrone {
 	public FlightControllerMambo(final Context context, final ARDiscoveryDeviceService service) {
 		super(context, service);
 	}
+
+	@Override
+	public boolean hasClaw() {
+		return super.hasClaw();
+	}
+
+	@Override
+	public boolean isClawClosed() {
+		return super.isClawClosed();
+	}
+
+	@Override
+	public boolean isClawClosed(final int id) {
+		return super.isClawClosed(id);
+	}
+
+	@Override
+	public boolean requestClawClose() {
+		return super.requestClawClose();
+	}
+
+	@Override
+	public boolean requestClawClose(final int id) {
+		return super.requestClawClose(id);
+	}
+
+	@Override
+	public boolean requestClawOpen() {
+		return super.requestClawOpen();
+	}
+
+	@Override
+	public boolean requestClawOpen(final int id) {
+		return super.requestClawOpen(id);
+	}
+
+	@Override
+	public boolean requestClawOpenClose(final int id, final boolean open) {
+		return super.requestClawOpenClose(id, open);
+	}
+
+	public void toggleClaw() {
+		super.toggleClaw();
+	}
+
+	public void toggleClaw(final int id) {
+		super.toggleClaw(id);
+	}
+//--------------------------------------------------------------------------------
+	@Override
+	public boolean hasGun() {
+		return super.hasGun();
+	}
+
+	@Override
+	public boolean requestFireGun() {
+		return super.requestFireGun();
+	}
+
+	@Override
+	public boolean requestFireGun(final int id) {
+		return super.requestFireGun(id);
+	}
 }

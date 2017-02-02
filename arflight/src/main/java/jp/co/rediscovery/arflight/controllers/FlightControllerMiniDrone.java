@@ -48,11 +48,14 @@ import com.parrot.arsdk.arcommands.ARCOMMANDS_MINIDRONE_MEDIARECORDEVENT_PICTURE
 import com.parrot.arsdk.arcommands.ARCOMMANDS_MINIDRONE_MEDIARECORDEVENT_PICTUREEVENTCHANGED_EVENT_ENUM;
 import com.parrot.arsdk.arcommands.ARCOMMANDS_MINIDRONE_MEDIARECORDSTATE_PICTURESTATECHANGEDV2_STATE_ENUM;
 import com.parrot.arsdk.arcommands.ARCOMMANDS_MINIDRONE_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_ENUM;
+import com.parrot.arsdk.arcommands.ARCOMMANDS_MINIDRONE_USBACCESSORY_CLAWCONTROL_ACTION_ENUM;
+import com.parrot.arsdk.arcommands.ARCOMMANDS_MINIDRONE_USBACCESSORY_GUNCONTROL_ACTION_ENUM;
 import com.parrot.arsdk.arcontroller.ARCONTROLLER_DICTIONARY_KEY_ENUM;
 import com.parrot.arsdk.arcontroller.ARCONTROLLER_ERROR_ENUM;
 import com.parrot.arsdk.arcontroller.ARControllerArgumentDictionary;
 import com.parrot.arsdk.arcontroller.ARControllerDictionary;
 import com.parrot.arsdk.arcontroller.ARDeviceController;
+import com.parrot.arsdk.arcontroller.ARFeatureCommon;
 import com.parrot.arsdk.arcontroller.ARFeatureMiniDrone;
 import com.parrot.arsdk.ardiscovery.ARDiscoveryDeviceService;
 
@@ -64,7 +67,7 @@ import jp.co.rediscovery.arflight.attribute.AttributeMotor;
 import jp.co.rediscovery.arflight.attribute.AttributeUSBAccessory;
 
 public class FlightControllerMiniDrone extends FlightController {
-	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること
+	private static final boolean DEBUG = true;	// FIXME 実働時はfalseにすること
 	private final String TAG = "FlightControllerMiniDrone:" + getClass().getSimpleName();
 
 	public final AttributeIMU mIMU = new AttributeIMU();
@@ -270,23 +273,77 @@ public class FlightControllerMiniDrone extends FlightController {
 		}
 		case ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_LIGHTSTATE:
 		{	// ライトの状態を受信した時
-			final Object id = args.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_LIGHTSTATE_ID);
-			final Object state = args.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_LIGHTSTATE_STATE);
-			final Object intensity = args.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_LIGHTSTATE_INTENSITY);
+			// ライトがない機種だとnullで来るみたい?
+			Object id = null, state = null, intensity = null;
+			if (args != null) {
+				id = args.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_LIGHTSTATE_ID);
+				state = args.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_LIGHTSTATE_STATE);
+				intensity = args.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_LIGHTSTATE_INTENSITY);
+			}
+			if (((id == null) || (state == null) || (intensity == null)) && (elementDictionary != null) && (elementDictionary.values() != null)) {
+				for (final ARControllerArgumentDictionary<Object> element: elementDictionary.values()) {
+					id = element.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_LIGHTSTATE_ID);
+					state = element.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_LIGHTSTATE_STATE);
+					intensity = element.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_LIGHTSTATE_INTENSITY);
+				}
+			}
+			if ((id != null) && (state != null) && (intensity != null)) {
+				try {
+					mUSBAcc.lightState((Integer)id, (Integer)state, (Integer)intensity);
+				} catch (final Exception e) {
+					Log.w(TAG, e);
+				}
+			}
 			if (DEBUG) Log.v(TAG, "onMiniDroneUSBAccessoryStateLightStateUpdate:id=" + id + ",state=" + state + ",intensity=" + intensity);
 			break;
 		}
 		case ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_CLAWSTATE:
 		{	// Mamboのアームの状態を受信した時
-			final Object id = args.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_CLAWSTATE_ID);
-			final Object state = args.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_CLAWSTATE_STATE);
+			// アームが付いてないとnullで来るみたい?
+			Object id = null, state = null;
+			if (args != null) {
+				id = args.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_CLAWSTATE_ID);
+				state = args.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_CLAWSTATE_STATE);
+			}
+			if (((id == null) || (state == null)) && (elementDictionary != null) && (elementDictionary.values() != null)) {
+				for (final ARControllerArgumentDictionary<Object> element: elementDictionary.values()) {
+					id = element.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_CLAWSTATE_ID);
+					state = element.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_CLAWSTATE_STATE);
+				}
+			}
+			if ((id != null) && (state != null)) {
+				try {
+					mUSBAcc.clawState((Integer)id, (Integer)state);
+				} catch (final Exception e) {
+					Log.w(TAG, e);
+				}
+			}
 			if (DEBUG) Log.v(TAG, "onMiniDroneUSBAccessoryStateClawStateUpdate:id=" + id + ",state=" + state);
+			break;
 		}
 		case ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_GUNSTATE:
 		{	// Mamboのキャノンの状態を受信した時
-			final Object id = args.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_GUNSTATE_ID);
-			final Object state = args.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_GUNSTATE_STATE);
-			if (DEBUG) Log.v(TAG, "onMiniDroneUSBAccessoryStateClawStateUpdate:id=" + id + ",state=" + state);
+			// キャノンが付いてないとnullで来るみたい?
+			Object id = null, state = null;
+			if (args != null) {
+				id = args.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_GUNSTATE_ID);
+				state = args.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_GUNSTATE_STATE);
+			}
+			if (((id == null) || (state == null)) && (elementDictionary != null) && (elementDictionary.values() != null)) {
+				for (final ARControllerArgumentDictionary<Object> element: elementDictionary.values()) {
+					id = element.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_GUNSTATE_ID);
+					state = element.get(ARFeatureMiniDrone.ARCONTROLLER_DICTIONARY_KEY_MINIDRONE_USBACCESSORYSTATE_GUNSTATE_STATE);
+				}
+			}
+			if ((id != null) && (state != null)) {
+				try {
+					mUSBAcc.gunState((Integer)id, (Integer)state);
+				} catch (final Exception e) {
+					Log.w(TAG, e);
+				}
+			}
+			if (DEBUG) Log.v(TAG, "onMiniDroneUSBAccessoryStateGunStateUpdate:id=" + id + ",state=" + state);
+			break;
 		}
 		default:
 			break;
@@ -604,4 +661,129 @@ public class FlightControllerMiniDrone extends FlightController {
 //public ARCONTROLLER_ERROR_ENUM sendConfigurationControllerType (String _type)
 //public ARCONTROLLER_ERROR_ENUM sendConfigurationControllerName (String _name)
 
+//================================================================================
+	/**
+	 * アームがついているかどうか
+	 * 接続されていなければ常にfalse
+	 * @return
+	 */
+	protected boolean hasClaw() {
+		return isConnected() && mUSBAcc.hasClaw();
+	}
+
+	protected boolean isClawClosed() {
+		return isClawClosed(mUSBAcc.clawId());
+	}
+
+	protected boolean isClawClosed(final int id) {
+		return hasClaw() && (mUSBAcc.clawState(id) != 0);
+	}
+
+	/**
+	 * Mamboの指定したidのアームを開閉する
+	 * 状態が同じ時は何もしない
+	 * @param id 多分0だけ
+	 * @param open trueなら開く, falseなら閉じる
+	 * @return
+	 */
+	protected boolean requestClawOpenClose(final int id, final boolean open) {
+		if (DEBUG) Log.v(TAG, "requestClawOpenClose:");
+		ARCONTROLLER_ERROR_ENUM result = ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_ERROR;
+		if (hasClaw()) {
+			if (mUSBAcc.clawState(id) != (open ? 0 : 1)) {
+				final ARCOMMANDS_MINIDRONE_USBACCESSORY_CLAWCONTROL_ACTION_ENUM
+					action = ARCOMMANDS_MINIDRONE_USBACCESSORY_CLAWCONTROL_ACTION_ENUM.getFromValue(open ? 0 : 1);
+				result = mARDeviceController.getFeatureMiniDrone().sendUsbAccessoryClawControl((byte)id, action);
+			} else {
+				result = ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK;
+			}
+		}
+		return result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK;
+	}
+
+	/**
+	 * Mamboのidが一番最初のアームを開く
+	 * 既に開いている時は何もしない
+	 * @return
+	 */
+	protected boolean requestClawOpen() {
+		return requestClawOpenClose(mUSBAcc.clawId(), true);
+	}
+
+	/**
+	 * Mamboの指定したidのアームを開く
+	 * 既に開いている時は何もしない
+	 * @param id 多分0だけ
+	 * @return
+	 */
+	protected boolean requestClawOpen(final int id) {
+		return requestClawOpenClose(id, true);
+	}
+
+	/**
+	 * Mamboのidが一番最初のアームを閉じる
+	 * 既に閉じている時は何もしない
+	 * @return
+	 */
+	protected boolean requestClawClose() {
+		return requestClawOpenClose(mUSBAcc.clawId(), false);
+	}
+
+	/**
+	 * Mamboの指定したidのアームを閉じる
+	 * 既に閉じている時は何もしない
+	 * @param id 多分0だけ
+	 * @return
+	 */
+	protected boolean requestClawClose(final int id) {
+		return requestClawOpenClose(id, false);
+	}
+
+	protected void toggleClaw() {
+		if (hasClaw()) {
+			final int id = mUSBAcc.clawId();
+			requestClawOpenClose(id, !isClawClosed(id));
+		}
+	}
+
+	protected void toggleClaw(final int id) {
+		if (hasClaw()) {
+			requestClawOpenClose(id, !isClawClosed(id));
+		}
+	}
+
+//================================================================================
+	/**
+	 * キャノンがついているかどうか
+	 * 接続されていなければ常にfalse
+	 * @return
+	 */
+	protected boolean hasGun() {
+		return isConnected() && mUSBAcc.hasGun();
+	}
+
+	/**
+	 * Mamboの指定したidのキャノンを発射する
+	 * 状態が同じ時は何もしない
+	 * @param id 多分0だけ
+	 * @return
+	 */
+	protected boolean requestFireGun(final int id) {
+		if (DEBUG) Log.v(TAG, "requestClawOpenClose:");
+		ARCONTROLLER_ERROR_ENUM result = ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_ERROR;
+		if (hasGun()) {
+			result = mARDeviceController.getFeatureMiniDrone().sendUsbAccessoryGunControl((byte)id,
+				ARCOMMANDS_MINIDRONE_USBACCESSORY_GUNCONTROL_ACTION_ENUM.ARCOMMANDS_MINIDRONE_USBACCESSORY_GUNCONTROL_ACTION_FIRE);
+		}
+		return result != ARCONTROLLER_ERROR_ENUM.ARCONTROLLER_OK;
+	}
+
+	/**
+	 * Mamboのidが一番最初のキャノンを発射する
+	 * 既に開いている時は何もしない
+	 * @return
+	 */
+	protected boolean requestFireGun() {
+		return requestClawOpenClose(mUSBAcc.gunId(), true);
+	}
 }

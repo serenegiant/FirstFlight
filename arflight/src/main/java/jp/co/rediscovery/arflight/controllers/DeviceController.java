@@ -92,6 +92,7 @@ public abstract class DeviceController implements IDeviceController {
 	private final ARDiscoveryDeviceService mDeviceService;
 	protected ARDeviceController mARDeviceController;
 	protected Handler mAsyncHandler;
+	protected long mAsyncThreadId;
 
 	/** 接続待ちのためのセマフォ */
 	private final Semaphore connectSent = new Semaphore(0);
@@ -120,6 +121,7 @@ public abstract class DeviceController implements IDeviceController {
 		mLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
 		mDeviceService = service;
 		mAsyncHandler = HandlerThreadHandler.createHandler(TAG);
+		mAsyncThreadId = mAsyncHandler.getLooper().getThread().getId();
 	}
 
 	/**
@@ -139,6 +141,7 @@ public abstract class DeviceController implements IDeviceController {
 		stop();
 		mLocalBroadcastManager = null;
 		if (mAsyncHandler != null) {
+			mAsyncHandler.removeCallbacks(null, null);
 			try {
 				mAsyncHandler.getLooper().quit();
 			} catch (final Exception e) {
@@ -150,6 +153,29 @@ public abstract class DeviceController implements IDeviceController {
 
 	public Context getContext() {
 		return mWeakContext.get();
+	}
+
+	protected synchronized void queueEvent(final Runnable task, final long delayMs) {
+		if ((task != null) && (mAsyncHandler != null)) {
+			mAsyncHandler.removeCallbacks(task);
+			if (delayMs > 0) {
+				mAsyncHandler.postDelayed(task, delayMs);
+			} else if (mAsyncHandler.getLooper().getThread().getId() == mAsyncThreadId) {
+				try {
+					task.run();
+				} catch (final Exception e) {
+					Log.w(TAG, e);
+				}
+			} else {
+				mAsyncHandler.post(task);
+			}
+		}
+	}
+
+	protected synchronized void removeEvent(final Runnable task) {
+		if ((task != null) && (mAsyncHandler != null)) {
+			mAsyncHandler.removeCallbacks(task);
+		}
 	}
 
 //================================================================================

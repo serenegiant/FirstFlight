@@ -37,33 +37,77 @@ package jp.co.rediscovery.arflight.attribute;
  * the use of this software, even if advised of the possibility of such damage.
  */
 
+import android.util.SparseArray;
+import android.util.SparseIntArray;
+
 public class AttributeUSBAccessory {
-	// FIXME 受信するステータスにidが付いているのでMapとかparseArrayにしないとダメかも
-	private int mLightState;
-	private int mClawState;
-	private int mGunState;
-
-	public synchronized void lightState(final int state) {
-		mLightState = state;
+	public static class LightState {
+		public int state;
+		public int intensity;
 	}
 
-	public synchronized int lightState() {
-		return mLightState;
+	private final SparseArray<LightState> mLightStates = new SparseArray<LightState>();
+	private final SparseIntArray mClawStates = new SparseIntArray();
+	private final SparseIntArray mGunStates = new SparseIntArray();
+
+	public synchronized void lightState(final int id, final int state, final int intensity) {
+		LightState sts = mLightStates.get(id);
+		if (sts == null) {
+			sts = new LightState();
+		}
+		sts.state = state;
+		sts.intensity = intensity;
 	}
 
-	public synchronized void clawState(final int state) {
-		mClawState = state;
+	public synchronized boolean hasLight() {
+		return mLightStates.size() > 0;
+	}
+
+	public synchronized int lightId() {
+		return mLightStates.size() > 0 ? mLightStates.keyAt(0) : 0;
+	}
+
+	public synchronized LightState lightState(final int id) {
+		return mLightStates.get(id);
+	}
+
+	public synchronized boolean hasClaw() {
+		return mClawStates.size() > 0;
+	}
+
+	public synchronized int clawId() {
+		return mClawStates.size() > 0 ? mClawStates.keyAt(0) : 0;
+	}
+
+	public synchronized void clawState(final int id, final int state) {
+		mClawStates.put(id, state);
 	}
 
 	public synchronized int clawState() {
-		return mClawState;
+		return mClawStates.get(0, 0);
 	}
 
-	public synchronized  void gunState(final int state) {
-		mGunState = state;
+	public synchronized int clawState(final int id) {
+		return mClawStates.get(id, 0);
+	}
+
+	public synchronized boolean hasGun() {
+		return mGunStates.size() > 0;
+	}
+
+	public synchronized int gunId() {
+		return mGunStates.size() > 0 ? mGunStates.keyAt(0) : 0;
+	}
+
+	public synchronized  void gunState(final int id, final int state) {
+		mGunStates.put(id, state);
 	}
 
 	public synchronized int gunState() {
-		return mGunState;
+		return mGunStates.get(0, 0);
+	}
+
+	public synchronized int gunState(final int id) {
+		return mGunStates.get(id, 0);
 	}
 }
