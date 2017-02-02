@@ -742,13 +742,13 @@ public class FlightControllerMiniDrone extends FlightController {
 	protected void toggleClaw() {
 		if (hasClaw()) {
 			final int id = mUSBAcc.clawId();
-			requestClawOpenClose(id, !isClawClosed(id));
+			requestClawOpenClose(id, isClawClosed(id));
 		}
 	}
 
 	protected void toggleClaw(final int id) {
 		if (hasClaw()) {
-			requestClawOpenClose(id, !isClawClosed(id));
+			requestClawOpenClose(id, isClawClosed(id));
 		}
 	}
 
