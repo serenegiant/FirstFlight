@@ -784,6 +784,6 @@ public class FlightControllerMiniDrone extends FlightController {
 	 * @return
 	 */
 	protected boolean requestFireGun() {
-		return requestClawOpenClose(mUSBAcc.gunId(), true);
+		return requestFireGun(mUSBAcc.gunId());
 	}
 }
