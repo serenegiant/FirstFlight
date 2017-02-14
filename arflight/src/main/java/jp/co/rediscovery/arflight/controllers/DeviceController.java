@@ -89,7 +89,7 @@ public abstract class DeviceController implements IDeviceController {
 
 	private final WeakReference<Context> mWeakContext;
 	protected LocalBroadcastManager mLocalBroadcastManager;
-	private final ARDiscoveryDeviceService mDeviceService;
+	private final ARDiscoveryDeviceService mDiscoveredDevice;
 	protected ARDeviceController mARDeviceController;
 	protected Handler mAsyncHandler;
 	protected long mAsyncThreadId;
@@ -107,19 +107,19 @@ public abstract class DeviceController implements IDeviceController {
 	protected CommonStatus mStatus;
 	protected ARCONTROLLER_DEVICE_STATE_ENUM mDeviceState = ARCONTROLLER_DEVICE_STATE_ENUM.ARCONTROLLER_DEVICE_STATE_STOPPED;
 	protected ARCONTROLLER_DEVICE_STATE_ENUM mExtensionState = ARCONTROLLER_DEVICE_STATE_ENUM.ARCONTROLLER_DEVICE_STATE_STOPPED;
-
+	/** コールバックリスナー */
 	private final List<DeviceConnectionListener> mConnectionListeners = new ArrayList<DeviceConnectionListener>();
 
 	/**
 	 * コンストラクタ
 	 * @param context
-	 * @param service デバイス探索サービスから取得したARDiscoveryDeviceServiceインスタンス
+	 * @param discoveredDevice デバイス探索サービスから取得したARDiscoveryDeviceServiceインスタンス
 	 */
-	public DeviceController(final Context context, final ARDiscoveryDeviceService service) {
+	public DeviceController(final Context context, final ARDiscoveryDeviceService discoveredDevice) {
 		if (DEBUG) Log.v(TAG, "コンストラクタ:");
 		mWeakContext = new WeakReference<Context>(context);
 		mLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
-		mDeviceService = service;
+		mDiscoveredDevice = discoveredDevice;
 		mAsyncHandler = HandlerThreadHandler.createHandler(TAG);
 		mAsyncThreadId = mAsyncHandler.getLooper().getThread().getId();
 	}
@@ -332,7 +332,7 @@ public abstract class DeviceController implements IDeviceController {
 
 	@Override
 	public ARDiscoveryDeviceService getDeviceService() {
-		return mDeviceService;
+		return mDiscoveredDevice;
 	}
 
 	@Override
@@ -401,6 +401,10 @@ public abstract class DeviceController implements IDeviceController {
 		}
 	}
 
+	/**
+	 * 接続開始処理
+	 * @return
+	 */
 	@Override
 	public boolean start() {
 		if (DEBUG) Log.v(TAG, "start:");
@@ -467,6 +471,7 @@ public abstract class DeviceController implements IDeviceController {
 		return failed;
 	}
 
+	/** 接続処理をキャンセル要求 */
 	@Override
 	public void cancelStart() {
 		if (DEBUG) Log.v(TAG, "cancelStart:");
@@ -491,7 +496,7 @@ public abstract class DeviceController implements IDeviceController {
 	}
 
 	/**
-	 * デバイスへの接続開始処理
+	 * デバイスへの接続開始の実際の処理
 	 * @return
 	 */
 	protected synchronized boolean startNetwork() {
@@ -501,7 +506,7 @@ public abstract class DeviceController implements IDeviceController {
 		try {
 			discovery_device = new ARDiscoveryDevice();
 
-			final Object device = mDeviceService.getDevice();
+			final Object device = mDiscoveredDevice.getDevice();
 			if (device instanceof ARDiscoveryDeviceNetService) {
 				if (DEBUG) Log.v(TAG, "startNetwork:ARDiscoveryDeviceNetService");
 				final ARDiscoveryDeviceNetService netDeviceService = (ARDiscoveryDeviceNetService)device;
@@ -558,6 +563,7 @@ public abstract class DeviceController implements IDeviceController {
 		if (DEBUG) Log.v(TAG, "onStarted:終了");
 	}
 
+	/** 切断処理 */
 	@Override
 	public final synchronized void stop() {
 		if (DEBUG) Log.v(TAG, "stop:");
@@ -625,6 +631,11 @@ public abstract class DeviceController implements IDeviceController {
 		}
 	}
 
+	/**
+	 * デバイスと接続しているかどうか
+	 * スカイコントローラー経由の場合はスカイコントローラーとの接続状態
+	 * @return
+	 */
 	@Override
 	public boolean isStarted() {
 		synchronized (mStateSync) {
@@ -634,6 +645,12 @@ public abstract class DeviceController implements IDeviceController {
 		}
 	}
 
+	/**
+	 * デバイスと接続しているかどうか
+	 * 直接接続の時は#isStartedと同じ
+ 	 * スカイコントローラー経由の場合はスカイコントローラーを経由してデバイスと接続しているかどうか
+	 * @return
+	 */
 	@Override
 	public boolean isConnected() {
 		return isStarted();
