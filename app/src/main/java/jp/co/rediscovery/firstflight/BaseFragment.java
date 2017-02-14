@@ -417,6 +417,13 @@ public class BaseFragment extends Fragment implements MessageDialogFragment.Mess
 				Toast.makeText(getActivity().getApplicationContext(), R.string.permission_network, Toast.LENGTH_SHORT).show();
 			}
 		}
+		if (Manifest.permission.ACCESS_COARSE_LOCATION.equals(permission)
+			|| Manifest.permission.ACCESS_FINE_LOCATION.equals(permission)) {
+			onUpdateLocationPermission(permission, result);
+			if (!result) {
+				Toast.makeText(getActivity().getApplicationContext(), R.string.permission_location, Toast.LENGTH_SHORT).show();
+			}
+		}
 	}
 
 	protected void onUpdateAudioPermission(final boolean hasPermission) {
@@ -426,6 +433,9 @@ public class BaseFragment extends Fragment implements MessageDialogFragment.Mess
 	}
 
 	protected void onUpdateNetworkPermission(final boolean hasPermission) {
+	}
+
+	protected void onUpdateLocationPermission(final String permission, final boolean hasPermission) {
 	}
 
 	protected static final int REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 0x01;

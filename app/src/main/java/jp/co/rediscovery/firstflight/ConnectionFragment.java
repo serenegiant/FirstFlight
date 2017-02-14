@@ -91,12 +91,7 @@ public class ConnectionFragment extends BaseFragment {
 	public void onResume() {
 		super.onResume();
 		if (DEBUG) Log.d(TAG, "onResume:");
-		if (checkPermissionLocation()) {
-			final ManagerFragment manager = ManagerFragment.getInstance(getActivity());
-			manager.addCallback(mManagerCallback);
-			manager.startDiscovery();
-		}
-		updateButtons(false);
+		runOnUiThread(mStartDiscoveryOnUITask);
 	}
 
 	@Override
@@ -111,6 +106,25 @@ public class ConnectionFragment extends BaseFragment {
 		}
 		super.onPause();
 	}
+
+	@Override
+	protected void onUpdateLocationPermission(final String permission, final boolean hasPermission) {
+		if (hasPermission) {
+			runOnUiThread(mStartDiscoveryOnUITask, 100);
+		}
+	}
+
+	private final Runnable mStartDiscoveryOnUITask = new Runnable() {
+		@Override
+		public void run() {
+			if (checkPermissionLocation()) {
+				final ManagerFragment manager = ManagerFragment.getInstance(getActivity());
+				manager.startDiscovery();
+				manager.addCallback(mManagerCallback);
+			}
+			updateButtons(false);
+		}
+	};
 
 	/**
 	 * Viewを初期化
