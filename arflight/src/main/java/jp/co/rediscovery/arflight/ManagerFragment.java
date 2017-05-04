@@ -446,7 +446,6 @@ public class ManagerFragment extends Fragment {
 			case ARDISCOVERY_PRODUCT_SKYCONTROLLER:	// SkyController
 				result = new SkyController(getActivity(), device);
 				break;
-			case ARDISCOVERY_PRODUCT_NSNETSERVICE:
 			case ARDISCOVERY_PRODUCT_JS:		// FIXME JumpingSumoは未対応
 			case ARDISCOVERY_PRODUCT_JS_EVO_LIGHT:
 			case ARDISCOVERY_PRODUCT_JS_EVO_RACE:
