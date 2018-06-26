@@ -74,7 +74,7 @@ public class OrientationView extends View {
 		final float scale = getContext().getResources().getDisplayMetrics().density;
 		mPathEffect = new DashPathEffect(new float[] { 15 * scale, 10 * scale }, 0);	// 15dp-10dp
 //		mPathEffect = createSafeDashedPathEffect(20 * scale, 5 * scale, 0, 3 * scale);
-		mPaint.setColor(getResources().getColor(R.color.QUATER_CLEAR_WHITE));
+		mPaint.setColor(getResources().getColor(R.color.QUARTER_CLEAR_WHITE));
 		mPaint.setStrokeWidth(3 * scale);	// 3dp
 		mPaint.setStyle(Paint.Style.STROKE);
 		mPaint.setPathEffect(mPathEffect);

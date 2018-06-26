@@ -98,9 +98,15 @@ repositories {
 }
 
 dependencies {
-	compile fileTree(dir: 'libs', include: ['*.jar'])
-	compile "com.android.support:appcompat-v7:${supportLibVersion}"
-	compile project(':arflight')
-	compile project(':opencv')
-	compile 'com.serenegiant:gamepad:0.1.1'
+	implementation fileTree(dir: 'libs', include: ['*.jar'])
+	implementation "com.android.support:appcompat-v7:${supportLibVersion}"
+	implementation "com.android.support:support-annotations:${supportLibVersion}"
+
+	implementation("com.serenegiant:common:${commonLibVersion}") {
+		exclude module: 'support-v4'
+	}
+
+	implementation project(':arflight')
+	implementation project(':opencv')
+	implementation 'com.serenegiant:gamepad:0.1.2'
 }

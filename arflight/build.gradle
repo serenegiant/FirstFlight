@@ -61,15 +61,15 @@ android {
 }
 
 dependencies {
-	compile fileTree(dir: 'libs', include: ['*.jar'])
-	compile "com.android.support:appcompat-v7:${supportLibVersion}"
-	compile ("com.parrot:arsdk:${arsdkVersion}") {
+	api fileTree(dir: 'libs', include: ['*.jar'])
+	implementation "com.android.support:appcompat-v7:${supportLibVersion}"
+	api ("com.parrot:arsdk:${arsdkVersion}") {
 		exclude group: 'com.android.support'
 	}
-	compile("com.serenegiant:common:${commonLibVersion}") {
+	implementation("com.serenegiant:common:${commonLibVersion}") {
 		exclude module: 'support-v4'
 	}
-	compile 'jp.co.rediscovery.widget:drone-notice-view:1.1.1'
+	api 'jp.co.rediscovery.widget:drone-notice-view:1.1.1'
 }
 
 def repo = new File(rootDir, "repository")
