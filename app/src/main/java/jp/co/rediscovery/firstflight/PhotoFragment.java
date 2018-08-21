@@ -88,7 +88,7 @@ public class PhotoFragment extends BaseFragment {
 	}
 
 	private void initView(final View rootView) {
-		mViewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
+		mViewPager = rootView.findViewById(R.id.viewpager);
 		mViewPager.setKeepScreenOn(true);
 		mAdapter = new MediaStoreImageAdapter(getActivity(), R.layout.grid_item_media, false);
 		// MediaStoreImageAdapterのCursorクエリーは非同期で実行されるので

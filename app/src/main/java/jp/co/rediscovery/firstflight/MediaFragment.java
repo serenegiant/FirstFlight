@@ -39,6 +39,7 @@ package jp.co.rediscovery.firstflight;
 import android.content.DialogInterface;
 import android.media.MediaScannerConnection;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
@@ -84,8 +85,6 @@ public class MediaFragment extends BaseFlightControllerFragment
 	}
 
 	private FTPController mFTPController;
-	private ViewPager mViewPager;
-	private MediaPagerAdapter mPagerAdapter;
 	private String mFreeSpaceFmt;
 
 	public MediaFragment() {
@@ -97,11 +96,11 @@ public class MediaFragment extends BaseFlightControllerFragment
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		if (DEBUG) Log.v(TAG, "onCreateView:");
 		onBeforeCreateView();
-		mPagerAdapter = new MediaPagerAdapter(inflater);
+		final MediaPagerAdapter pagerAdapter = new MediaPagerAdapter(inflater);
 
 		final View rootView = inflater.inflate(R.layout.fragment_media, container, false);
-		mViewPager = (ViewPager)rootView.findViewById(R.id.pager);
-		mViewPager.setAdapter(mPagerAdapter);
+		final ViewPager viewPager = rootView.findViewById(R.id.pager);
+		viewPager.setAdapter(pagerAdapter);
 		mFreeSpaceFmt = getString(R.string.media_free_space);
 		return rootView;
 	}
@@ -319,7 +318,7 @@ public class MediaFragment extends BaseFlightControllerFragment
 	 * 選択されているファイルを取得する
 	 */
 	private void transferMedias() {
-		final boolean needDelete = mDeleteAfterFetchCheckBox != null ? mDeleteAfterFetchCheckBox.isChecked() : false;
+		final boolean needDelete = mDeleteAfterFetchCheckBox != null && mDeleteAfterFetchCheckBox.isChecked();
 		final ARMediaObject[] medias = getSelectedMedias();
 		if (medias != null) {
 			mTransferProgressDialogFragment = TransferProgressDialogFragment.showDialog(this, getString(R.string.loading), null);
@@ -361,7 +360,7 @@ public class MediaFragment extends BaseFlightControllerFragment
 		@Override
 		public void run() {
 			if (DEBUG) Log.v(TAG, "mUpdateMediaListTask:count=" + mMediaListView.getCheckedItemCount());
-			final boolean selected = mMediaListView != null ? mMediaListView.getCheckedItemCount() > 0 : false;
+			final boolean selected = mMediaListView != null && mMediaListView.getCheckedItemCount() > 0;
 			final int visibility = selected ? View.VISIBLE : View.INVISIBLE;
 			if (mDeleteBtn != null) {
 				mDeleteBtn.setVisibility(visibility);
@@ -419,7 +418,7 @@ public class MediaFragment extends BaseFlightControllerFragment
 	 * @param rootView
 	 */
 	private void initMediaList(final View rootView) {
-		mMediaListView = (ListView)rootView.findViewById(R.id.listView);
+		mMediaListView = rootView.findViewById(R.id.listView);
 		if (mMediaListView != null) {
 			mARMediaObjectListAdapter = new ARMediaObjectListAdapter(getActivity(), R.layout.list_item_media);
 			final View empty_view = rootView.findViewById(R.id.empty_view);
@@ -434,13 +433,13 @@ public class MediaFragment extends BaseFlightControllerFragment
 			mMediaListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 			mMediaListView.setAdapter(mARMediaObjectListAdapter);
 		}
-		mFreeSpaceProgressbar = (ProgressBar)rootView.findViewById(R.id.frees_pace_progress);
-		mFreeSpaceText = (TextView)rootView.findViewById(R.id.free_space_textview);
-		mDeleteBtn = (ImageButton)rootView.findViewById(R.id.delete_btn);
+		mFreeSpaceProgressbar = rootView.findViewById(R.id.frees_pace_progress);
+		mFreeSpaceText = rootView.findViewById(R.id.free_space_textview);
+		mDeleteBtn = rootView.findViewById(R.id.delete_btn);
 		mDeleteBtn.setOnClickListener(mOnClickListener);
-		mFetchBtn = (ImageButton)rootView.findViewById(R.id.fetch_btn);
+		mFetchBtn = rootView.findViewById(R.id.fetch_btn);
 		mFetchBtn.setOnClickListener(mOnClickListener);
-		mDeleteAfterFetchCheckBox = (CheckBox)rootView.findViewById(R.id.delete_after_fetch_checkbox);
+		mDeleteAfterFetchCheckBox = rootView.findViewById(R.id.delete_after_fetch_checkbox);
 		updateMediaList();
 	}
 
@@ -469,7 +468,7 @@ public class MediaFragment extends BaseFlightControllerFragment
 				parent.initMediaList(view);
 			}
 		});
-	};
+	}
 
 	/**
 	 * メディア画面の各ページ用のViewを提供するためのPagerAdapterクラス
@@ -481,8 +480,11 @@ public class MediaFragment extends BaseFlightControllerFragment
 			mInflater = inflater;
 		}
 
+		@NonNull
 		@Override
-		public synchronized Object instantiateItem(final ViewGroup container, final int position) {
+		public synchronized Object instantiateItem(
+			@NonNull final ViewGroup container, final int position) {
+
 			if (DEBUG) Log.v(TAG, "instantiateItem:position=" + position);
 			View view = null;
 			if ((position >= 0) && (position < PAGER_MEDIA.length)) {
@@ -497,7 +499,9 @@ public class MediaFragment extends BaseFlightControllerFragment
 		}
 
 		@Override
-		public synchronized void destroyItem(final ViewGroup container, final int position, final Object object) {
+		public synchronized void destroyItem(@NonNull final ViewGroup container,
+			final int position, @NonNull final Object object) {
+
 			if (DEBUG) Log.v(TAG, "destroyItem:position=" + position);
 			if (object instanceof View) {
 				container.removeView((View)object);
@@ -510,7 +514,9 @@ public class MediaFragment extends BaseFlightControllerFragment
 		}
 
 		@Override
-		public boolean isViewFromObject(final View view, final Object object) {
+		public boolean isViewFromObject(@NonNull final View view,
+			@NonNull final Object object) {
+
 			return view.equals(object);
 		}
 

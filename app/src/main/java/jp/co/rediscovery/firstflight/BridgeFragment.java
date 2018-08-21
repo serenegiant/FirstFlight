@@ -56,6 +56,8 @@ import com.parrot.arsdk.ardiscovery.ARDISCOVERY_PRODUCT_ENUM;
 import com.parrot.arsdk.ardiscovery.ARDiscoveryDeviceService;
 import com.parrot.arsdk.ardiscovery.ARDiscoveryService;
 
+import java.util.Arrays;
+
 import jp.co.rediscovery.arflight.ARDeviceInfoAdapter;
 import jp.co.rediscovery.arflight.DeviceInfo;
 import jp.co.rediscovery.arflight.IDeviceController;
@@ -164,21 +166,21 @@ public class BridgeFragment extends BaseControllerFragment {
 
 		final ARDeviceInfoAdapter adapter = new ARDeviceInfoAdapter(getActivity(), R.layout.list_item_deviceservice);
 
-		mDeviceListView = (ListView)rootView.findViewById(R.id.list);
+		mDeviceListView = rootView.findViewById(R.id.list);
 		final View empty_view = rootView.findViewById(R.id.empty_view);
 		mDeviceListView.setEmptyView(empty_view);
 		mDeviceListView.setAdapter(adapter);
 		mDeviceListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
-		mDownloadBtn = (ImageButton)rootView.findViewById(R.id.download_button);
+		mDownloadBtn = rootView.findViewById(R.id.download_button);
 		mDownloadBtn.setOnClickListener(mOnClickListener);
 		mDownloadBtn.setOnLongClickListener(mOnLongClickListener);
 
-		mPilotBtn = (ImageButton)rootView.findViewById(R.id.pilot_button);
+		mPilotBtn = rootView.findViewById(R.id.pilot_button);
 		mPilotBtn.setOnClickListener(mOnClickListener);
 		mPilotBtn.setOnLongClickListener(mOnLongClickListener);
 
-		mGalleyBrn = (ImageButton)rootView.findViewById(R.id.gallery_button);
+		mGalleyBrn = rootView.findViewById(R.id.gallery_button);
 		mGalleyBrn.setOnClickListener(mOnClickListener);
 		mGalleyBrn.setOnLongClickListener(mOnLongClickListener);
 
@@ -390,7 +392,7 @@ public class BridgeFragment extends BaseControllerFragment {
 
 	/** 検出したデバイスをリストに登録する, Bridge接続はBebop/Bebop2のみ対応 */
 	private void updateDeviceList(final DeviceInfo[] info_array) {
-		if (DEBUG) Log.v(TAG, "updateDeviceList:" + info_array);
+		if (DEBUG) Log.v(TAG, "updateDeviceList:" + Arrays.toString(info_array));
 		final ARDeviceInfoAdapter adapter = (ARDeviceInfoAdapter) mDeviceListView.getAdapter();
 		adapter.clear();
 		final int n = info_array != null ? info_array.length : 0;

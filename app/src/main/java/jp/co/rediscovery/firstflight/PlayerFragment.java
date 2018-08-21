@@ -113,7 +113,7 @@ public class PlayerFragment extends BaseFragment {
 	}
 
 	private void initView(final View rootView) {
-		mVideoView = (VideoView)rootView.findViewById(R.id.videoView);
+		mVideoView = rootView.findViewById(R.id.videoView);
 		mVideoView.setMediaController(new MediaController(getActivity()));
 		mVideoView.setVideoPath(mFileName);
 		mVideoView.setOnCompletionListener(mOnCompletionListener);

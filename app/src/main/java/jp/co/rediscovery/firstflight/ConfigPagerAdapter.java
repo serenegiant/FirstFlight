@@ -36,6 +36,7 @@ package jp.co.rediscovery.firstflight;
  * the use of this software, even if advised of the possibility of such damage.
  */
 
+import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -59,8 +60,11 @@ public class ConfigPagerAdapter extends PagerAdapter {
 		mConfigs = configs;
 	}
 
+	@NonNull
 	@Override
-	public synchronized Object instantiateItem(final ViewGroup container, final int position) {
+	public synchronized Object instantiateItem(@NonNull final ViewGroup container,
+		final int position) {
+
 		if (DEBUG) Log.v(TAG, "instantiateItem:position=" + position);
 		View view = null;
 		final int n = mConfigs != null ? mConfigs.length : 0;
@@ -76,7 +80,9 @@ public class ConfigPagerAdapter extends PagerAdapter {
 	}
 
 	@Override
-	public synchronized void destroyItem(final ViewGroup container, final int position, final Object object) {
+	public synchronized void destroyItem(@NonNull final ViewGroup container,
+		final int position, @NonNull final Object object) {
+
 		if (DEBUG) Log.v(TAG, "destroyItem:position=" + position);
 		if (object instanceof View) {
 			container.removeView((View)object);
@@ -89,7 +95,7 @@ public class ConfigPagerAdapter extends PagerAdapter {
 	}
 
 	@Override
-	public boolean isViewFromObject(final View view, final Object object) {
+	public boolean isViewFromObject(@NonNull final View view, @NonNull final Object object) {
 		return view.equals(object);
 	}
 

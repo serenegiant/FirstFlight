@@ -37,6 +37,7 @@ package jp.co.rediscovery.firstflight;
  */
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,8 +70,9 @@ public class ARMediaObjectListAdapter extends ArrayAdapter<ARMediaObject> {
 		itemLayoutId = resource;
 	}
 
+	@NonNull
 	@Override
-	public View getView(final int position, View convertView, final ViewGroup parent) {
+	public View getView(final int position, View convertView, @NonNull final ViewGroup parent) {
 		if (convertView == null) {
 			final TextView label;
 			convertView = mInflater.inflate(itemLayoutId, null);
@@ -78,11 +80,11 @@ public class ARMediaObjectListAdapter extends ArrayAdapter<ARMediaObject> {
 		ViewHolder holder = (ViewHolder)convertView.getTag();
 		if (holder == null) {
 			holder = new ViewHolder();
-			holder.title = (TextView) convertView.findViewById(R.id.title);
-			holder.datetime = (TextView) convertView.findViewById(R.id.datetime);
-			holder.size = (TextView) convertView.findViewById(R.id.size);
-			holder.thumbnail = (ImageView) convertView.findViewById(R.id.thumbnail);
-			holder.playable = (ImageView) convertView.findViewById(R.id.playable_imageview);
+			holder.title = convertView.findViewById(R.id.title);
+			holder.datetime = convertView.findViewById(R.id.datetime);
+			holder.size = convertView.findViewById(R.id.size);
+			holder.thumbnail = convertView.findViewById(R.id.thumbnail);
+			holder.playable = convertView.findViewById(R.id.playable_imageview);
 			convertView.setTag(holder);
 		}
 		final ARMediaObject mediaObject = getItem(position);

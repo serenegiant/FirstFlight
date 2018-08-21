@@ -80,7 +80,7 @@ public class GalleyFragment extends BaseFragment {
 	 * @param rootView
 	 */
 	private void initView(final View rootView) {
-		mGalleyGridView = (GridView)rootView.findViewById(R.id.media_gridview);
+		mGalleyGridView = rootView.findViewById(R.id.media_gridview);
 		mMediaStoreAdapter = new MediaStoreAdapter(getActivity(), R.layout.grid_item_media);
 		mGalleyGridView.setAdapter(mMediaStoreAdapter);
 		mGalleyGridView.setOnItemClickListener(mOnItemClickListener);

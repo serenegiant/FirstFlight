@@ -133,25 +133,25 @@ public class ConnectionFragment extends BaseFragment {
 
 		final ARDeviceServiceAdapter adapter = new ARDeviceServiceAdapter(getActivity(), R.layout.list_item_deviceservice);
 
-		mDeviceListView = (ListView)rootView.findViewById(R.id.list);
+		mDeviceListView = rootView.findViewById(R.id.list);
 		final View empty_view = rootView.findViewById(R.id.empty_view);
 		mDeviceListView.setEmptyView(empty_view);
 		mDeviceListView.setAdapter(adapter);
 		mDeviceListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
-		mDownloadBtn = (ImageButton)rootView.findViewById(R.id.download_button);
+		mDownloadBtn = rootView.findViewById(R.id.download_button);
 		mDownloadBtn.setOnClickListener(mOnClickListener);
 		mDownloadBtn.setOnLongClickListener(mOnLongClickListener);
 
-		mPilotBtn = (ImageButton)rootView.findViewById(R.id.pilot_button);
+		mPilotBtn = rootView.findViewById(R.id.pilot_button);
 		mPilotBtn.setOnClickListener(mOnClickListener);
 		mPilotBtn.setOnLongClickListener(mOnLongClickListener);
 
-		mGalleyBrn = (ImageButton)rootView.findViewById(R.id.gallery_button);
+		mGalleyBrn = rootView.findViewById(R.id.gallery_button);
 		mGalleyBrn.setOnClickListener(mOnClickListener);
 		mGalleyBrn.setOnLongClickListener(mOnLongClickListener);
 
-		mAutoBtn = (ImageButton)rootView.findViewById(R.id.auto_button);
+		mAutoBtn = rootView.findViewById(R.id.auto_button);
 		mAutoBtn.setOnClickListener(mOnClickListener);
 		mAutoBtn.setOnLongClickListener(mOnLongClickListener);
 	}

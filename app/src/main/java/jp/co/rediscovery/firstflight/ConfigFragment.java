@@ -152,7 +152,7 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 		mProduct = getProduct();
 		final View rootView = inflater.inflate(R.layout.fragment_config, container, false);
 		final ConfigPagerAdapter adapter = new ConfigPagerAdapter(this, inflater, getConfigs(mProduct));
-		final ViewPager pager = (ViewPager)rootView.findViewById(R.id.pager);
+		final ViewPager pager = rootView.findViewById(R.id.pager);
 		pager.setAdapter(adapter);
 		return rootView;
 	}
@@ -194,8 +194,8 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 	private void initConfigFlight(final View root) {
 		if (DEBUG) Log.v(TAG, "initConfigFlight:");
 		// 最大高度設定
-		mMaxAltitudeLabel = (TextView)root.findViewById(R.id.max_altitude_textview);
-		SeekBar seekbar = (SeekBar)root.findViewById(R.id.max_altitude_seekbar);
+		mMaxAltitudeLabel = root.findViewById(R.id.max_altitude_textview);
+		SeekBar seekbar = root.findViewById(R.id.max_altitude_seekbar);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
 		mMaxAltitude = mFlightController.getMaxAltitude();
@@ -208,8 +208,8 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 		updateMaxAltitude(mMaxAltitude.current());
 		// 最大傾斜設定
 		// bebopは5-30度。最大時速約50km/hrからすると13.9m/s/30度≒0.46[m/s/度]
-		mMaxTiltLabel = (TextView)root.findViewById(R.id.max_tilt_textview);
-		seekbar = (SeekBar)root.findViewById(R.id.max_tilt_seekbar);
+		mMaxTiltLabel = root.findViewById(R.id.max_tilt_textview);
+		seekbar = root.findViewById(R.id.max_tilt_seekbar);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
 		mMaxTilt = mFlightController.getMaxTilt();
@@ -221,8 +221,8 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 		seekbar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateMaxTilt(mMaxTilt.current());
 		// 最大上昇/降下速度設定
-		mMaxVerticalSpeedLabel = (TextView)root.findViewById(R.id.max_vertical_speed_textview);
-		seekbar = (SeekBar)root.findViewById(R.id.max_vertical_speed_seekbar);
+		mMaxVerticalSpeedLabel = root.findViewById(R.id.max_vertical_speed_textview);
+		seekbar = root.findViewById(R.id.max_vertical_speed_seekbar);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
 		mMaxVerticalSpeed = mFlightController.getMaxVerticalSpeed();
@@ -234,8 +234,8 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 		seekbar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateMaxVerticalSpeed(mMaxVerticalSpeed.current());
 		// 最大回転速度
-		mMaxRotationSpeedLabel = (TextView)root.findViewById(R.id.max_rotation_speed_textview);
-		seekbar = (SeekBar)root.findViewById(R.id.max_rotation_speed_seekbar);
+		mMaxRotationSpeedLabel = root.findViewById(R.id.max_rotation_speed_textview);
+		seekbar = root.findViewById(R.id.max_rotation_speed_seekbar);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
 		mMaxRotationSpeed = mFlightController.getMaxRotationSpeed();
@@ -255,7 +255,7 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 	private void initConfigMinidrone1(final View root) {
 		if (DEBUG) Log.v(TAG, "initConfigMinidrone1:");
 		// 自動カットアウトモード
-		CheckBox checkbox = (CheckBox)root.findViewById(R.id.cutout_checkbox);
+		CheckBox checkbox = root.findViewById(R.id.cutout_checkbox);
 		if (checkbox != null) {
 			try {
 				checkbox.setOnCheckedChangeListener(null);
@@ -266,7 +266,7 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 			}
 		}
 		// 車輪
-		checkbox = (CheckBox)root.findViewById(R.id.wheel_checkbox);
+		checkbox = root.findViewById(R.id.wheel_checkbox);
 		if (checkbox != null) {
 			try {
 				checkbox.setOnCheckedChangeListener(null);
@@ -277,7 +277,7 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 			}
 		}
 		// 自動離陸モード
-		checkbox = (CheckBox)root.findViewById(R.id.auto_takeoff_checkbox);
+		checkbox = root.findViewById(R.id.auto_takeoff_checkbox);
 		if (checkbox != null) {
 			try {
 				checkbox.setOnCheckedChangeListener(null);
@@ -296,7 +296,7 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 	private void initConfigBebop(final View root) {
 		if (DEBUG) Log.v(TAG, "initConfigMinidrone1:");
 		// 自動カットアウトモード
-		CheckBox checkbox = (CheckBox)root.findViewById(R.id.cutout_checkbox);
+		CheckBox checkbox = root.findViewById(R.id.cutout_checkbox);
 		if (checkbox != null) {
 			try {
 				checkbox.setOnCheckedChangeListener(null);
@@ -307,7 +307,7 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 			}
 		}
 		// 車輪
-		checkbox = (CheckBox)root.findViewById(R.id.wheel_checkbox);
+		checkbox = root.findViewById(R.id.wheel_checkbox);
 		if (checkbox != null) {
 			try {
 				checkbox.setOnCheckedChangeListener(null);
@@ -318,7 +318,7 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 			}
 		}
 		// 自動離陸モード
-		checkbox = (CheckBox)root.findViewById(R.id.auto_takeoff_checkbox);
+		checkbox = root.findViewById(R.id.auto_takeoff_checkbox);
 		if (checkbox != null) {
 			try {
 				checkbox.setOnCheckedChangeListener(null);
@@ -336,7 +336,7 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 	 */
 	private void initConfigOperation(final View root) {
 		if (DEBUG) Log.v(TAG, "initConfigOperation:");
-		final RadioGroup group = (RadioGroup)root.findViewById(R.id.operation_radiogroup);
+		final RadioGroup group = root.findViewById(R.id.operation_radiogroup);
 		switch (mPref.getInt(APP_CONFIG_KEY_OPERATION_TYPE, 0)) {
 		case 1:		// モード2
 			group.check(R.id.operation_mode2_radiobutton);
@@ -364,8 +364,8 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 //		final CheckBox checkbox = (CheckBox)root.findViewById(R.id.usb_driver_checkbox);
 //		checkbox.setChecked(mPref.getBoolean(KEY_GAMEPAD_USE_DRIVER, false));
 //		checkbox.setOnCheckedChangeListener(mOnCheckedChangeListener);
-		mGamepadMaxControlValueLabel = (TextView)root.findViewById(R.id.gamepad_sensitivity_textview);
-		SeekBar seekbar = (SeekBar)root.findViewById(R.id.gamepad_sensitivity_seekbar);
+		mGamepadMaxControlValueLabel = root.findViewById(R.id.gamepad_sensitivity_textview);
+		SeekBar seekbar = root.findViewById(R.id.gamepad_sensitivity_seekbar);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
 		mGamepadMaxControlValue = mPref.getFloat(APP_CONFIG_KEY_GAMEPAD_SENSITIVITY, 1.0f);
@@ -377,8 +377,8 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 		seekbar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateGamepadMaxControlValue(mGamepadMaxControlValue);
 		// スケールX設定
-		mGamepadScaleXLabel = (TextView)root.findViewById(R.id.gamepad_scale_x_textview);
-		seekbar = (SeekBar)root.findViewById(R.id.gamepad_scale_seekbar_x);
+		mGamepadScaleXLabel = root.findViewById(R.id.gamepad_scale_x_textview);
+		seekbar = root.findViewById(R.id.gamepad_scale_seekbar_x);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
 		mGamepadScaleX = mPref.getFloat(APP_CONFIG_KEY_GAMEPAD_SCALE_X, 1.0f);
@@ -390,8 +390,8 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 		seekbar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateGamepadScaleX(mGamepadScaleX);
 		// スケールY設定
-		mGamepadScaleYLabel = (TextView)root.findViewById(R.id.gamepad_scale_y_textview);
-		seekbar = (SeekBar)root.findViewById(R.id.gamepad_scale_seekbar_y);
+		mGamepadScaleYLabel = root.findViewById(R.id.gamepad_scale_y_textview);
+		seekbar = root.findViewById(R.id.gamepad_scale_seekbar_y);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
 		mGamepadScaleY = mPref.getFloat(APP_CONFIG_KEY_GAMEPAD_SCALE_Y, 1.0f);
@@ -403,8 +403,8 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 		seekbar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateGamepadScaleY(mGamepadScaleY);
 		// スケールZ設定
-		mGamepadScaleZLabel = (TextView)root.findViewById(R.id.gamepad_scale_z_textview);
-		seekbar = (SeekBar)root.findViewById(R.id.gamepad_scale_seekbar_z);
+		mGamepadScaleZLabel = root.findViewById(R.id.gamepad_scale_z_textview);
+		seekbar = root.findViewById(R.id.gamepad_scale_seekbar_z);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
 		mGamepadScaleZ = mPref.getFloat(APP_CONFIG_KEY_GAMEPAD_SCALE_Z, 1.0f);
@@ -416,8 +416,8 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 		seekbar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateGamepadScaleZ(mGamepadScaleZ);
 		// スケールR設定
-		mGamepadScaleRLabel = (TextView)root.findViewById(R.id.gamepad_scale_r_textview);
-		seekbar = (SeekBar)root.findViewById(R.id.gamepad_scale_seekbar_r);
+		mGamepadScaleRLabel = root.findViewById(R.id.gamepad_scale_r_textview);
+		seekbar = root.findViewById(R.id.gamepad_scale_seekbar_r);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
 		mGamepadScaleR = mPref.getFloat(APP_CONFIG_KEY_GAMEPAD_SCALE_R, 1.0f);
@@ -436,7 +436,7 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 	 */
 	private void initConfigNetwork(final View root) {
 		final IWiFiController wifi = (mController instanceof IWiFiController) ? (IWiFiController)mController : null;
-		final RadioGroup group = (RadioGroup)root.findViewById(R.id.network_wifi_mode_radiogroup);
+		final RadioGroup group = root.findViewById(R.id.network_wifi_mode_radiogroup);
 		if (wifi != null) {
 			final boolean outdoor = wifi.isOutdoor();
 			group.check(outdoor ? R.id.network_outdoor_radiobutton : R.id.network_indoor_radiobutton);
@@ -453,13 +453,13 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 	 */
 	private void initConfigInfo(final View root) {
 		if (DEBUG) Log.v(TAG, "initConfigInfo:");
-		TextView tv = (TextView)root.findViewById(R.id.app_version_textview);
+		TextView tv = root.findViewById(R.id.app_version_textview);
 		tv.setText(BuildConfig.VERSION_NAME);
-		tv = (TextView)root.findViewById(R.id.product_name_textview);
+		tv = root.findViewById(R.id.product_name_textview);
 		tv.setText(mController.getName());
-		tv = (TextView)root.findViewById(R.id.software_version_textview);
+		tv = root.findViewById(R.id.software_version_textview);
 		tv.setText(mController.getSoftwareVersion());
-		tv = (TextView)root.findViewById(R.id.hardware_version_textview);
+		tv = root.findViewById(R.id.hardware_version_textview);
 		tv.setText(mController.getHardwareVersion());
 	}
 

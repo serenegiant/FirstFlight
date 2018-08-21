@@ -68,7 +68,6 @@ import jp.co.rediscovery.arflight.IVideoStreamController;
 import jp.co.rediscovery.widget.OrientationView;
 import jp.co.rediscovery.widget.StickView;
 import jp.co.rediscovery.widget.TouchableLinearLayout;
-import jp.co.rediscovery.widget.VideoView;
 
 public class PilotFragment extends BasePilotFragment {
 //	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること
@@ -134,13 +133,13 @@ public class PilotFragment extends BasePilotFragment {
 
 		final ViewGroup rootView = (ViewGroup) inflater.inflate(layout_id, container, false);
 
-		mControllerFrame = (ViewGroup) rootView.findViewById(R.id.controller_frame);
+		mControllerFrame = rootView.findViewById(R.id.controller_frame);
 		mControllerFrame.setOnClickListener(mOnClickListener);
 
-		mPilotFrame = (TouchableLinearLayout)rootView.findViewById(R.id.pilot_frame);
+		mPilotFrame = rootView.findViewById(R.id.pilot_frame);
 		mPilotFrame.setOnTouchableListener(mOnTouchableListener);
 
-		mCameraView = (OrientationView)rootView.findViewById(R.id.camera_view);
+		mCameraView = rootView.findViewById(R.id.camera_view);
 		if (mCameraView != null) {
 			mCameraView.setPanTilt(0, 0);
 			mCameraView.setOnClickListener(mOnClickListener);
@@ -152,25 +151,25 @@ public class PilotFragment extends BasePilotFragment {
 		mTopPanel.setOnLongClickListener(mOnLongClickListener);
 		mActionViews.add(mTopPanel);
 		// フラットトリムボタン
-		mFlatTrimBtn = (ImageButton) rootView.findViewById(R.id.flat_trim_btn);
+		mFlatTrimBtn = rootView.findViewById(R.id.flat_trim_btn);
 		mFlatTrimBtn.setOnClickListener(mOnClickListener);
 		mFlatTrimBtn.setOnLongClickListener(mOnLongClickListener);
 		mActionViews.add(mFlatTrimBtn);
 		// 設定表示ボタン
-		mConfigShowBtn = (ImageButton) rootView.findViewById(R.id.config_show_btn);
+		mConfigShowBtn = rootView.findViewById(R.id.config_show_btn);
 		mConfigShowBtn.setOnClickListener(mOnClickListener);
 		//
-		mBatteryLabel = (TextView) rootView.findViewById(R.id.batteryLabel);
-		mAlertMessage = (TextView) rootView.findViewById(R.id.alert_message);
+		mBatteryLabel = rootView.findViewById(R.id.batteryLabel);
+		mAlertMessage = rootView.findViewById(R.id.alert_message);
 		mAlertMessage.setVisibility(View.INVISIBLE);
 
 // 下パネル
 		// 非常停止ボタン
 		mBottomPanel = rootView.findViewById(R.id.bottom_panel);
-		mEmergencyBtn = (ImageButton) rootView.findViewById(R.id.emergency_btn);
+		mEmergencyBtn = rootView.findViewById(R.id.emergency_btn);
 		mEmergencyBtn.setOnClickListener(mOnClickListener);
 		// 離着陸指示ボタン
-		mTakeOnOffBtn = (ImageButton) rootView.findViewById(R.id.take_onoff_btn);
+		mTakeOnOffBtn = rootView.findViewById(R.id.take_onoff_btn);
 		mTakeOnOffBtn.setOnClickListener(mOnClickListener);
 		mTakeOnOffBtn.setOnLongClickListener(mOnLongClickListener);
 		mActionViews.add(mTakeOnOffBtn);
@@ -182,23 +181,23 @@ public class PilotFragment extends BasePilotFragment {
 		mActionViews.add(mRightSidePanel);
 
 		// コパイロットボタン
-		mCopilotBtn = (ImageButton) rootView.findViewById(R.id.copilot_btn);
+		mCopilotBtn = rootView.findViewById(R.id.copilot_btn);
 		mCopilotBtn.setOnClickListener(mOnClickListener);
 		mCopilotBtn.setVisibility(mController instanceof ISkyController ? View.VISIBLE : View.GONE);
 
 		// 静止画撮影
-		mStillCaptureBtn = (ImageButton) rootView.findViewById(R.id.still_capture_btn);
+		mStillCaptureBtn = rootView.findViewById(R.id.still_capture_btn);
 		mStillCaptureBtn.setOnClickListener(mOnClickListener);
 
 		// 動画撮影
-		mVideoRecordingBtn = (ImageButton) rootView.findViewById(R.id.video_capture_btn);
+		mVideoRecordingBtn = rootView.findViewById(R.id.video_capture_btn);
 		mVideoRecordingBtn.setOnClickListener(mOnClickListener);
 
-		button = (ImageButton) rootView.findViewById(R.id.cap_p45_btn);
+		button = rootView.findViewById(R.id.cap_p45_btn);
 		button.setOnClickListener(mOnClickListener);
 		mActionViews.add(button);
 
-		button = (ImageButton) rootView.findViewById(R.id.cap_m45_btn);
+		button = rootView.findViewById(R.id.cap_m45_btn);
 		button.setOnClickListener(mOnClickListener);
 		mActionViews.add(button);
 
@@ -206,31 +205,31 @@ public class PilotFragment extends BasePilotFragment {
 		mLeftSidePanel = rootView.findViewById(R.id.left_side_panel);
 		mActionViews.add(mLeftSidePanel);
 
-		button = (ImageButton) rootView.findViewById(R.id.flip_right_btn);
+		button = rootView.findViewById(R.id.flip_right_btn);
 		button.setOnClickListener(mOnClickListener);
 		mActionViews.add(button);
 
-		button = (ImageButton) rootView.findViewById(R.id.flip_left_btn);
+		button = rootView.findViewById(R.id.flip_left_btn);
 		button.setOnClickListener(mOnClickListener);
 		mActionViews.add(button);
 
-		button = (ImageButton) rootView.findViewById(R.id.flip_front_btn);
+		button = rootView.findViewById(R.id.flip_front_btn);
 		button.setOnClickListener(mOnClickListener);
 		mActionViews.add(button);
 
-		button = (ImageButton) rootView.findViewById(R.id.flip_back_btn);
+		button = rootView.findViewById(R.id.flip_back_btn);
 		button.setOnClickListener(mOnClickListener);
 		mActionViews.add(button);
 
 		// 右スティックパネル
-		mRightStickPanel = (StickView) rootView.findViewById(R.id.stick_view_right);
+		mRightStickPanel = rootView.findViewById(R.id.stick_view_right);
 		if (mRightStickPanel != null) {
 			mRightStickPanel.setOnStickMoveListener(mOnStickMoveListener);
 			mActionViews.add(mRightStickPanel);
 		}
 
 		// 左スティックパネル
-		mLeftStickPanel = (StickView) rootView.findViewById(R.id.stick_view_left);
+		mLeftStickPanel = rootView.findViewById(R.id.stick_view_left);
 		if (mLeftStickPanel != null) {
 			mLeftStickPanel.setOnStickMoveListener(mOnStickMoveListener);
 			mActionViews.add(mRightStickPanel);
@@ -241,7 +240,7 @@ public class PilotFragment extends BasePilotFragment {
 			((ICameraController)mController).setCameraControllerListener(mCameraControllerListener);
 			((ICameraController)mController).sendCameraOrientation(0, 0);
 		}
-		mVideoView = (VideoView)rootView.findViewById(R.id.drone_view);
+		mVideoView = rootView.findViewById(R.id.drone_view);
 		return rootView;
 	}
 
@@ -276,7 +275,6 @@ public class PilotFragment extends BasePilotFragment {
 			if (intercept) {
 				// マルチタッチ開始時のタッチ位置等を保存
 				initTouch(event);
-			} else {
 			}
 			return intercept;
 		}

@@ -87,8 +87,8 @@ public class CalibrationFragment extends BaseFlightControllerFragment {
 		final int model;
 		final View rootView = inflater.inflate(R.layout.fragment_calibration, container, false);
 
-		mVideoView = (VideoView)rootView.findViewById(R.id.drone_view);
-		mMessageTextView = (TextView)rootView.findViewById(R.id.cal_msg_textview);
+		mVideoView = rootView.findViewById(R.id.drone_view);
+		mMessageTextView = rootView.findViewById(R.id.cal_msg_textview);
 		mMessageTextView.setText(R.string.calibration_title);
 
 		return rootView;
