@@ -51,10 +51,10 @@ buildscript {
 
 allprojects {
 	repositories {
-		maven { url 'http://raw.github.com/saki4510t/libcommon/master/repository/' }
-		maven { url 'http://raw.github.com/saki4510t/dronenotice/master/repository/' }
 		google()
 		jcenter()
+		maven { url 'http://raw.github.com/saki4510t/libcommon/master/repository/' }
+		maven { url 'http://raw.github.com/saki4510t/dronenotice/master/repository/' }
 	}
 }
 
