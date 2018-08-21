@@ -7,7 +7,7 @@
  *                           License Agreement
  *                        (3-clause BSD License)
  *
- * Copyright (C) 2014-2017, saki t_saki@serenegiant.com
+ * Copyright (C) 2014-2018, saki t_saki@serenegiant.com
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
