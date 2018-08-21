@@ -64,7 +64,7 @@ task clean(type: Delete) {
 
 ext {
 	supportLibVersion = '27.1.1'  // variable that can be referenced to keep support libs consistent
-	commonLibVersion = '2.5.1'
+	commonLibVersion = '2.9.6'
 	arsdkVersion = '3.14.0'
 	versionBuildTool = '27.0.3'
 	versionCompiler = 27
