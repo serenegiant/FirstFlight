@@ -444,6 +444,9 @@ public class ManagerFragment extends Fragment {
 				result = new FlightControllerBebop2(getActivity(), device);
 				break;
 			case ARDISCOVERY_PRODUCT_SKYCONTROLLER:	// SkyController
+			case ARDISCOVERY_PRODUCT_SKYCONTROLLER_NG:
+			case ARDISCOVERY_PRODUCT_SKYCONTROLLER_2:
+			case ARDISCOVERY_PRODUCT_SKYCONTROLLER_2P:
 				result = new SkyController(getActivity(), device);
 				break;
 			case ARDISCOVERY_PRODUCT_JS:		// FIXME JumpingSumoは未対応
