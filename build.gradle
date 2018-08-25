@@ -75,6 +75,6 @@ ext {
 	arsdkVersion = '3.14.0'
 	commonLibVersion = '2.9.6'
 
-	versionCodeValue = 12
-	versionNameString = '0.5.2'
+	versionCodeValue = 13
+	versionNameString = '0.5.3'
 }
