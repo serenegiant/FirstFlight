@@ -63,14 +63,18 @@ task clean(type: Delete) {
 }
 
 ext {
-	supportLibVersion = '27.1.1'  // variable that can be referenced to keep support libs consistent
-	commonLibVersion = '2.9.6'
-	arsdkVersion = '3.14.0'
+	javaSourceCompatibility = JavaVersion.VERSION_1_8
+	javaTargetCompatibility = JavaVersion.VERSION_1_8
+
 	versionBuildTool = '27.0.3'
 	versionCompiler = 27
 	versionTarget = 27
+
+	supportLibVersion = '27.1.1'  // variable that can be referenced to keep support libs consistent
+
+	arsdkVersion = '3.14.0'
+	commonLibVersion = '2.9.6'
+
 	versionCodeValue = 11
 	versionNameString = '0.5.1'
-	javaSourceCompatibility = JavaVersion.VERSION_1_8
-	javaTargetCompatibility = JavaVersion.VERSION_1_8
 }
