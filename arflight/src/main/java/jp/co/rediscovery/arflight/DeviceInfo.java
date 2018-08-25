@@ -39,7 +39,13 @@ package jp.co.rediscovery.arflight;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.parrot.arsdk.ardiscovery.ARDISCOVERY_PRODUCT_ENUM;
+import com.parrot.arsdk.ardiscovery.ARDiscoveryService;
+
 import java.util.Locale;
+
+import jp.co.rediscovery.arflight.controllers.FlightControllerCargoDrone;
+import jp.co.rediscovery.arflight.controllers.FlightControllerMambo;
 
 import static com.parrot.arsdk.arcommands.ARCOMMANDS_SKYCONTROLLER_DEVICESTATE_CONNEXIONCHANGED_STATUS_ENUM.ARCOMMANDS_SKYCONTROLLER_DEVICESTATE_CONNEXIONCHANGED_STATUS_CONNECTED;
 import static com.parrot.arsdk.arcommands.ARCOMMANDS_SKYCONTROLLER_DEVICESTATE_CONNEXIONCHANGED_STATUS_ENUM.ARCOMMANDS_SKYCONTROLLER_DEVICESTATE_CONNEXIONCHANGED_STATUS_CONNECTING;
@@ -107,6 +113,55 @@ public class DeviceInfo implements Parcelable {
 	 */
 	public int productId() {
 		return mProductId;
+	}
+	
+	/**
+	 * スカイコントローラーかどうかを取得
+	 * @return
+	 */
+	public boolean isSkyController() {
+		switch (ARDiscoveryService.getProductFromProductID(mProductId)) {
+		case ARDISCOVERY_PRODUCT_SKYCONTROLLER:	// SkyController
+		case ARDISCOVERY_PRODUCT_SKYCONTROLLER_NG:
+		case ARDISCOVERY_PRODUCT_SKYCONTROLLER_2:
+		case ARDISCOVERY_PRODUCT_SKYCONTROLLER_2P:
+			return true;
+		default:
+			return false;
+		}
+	}
+	
+	/**
+	 * ミニドローン達かどうかを取得
+	 * @return
+	 */
+	public boolean isMiniDrone() {
+		switch (ARDiscoveryService.getProductFromProductID(mProductId)) {
+		case ARDISCOVERY_PRODUCT_MINIDRONE:
+		case ARDISCOVERY_PRODUCT_MINIDRONE_EVO_LIGHT:
+		case ARDISCOVERY_PRODUCT_MINIDRONE_EVO_BRICK:
+		case ARDISCOVERY_PRODUCT_MINIDRONE_EVO_HYDROFOIL: // ハイドロフォイルもいる?
+		case ARDISCOVERY_PRODUCT_MINIDRONE_DELOS3:
+		case ARDISCOVERY_PRODUCT_MINIDRONE_WINGX:
+			return true;
+		default:
+			return false;
+		}
+	}
+	
+	/**
+	 * ジャンピングスーモ達かどうかを取得
+	 * @return
+	 */
+	public boolean isJS() {
+		switch (ARDiscoveryService.getProductFromProductID(mProductId)) {
+		case ARDISCOVERY_PRODUCT_JS:
+		case ARDISCOVERY_PRODUCT_JS_EVO_LIGHT:
+		case ARDISCOVERY_PRODUCT_JS_EVO_RACE:
+			return true;
+		default:
+			return false;
+		}
 	}
 
 	/**
