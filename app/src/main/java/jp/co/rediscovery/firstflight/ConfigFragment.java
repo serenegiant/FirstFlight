@@ -36,10 +36,12 @@ package jp.co.rediscovery.firstflight;
  * the use of this software, even if advised of the possibility of such damage.
  */
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
+
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -115,8 +117,8 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 	}
 
 	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
+	public void onAttach(@NonNull final Context context) {
+		super.onAttach(context);
 		if (DEBUG) Log.v(TAG, "onAttach:");
 		mMaxAltitudeFormat = getString(R.string.config_max_altitude);
 		mMaxTiltFormat = getString(R.string.config_max_tilt);
@@ -135,7 +137,7 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 		mAutopilotScaleRFormat = getString(R.string.config_scale_r);
 		mAutopilotMaxControlValueFormat = getString(R.string.config_control_max);
 
-		mPref = activity.getPreferences(0);
+		mPref = context.getSharedPreferences(PREF_NAME, 0);
 	}
 
 	@Override
@@ -146,7 +148,7 @@ public class ConfigFragment extends BaseFlightControllerFragment {
 	}
 
 	@Override
-	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+	public View onCreateView(@NonNull final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		if (DEBUG) Log.v(TAG, "onCreateView:");
 		onBeforeCreateView();
 		mProduct = getProduct();

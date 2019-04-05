@@ -153,7 +153,7 @@
 
 		</LinearLayout>
 
-		<android.support.v4.view.ViewPager
+		<androidx.viewpager.widget.ViewPager
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:id="@+id/pager"
@@ -163,7 +163,7 @@
 			android:layout_marginTop="@dimen/top_panel_height"
 			android:layout_marginBottom="@dimen/bottom_panel_height">
 
-			<android.support.v4.view.PagerTitleStrip
+			<androidx.viewpager.widget.PagerTitleStrip
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_gravity="top"
@@ -172,7 +172,7 @@
 				android:paddingTop="@dimen/half_padding"
 				android:paddingBottom="@dimen/min_padding"/>
 				<!--<include android:layout="@layout/trace_config_preprocess" /> -->
-		</android.support.v4.view.ViewPager>
+		</androidx.viewpager.widget.ViewPager>
 
 	</LinearLayout>
 

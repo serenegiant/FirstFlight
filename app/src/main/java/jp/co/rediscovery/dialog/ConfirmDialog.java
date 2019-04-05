@@ -36,26 +36,27 @@ package jp.co.rediscovery.dialog;
  * the use of this software, even if advised of the possibility of such damage.
  */
 
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
 
 import com.serenegiant.utils.BuildCheck;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+
 public class ConfirmDialog extends BaseDialogFragment {
 	private static final String TAG = "ConfirmDialog";
 
-	public static ConfirmDialog showDialog(final Activity parent, final int id, final String title, final String message) {
+	public static ConfirmDialog showDialog(final FragmentActivity parent, final int id, final String title, final String message) {
 		ConfirmDialog fragment = newInstance(id, title, message);
 		try {
-			fragment.show(parent.getFragmentManager(), TAG);
+			fragment.show(parent.getSupportFragmentManager(), TAG);
 		} catch (final IllegalStateException e) {
 			fragment = null;
 		}
@@ -85,33 +86,38 @@ public class ConfirmDialog extends BaseDialogFragment {
 		// デフォルトコンストラクタが必要
 	}
 
-	@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
 	@Override
-	public void onAttach(final Activity activity) {
-		super.onAttach(activity);
+	public void onAttach(@NonNull final Context context) {
+		super.onAttach(context);
         // コールバックインターフェースを取得
     	try {
     		// 親がフラグメントの場合
 			mListener = (OnDialogResultIntListener)getTargetFragment();
     	} catch (final NullPointerException e1) {
+			// ignore
     	} catch (final ClassCastException e) {
+			// ignore
     	}
 		if ((mListener == null) && BuildCheck.isAndroid4_2())
     	try {
     		// 親がフラグメントの場合
 			mListener = (OnDialogResultIntListener)getParentFragment();
     	} catch (final NullPointerException e1) {
+			// ignore
     	} catch (final ClassCastException e) {
+			// ignore
     	}
         if (mListener == null)
         try {
         	// 親がActivityの場合
-			mListener = (OnDialogResultIntListener)activity;
+			mListener = (OnDialogResultIntListener)context;
         } catch (final ClassCastException e) {
+			// ignore
     	} catch (final NullPointerException e1) {
+    		// ignore
         }
 		if (mListener == null) {
-        	throw new ClassCastException(activity.toString() + " must implement OnDialogResultIntListener");
+        	throw new ClassCastException(context.toString() + " must implement OnDialogResultIntListener");
 		}
 	}
 
@@ -124,6 +130,7 @@ public class ConfirmDialog extends BaseDialogFragment {
 		loadArgument(savedInstanceState);
 	}
 
+	@NonNull
 	@Override
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

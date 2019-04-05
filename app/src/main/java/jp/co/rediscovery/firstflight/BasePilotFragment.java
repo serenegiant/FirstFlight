@@ -53,6 +53,7 @@ import android.widget.Toast;
 import com.serenegiant.gamepad.GamePadConst;
 import com.serenegiant.gamepad.Joystick;
 
+import androidx.annotation.NonNull;
 import jp.co.rediscovery.arflight.DroneStatus;
 import jp.co.rediscovery.arflight.ICameraController;
 import jp.co.rediscovery.arflight.IDeviceController;
@@ -93,7 +94,9 @@ public abstract class BasePilotFragment extends BaseFlightControllerFragment {
 	protected float mGamepadScaleX, mGamepadScaleY, mGamepadScaleZ, mGamepadScaleR;
 
 	@Override
-	public final View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+	public final View onCreateView(@NonNull final LayoutInflater inflater,
+		final ViewGroup container, final Bundle savedInstanceState) {
+
 		if (DEBUG) Log.v(TAG, "onCreateView:");
 		onBeforeCreateView();
 		final SharedPreferences pref = getActivity().getPreferences(0);
@@ -399,9 +402,9 @@ public abstract class BasePilotFragment extends BaseFlightControllerFragment {
 					}
 				}
 			}
-			if (mController instanceof ICameraController) {
-				// FIXME カメラの方向を更新する
-			}
+//			if (mController instanceof ICameraController) {
+//				// FIXME カメラの方向を更新する
+//			}
 			if (prevState != getState()) {
 				prevState = getState();
 				updateButtons();

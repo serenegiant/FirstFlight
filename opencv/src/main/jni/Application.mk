@@ -66,8 +66,8 @@ APP_CPPFLAGS += -Wno-multichar
 # 出力アーキテクチャ
 APP_ABI := armeabi-v7a x86
 
-# STLライブラリ GNU-STLじゃないとリンクできない
-APP_STL := gnustl_shared
+# STLライブラリ
+APP_STL := c++_shared
 
 # 出力オプション
 APP_OPTIM := release

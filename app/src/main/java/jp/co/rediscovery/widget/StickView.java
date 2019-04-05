@@ -36,6 +36,7 @@ package jp.co.rediscovery.widget;
  * the use of this software, even if advised of the possibility of such damage.
  */
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
@@ -77,7 +78,7 @@ public class StickView extends FrameLayout {
 	private int mPrevX, mPrevY;		// 前回のタッチ位置
 	private boolean changed;
 
-	private int mDisableColor = DISABLE_COLOR;
+	private int mDisableColor;
 	private final View mStickStartView;	// 最初にタッチした位置に表示する薄い色のView
 	private final View mStickView;		// タッチに追随して表示する
 	private final Rect mWorkBounds = new Rect();
@@ -108,7 +109,6 @@ public class StickView extends FrameLayout {
 		}
 		mDisableColor = attributesArray.getColor(R.styleable.StickView_disable_color, DISABLE_COLOR);
 		attributesArray.recycle();
-		attributesArray = null;
 
 		if (stick_layout_id != 0) {
 			final LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -124,6 +124,8 @@ public class StickView extends FrameLayout {
 	}
 
 	private boolean mOnTouchEvent;
+
+	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public synchronized boolean onTouchEvent(final MotionEvent event) {
 		if (mStickView != null && isEnabled()) {

@@ -108,10 +108,10 @@ public class OrientationView extends View {
 
 	private PathDashPathEffect createSafeDashedPathEffect(int dashLength, int spaceLength, int offset, int strokeWidth) {
 		final Path p = new Path();
-		p.moveTo(0, strokeWidth / 2);
-		p.lineTo(dashLength, strokeWidth / 2);
-		p.lineTo(dashLength, -strokeWidth / 2);
-		p.lineTo(0, -strokeWidth / 2);
+		p.moveTo(0, strokeWidth / 2.0f);
+		p.lineTo(dashLength, strokeWidth / 2.0f);
+		p.lineTo(dashLength, -strokeWidth / 2.0f);
+		p.lineTo(0, -strokeWidth / 2.0f);
 		return new PathDashPathEffect(p, dashLength + spaceLength, offset, PathDashPathEffect.Style.ROTATE);
 	}
 }

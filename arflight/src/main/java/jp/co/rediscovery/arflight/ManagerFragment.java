@@ -37,8 +37,6 @@ package jp.co.rediscovery.arflight;
  */
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -50,7 +48,11 @@ import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.support.v4.content.LocalBroadcastManager;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -92,10 +94,10 @@ public class ManagerFragment extends Fragment {
 	 * @param activity
 	 * @return
 	 */
-	public static synchronized ManagerFragment getInstance(final Activity activity) {
+	public static synchronized ManagerFragment getInstance(final FragmentActivity activity) {
 		ManagerFragment result = null;
 		if ((activity != null) && !activity.isFinishing()) {
-			final FragmentManager fm = activity.getFragmentManager();
+			final FragmentManager fm = activity.getSupportFragmentManager();
 			result = (ManagerFragment)fm.findFragmentByTag(TAG);
 			if (result == null) {
 				result = new ManagerFragment();
@@ -111,7 +113,7 @@ public class ManagerFragment extends Fragment {
 	 * @param index
 	 * @return indexに対応するARDiscoveryDeviceServiceが見つからなければnull
 	 */
-	public static ARDiscoveryDeviceService getDevice(final Activity activity, final int index) {
+	public static ARDiscoveryDeviceService getDevice(final FragmentActivity activity, final int index) {
 		ARDiscoveryDeviceService result = null;
 		final ManagerFragment fragment =  getInstance(activity);
 		if (fragment != null)
@@ -125,7 +127,7 @@ public class ManagerFragment extends Fragment {
 	 * @param name
 	 * @return nameに対応するARDiscoveryDeviceServiceが見つからなければnull
 	 */
-	public static ARDiscoveryDeviceService getDevice(final Activity activity, final String name) {
+	public static ARDiscoveryDeviceService getDevice(final FragmentActivity activity, final String name) {
 		ARDiscoveryDeviceService result = null;
 		final ManagerFragment fragment =  getInstance(activity);
 		if (fragment != null)
@@ -139,7 +141,7 @@ public class ManagerFragment extends Fragment {
 	 * @param index
 	 * @return indexに対応するARDiscoveryDeviceServiceが見つからなければnull
 	 */
-	public static IDeviceController getController(final Activity activity, final int index) {
+	public static IDeviceController getController(final FragmentActivity activity, final int index) {
 		IDeviceController result = null;
 		final ManagerFragment fragment =  getInstance(activity);
 		if (fragment != null)
@@ -153,7 +155,7 @@ public class ManagerFragment extends Fragment {
 	 * @param name
 	 * @return nameに対応するARDiscoveryDeviceServiceが見つからなければnull
 	 */
-	public static IDeviceController getController(final Activity activity, final String name) {
+	public static IDeviceController getController(final FragmentActivity activity, final String name) {
 		IDeviceController result = null;
 		final ManagerFragment fragment =  getInstance(activity);
 		if (fragment != null)
@@ -167,7 +169,7 @@ public class ManagerFragment extends Fragment {
 	 * @param device
 	 * @return
 	 */
-	public static IDeviceController getController(final Activity activity, final ARDiscoveryDeviceService device) {
+	public static IDeviceController getController(final FragmentActivity activity, final ARDiscoveryDeviceService device) {
 		IDeviceController result = null;
 		final ManagerFragment fragment = getInstance(activity);
 		if (fragment != null)
@@ -175,7 +177,7 @@ public class ManagerFragment extends Fragment {
 		return result;
 	}
 
-	public static IDeviceController startController(final Activity activity, final IDeviceController controller, final StartControllerListener listener) {
+	public static IDeviceController startController(final FragmentActivity activity, final IDeviceController controller, final StartControllerListener listener) {
 		if (controller != null) {
 			final ManagerFragment fragment = getInstance(activity);
 			if (fragment != null) {
@@ -192,7 +194,7 @@ public class ManagerFragment extends Fragment {
 	 * @param activity
 	 * @param controller
 	 */
-	public static void releaseController(final Activity activity, final IDeviceController controller) {
+	public static void releaseController(final FragmentActivity activity, final IDeviceController controller) {
 		if (controller == null) return;
 		final ManagerFragment fragment =  getInstance(activity);
 		if (fragment != null) {
@@ -216,7 +218,7 @@ public class ManagerFragment extends Fragment {
 	 * 全てのARDiscoveryDeviceServiceとIDeviceControllerを取り除く
 	 * @param activity
 	 */
-	public static void releaseAll(final Activity activity) {
+	public static void releaseAll(final FragmentActivity activity) {
 		final ManagerFragment fragment =  getInstance(activity);
 		if (fragment != null)
 			fragment.releaseAll();
@@ -241,10 +243,9 @@ public class ManagerFragment extends Fragment {
 		// デフォルトコンストラクタが必要
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	public void onAttach(final Activity activity) {
-		super.onAttach(activity);
+	public void onAttach(final Context context) {
+		super.onAttach(context);
 		synchronized (mSync) {
 			mAsyncHandler = HandlerThreadHandler.createHandler(TAG);
 		}

@@ -36,6 +36,7 @@ package jp.co.rediscovery.widget;
  * the use of this software, even if advised of the possibility of such damage.
  */
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -92,6 +93,7 @@ public class TouchableLinearLayout extends LinearLayout {
 		return super.onInterceptTouchEvent(event);
 	}
 
+	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public synchronized boolean onTouchEvent(final MotionEvent event) {
 		if (mOnTouchableListener != null) {

@@ -39,9 +39,9 @@ package jp.co.rediscovery.firstflight;
 import android.content.DialogInterface;
 import android.media.MediaScannerConnection;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -93,7 +93,9 @@ public class MediaFragment extends BaseFlightControllerFragment
 	}
 
 	@Override
-	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+	public View onCreateView(@NonNull final LayoutInflater inflater,
+		final ViewGroup container, final Bundle savedInstanceState) {
+
 		if (DEBUG) Log.v(TAG, "onCreateView:");
 		onBeforeCreateView();
 		final MediaPagerAdapter pagerAdapter = new MediaPagerAdapter(inflater);
@@ -239,6 +241,7 @@ public class MediaFragment extends BaseFlightControllerFragment
 										list.add(mediaObject.getFilePath());
 									}
 								} catch (final Exception e) {
+									Log.w(TAG, e);
 								}
 							}
 							final int m = list.size();

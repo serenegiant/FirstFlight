@@ -55,13 +55,19 @@ android {
 	}
 
 	applicationVariants.all { variant ->
-		if (variant.buildType.name.equals("release")) {
+		if (GradleVersion.current() >= GradleVersion.version('4.10.1')) {
+			// after Android Studio 3.3.x / gradle 4.10.1
+			variant.outputs.all { output ->
+				outputFileName = "firstflight_${variant.buildType.name}_r${variant.versionName}_v${variant.versionCode}.apk"
+			}
+		} else {
+			// before Android Studio 3.3 / gradle 4.10.1
 			variant.outputs.each { output ->
 				if (output.outputFile != null && output.outputFile.name.endsWith('.apk')) {
-					def list = applicationId.split("\\.")
-					def appName = list[list.length - 1]
+//					def list = applicationId.split("\\.")
+//					def appName = list[list.length - 1]
 //					def date = new java.text.SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date())
-					def apkName = "${appName}_r${versionName}_v${versionCode}.apk"
+					def apkName = "firstflight__${variant.buildType.name}_r${versionName}_v${versionCode}.apk"
 					if (output.hasProperty('outputFileName')) {
 						output.outputFileName = apkName
 					} else {
@@ -108,8 +114,8 @@ repositories {
 
 dependencies {
 	implementation fileTree(dir: 'libs', include: ['*.jar'])
-	implementation "com.android.support:appcompat-v7:${supportLibVersion}"
-	implementation "com.android.support:support-annotations:${supportLibVersion}"
+	implementation "androidx.appcompat:appcompat:${supportLibVersion}"
+	implementation "androidx.annotation:annotation:${supportLibVersion}"
 
 	implementation("com.serenegiant:common:${commonLibVersion}") {
 		exclude module: 'support-v4'

@@ -39,20 +39,20 @@ package jp.co.rediscovery.firstflight;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Vibrator;
-import android.support.annotation.NonNull;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.serenegiant.dialog.MessageDialogFragment;
+import com.serenegiant.dialog.MessageDialogFragmentV4;
 import com.serenegiant.utils.BuildCheck;
 import com.serenegiant.utils.HandlerThreadHandler;
 import com.serenegiant.utils.PermissionCheck;
@@ -61,7 +61,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**　Fragmentでの共通処理を実装したクラス　*/
-public class BaseFragment extends Fragment implements MessageDialogFragment.MessageDialogListener {
+public class BaseFragment extends Fragment
+	implements MessageDialogFragmentV4.MessageDialogListener {
+
 	private static final boolean DEBUG = false; // FIXME 実働時はfalseにすること
 	private static final String TAG = BaseFragment.class.getSimpleName();
 
@@ -77,12 +79,11 @@ public class BaseFragment extends Fragment implements MessageDialogFragment.Mess
 		// デフォルトコンストラクタが必要
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	public void onAttach(final Activity activity) {
-		super.onAttach(activity);
-		mLocalBroadcastManager = LocalBroadcastManager.getInstance(activity);
-		mVibrator = (Vibrator)getActivity().getSystemService(Activity.VIBRATOR_SERVICE);
+	public void onAttach(@NonNull final Context context) {
+		super.onAttach(context);
+		mLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
+		mVibrator = (Vibrator)context.getSystemService(Activity.VIBRATOR_SERVICE);
 		mIsReplacing = false;
 	}
 
@@ -116,7 +117,7 @@ public class BaseFragment extends Fragment implements MessageDialogFragment.Mess
 	}
 
 	@Override
-	public void onSaveInstanceState(final Bundle outState) {
+	public void onSaveInstanceState(@NonNull final Bundle outState) {
 		super.onSaveInstanceState(outState);
 		final Bundle args = getArguments();
 		if (args != null) {
@@ -359,7 +360,9 @@ public class BaseFragment extends Fragment implements MessageDialogFragment.Mess
 	 */
 	@SuppressLint("NewApi")
 	@Override
-	public void onMessageDialogResult(final MessageDialogFragment dialog, final int requestCode, final String[] permissions, final boolean result) {
+	public void onMessageDialogResult(@NonNull final MessageDialogFragmentV4 dialog,
+		final int requestCode, @NonNull final String[] permissions, final boolean result) {
+
 		if (result) {
 			// request permission(s) when user touched/clicked OK
 			if (BuildCheck.isMarshmallow()) {
@@ -451,7 +454,7 @@ public class BaseFragment extends Fragment implements MessageDialogFragment.Mess
 	 */
 	protected boolean checkPermissionWriteExternalStorage() {
 		if (!PermissionCheck.hasWriteExternalStorage(getActivity())) {
-			MessageDialogFragment.showDialog(this, REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE,
+			MessageDialogFragmentV4.showDialog(this, REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE,
 				R.string.permission_title, R.string.permission_ext_storage_request,
 				new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE});
 			return false;
@@ -466,7 +469,7 @@ public class BaseFragment extends Fragment implements MessageDialogFragment.Mess
 	 */
 	protected boolean checkPermissionAudio() {
 		if (!PermissionCheck.hasAudio(getActivity())) {
-			MessageDialogFragment.showDialog(this, REQUEST_PERMISSION_AUDIO_RECORDING,
+			MessageDialogFragmentV4.showDialog(this, REQUEST_PERMISSION_AUDIO_RECORDING,
 				R.string.permission_title, R.string.permission_audio_recording_request,
 				new String[] {Manifest.permission.RECORD_AUDIO});
 			return false;
@@ -481,7 +484,7 @@ public class BaseFragment extends Fragment implements MessageDialogFragment.Mess
 	 */
 	protected boolean checkPermissionNetwork() {
 		if (!PermissionCheck.hasNetwork(getActivity())) {
-			MessageDialogFragment.showDialog(this, REQUEST_PERMISSION_NETWORK,
+			MessageDialogFragmentV4.showDialog(this, REQUEST_PERMISSION_NETWORK,
 				R.string.permission_title, R.string.permission_network_request,
 				new String[] {Manifest.permission.INTERNET});
 			return false;
@@ -495,8 +498,8 @@ public class BaseFragment extends Fragment implements MessageDialogFragment.Mess
 	 * @return true this app has permission
 	 */
 	protected boolean checkPermissionLocation() {
-		if (!PermissionCheck.hasAccessLocation(getActivity())) {
-			MessageDialogFragment.showDialog(this, REQUEST_PERMISSION_LOCATION,
+		if (!PermissionCheck.hasAccessLocation(requireContext())) {
+			MessageDialogFragmentV4.showDialog(this, REQUEST_PERMISSION_LOCATION,
 				R.string.permission_title, R.string.permission_location_request,
 				new String[] { Manifest.permission.ACCESS_COARSE_LOCATION,
 							  Manifest.permission.ACCESS_FINE_LOCATION});
@@ -512,7 +515,7 @@ public class BaseFragment extends Fragment implements MessageDialogFragment.Mess
 	 */
 	protected boolean checkPermissionLocationCoarse() {
 		if (!PermissionCheck.hasAccessLocation(getActivity())) {
-			MessageDialogFragment.showDialog(this, REQUEST_PERMISSION_LOCATION,
+			MessageDialogFragmentV4.showDialog(this, REQUEST_PERMISSION_LOCATION,
 				R.string.permission_title, R.string.permission_location_request,
 				new String[] { Manifest.permission.ACCESS_COARSE_LOCATION});
 			return false;
@@ -527,7 +530,7 @@ public class BaseFragment extends Fragment implements MessageDialogFragment.Mess
 	 */
 	protected boolean checkPermissionLocationFine() {
 		if (!PermissionCheck.hasAccessLocation(getActivity())) {
-			MessageDialogFragment.showDialog(this, REQUEST_PERMISSION_LOCATION,
+			MessageDialogFragmentV4.showDialog(this, REQUEST_PERMISSION_LOCATION,
 				R.string.permission_title, R.string.permission_location_request,
 				new String[] { Manifest.permission.ACCESS_FINE_LOCATION});
 			return false;

@@ -36,8 +36,7 @@ package jp.co.rediscovery.firstflight;
  * the use of this software, even if advised of the possibility of such damage.
  */
 
-import android.app.Fragment;
-
+import androidx.fragment.app.Fragment;
 import jp.co.rediscovery.arflight.InstructionsFragment;
 
 /**

@@ -38,12 +38,13 @@ package jp.co.rediscovery.dialog;
 
 
 import android.app.Dialog;
-import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 
 public class BaseDialogFragment extends DialogFragment {
 //	private static final boolean DEBUG = false;	// TODO 実働時はfalseにすること
@@ -59,7 +60,7 @@ public class BaseDialogFragment extends DialogFragment {
 	 * 変更がなければoverrideする必要はない
 	*/
 	@Override
-	public void onSaveInstanceState(final Bundle saveInstanceState) {
+	public void onSaveInstanceState(@NonNull final Bundle saveInstanceState) {
 		super.onSaveInstanceState(saveInstanceState);
 //		if (DEBUG) Log.v(TAG, "onSaveInstanceState");
 		final Bundle args = getArguments();
@@ -135,14 +136,14 @@ public class BaseDialogFragment extends DialogFragment {
 	}
 
 
-	/**
-	 * containerViewIdで指定したViewgroup内に存在するフラグメントを全て削除した後指定したフラグメントを追加する</br>
-	 * DialogFragment#onCreateDialogで生成したダイアログフラグメントはちゃんと表示されないみたい</br>
-	 * supportLibraryの問題かもしれないけど。Fragment#onCreateViewで生成すること
-	 * @param containerViewId
-	 * @param fragment
-	 * @return
-	 */
+//	/**
+//	 * containerViewIdで指定したViewgroup内に存在するフラグメントを全て削除した後指定したフラグメントを追加する</br>
+//	 * DialogFragment#onCreateDialogで生成したダイアログフラグメントはちゃんと表示されないみたい</br>
+//	 * supportLibraryの問題かもしれないけど。Fragment#onCreateViewで生成すること
+//	 * @param containerViewId
+//	 * @param fragment
+//	 * @return
+//	 */
 /*	protected Fragment replace(int containerViewId, Fragment fragment, CharSequence title) {
 		return replace(containerViewId, fragment, title, null);
 	} */
@@ -159,11 +160,11 @@ public class BaseDialogFragment extends DialogFragment {
 	protected Fragment replace(final int containerViewId, final Fragment fragment, final CharSequence title, final String tag) {
 		if (fragment != null) {
 			fragment.setTargetFragment(this, 0);
-			final FragmentTransaction transaction = getFragmentManager().beginTransaction();
-			transaction.setBreadCrumbTitle(title);
-			transaction.replace(containerViewId, fragment, tag);
-			transaction.addToBackStack(null);
-			transaction.commit();
+			getFragmentManager().beginTransaction()
+				.setBreadCrumbTitle(title)
+				.replace(containerViewId, fragment, tag)
+				.addToBackStack(null)
+				.commit();
 		}
 		return fragment;
 	}

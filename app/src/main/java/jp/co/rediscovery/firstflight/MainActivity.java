@@ -36,11 +36,10 @@ package jp.co.rediscovery.firstflight;
  * the use of this software, even if advised of the possibility of such damage.
  */
 
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -51,6 +50,7 @@ import com.parrot.arsdk.arsal.ARSALPrint;
 import com.parrot.arsdk.arsal.ARSAL_PRINT_LEVEL_ENUM;
 import com.serenegiant.gamepad.Joystick;
 
+import androidx.fragment.app.Fragment;
 import jp.co.rediscovery.arflight.ManagerFragment;
 
 import com.serenegiant.net.NetworkChangedReceiver;
@@ -68,14 +68,14 @@ public class MainActivity extends AppCompatActivity {
 	/*package*/Joystick mJoystick;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		NetworkChangedReceiver.enable(getApplicationContext());
 		final ManagerFragment manager = ManagerFragment.getInstance(this);
 		if (savedInstanceState == null) {
 			final Fragment fragment = MyInstructionsFragment.newInstance();
-			getFragmentManager().beginTransaction()
+			getSupportFragmentManager().beginTransaction()
 				.add(R.id.container, fragment)
 				.commit();
 		}

@@ -193,6 +193,7 @@ public class ImageProcessor {
 			try {
 				mAsyncHandler.getLooper().quit();
 			} catch (final Exception e) {
+				// ignore
 			}
 			mAsyncHandler = null;
 		}
@@ -512,6 +513,7 @@ public class ImageProcessor {
 				mSync.wait();
 				System.arraycopy(EXTRACT_COLOR_HSV_LIMIT, 0, temp, 0, 6);
 			} catch (final InterruptedException e) {
+				// ignore
 			}
 		}
 		return temp;
@@ -626,6 +628,7 @@ public class ImageProcessor {
 		try {
 			mCallback.onResult(type, result);
 		} catch (final Exception e) {
+			Log.w(TAG, e);
 		}
 	}
 

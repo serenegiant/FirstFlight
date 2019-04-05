@@ -44,8 +44,10 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Process;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
+
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Surface;
@@ -77,7 +79,6 @@ import jp.co.rediscovery.arflight.IFlightController;
 import jp.co.rediscovery.arflight.ISkyController;
 import jp.co.rediscovery.arflight.attribute.AttributeFloat;
 import jp.co.rediscovery.opencv.ImageProcessor;
-import jp.co.rediscovery.widget.VideoView;
 
 import com.serenegiant.math.Vector;
 import com.serenegiant.utils.CpuMonitor;
@@ -211,7 +212,7 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 
 		final ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_pilot_auto, container, false);
 
-		final ViewGroup controllerFrame = (ViewGroup) rootView.findViewById(R.id.controller_frame);
+		final ViewGroup controllerFrame = rootView.findViewById(R.id.controller_frame);
 		controllerFrame.setOnClickListener(mOnClickListener);
 
 // 上パネル
@@ -220,25 +221,25 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		mTopPanel.setOnLongClickListener(mOnLongClickListener);
 		mActionViews.add(mTopPanel);
 		// フラットトリムボタン
-		mFlatTrimBtn = (ImageButton) rootView.findViewById(R.id.flat_trim_btn);
+		mFlatTrimBtn = rootView.findViewById(R.id.flat_trim_btn);
 		mFlatTrimBtn.setOnClickListener(mOnClickListener);
 		mFlatTrimBtn.setOnLongClickListener(mOnLongClickListener);
 		mActionViews.add(mFlatTrimBtn);
 		// 設定表示ボタン
-		mConfigShowBtn = (ImageButton) rootView.findViewById(R.id.config_show_btn);
+		mConfigShowBtn = rootView.findViewById(R.id.config_show_btn);
 		mConfigShowBtn.setOnClickListener(mOnClickListener);
 		//
-		mBatteryLabel = (TextView) rootView.findViewById(R.id.batteryLabel);
-		mAlertMessage = (TextView) rootView.findViewById(R.id.alert_message);
+		mBatteryLabel = rootView.findViewById(R.id.batteryLabel);
+		mAlertMessage = rootView.findViewById(R.id.alert_message);
 		mAlertMessage.setVisibility(View.INVISIBLE);
 
 // 下パネル
 		// 非常停止ボタン
 //		mBottomPanel = rootView.findViewById(R.id.bottom_panel);
-		mEmergencyBtn = (ImageButton) rootView.findViewById(R.id.emergency_btn);
+		mEmergencyBtn = rootView.findViewById(R.id.emergency_btn);
 		mEmergencyBtn.setOnClickListener(mOnClickListener);
 		// 離着陸指示ボタン
-		mTakeOnOffBtn = (ImageButton) rootView.findViewById(R.id.take_onoff_btn);
+		mTakeOnOffBtn = rootView.findViewById(R.id.take_onoff_btn);
 		mTakeOnOffBtn.setOnClickListener(mOnClickListener);
 		mTakeOnOffBtn.setOnLongClickListener(mOnLongClickListener);
 		mActionViews.add(mTakeOnOffBtn);
@@ -248,20 +249,20 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		mActionViews.add(mRightSidePanel);
 
 		// コパイロットボタン
-		mCopilotBtn = (ImageButton) rootView.findViewById(R.id.copilot_btn);
+		mCopilotBtn = rootView.findViewById(R.id.copilot_btn);
 		mCopilotBtn.setOnClickListener(mOnClickListener);
 		mCopilotBtn.setVisibility(mController instanceof ISkyController ? View.VISIBLE : View.GONE);
 
 		// 静止画撮影
-		mStillCaptureBtn = (ImageButton) rootView.findViewById(R.id.still_capture_btn);
+		mStillCaptureBtn = rootView.findViewById(R.id.still_capture_btn);
 		mStillCaptureBtn.setOnClickListener(mOnClickListener);
 
 		// 動画撮影
-		mVideoRecordingBtn = (ImageButton) rootView.findViewById(R.id.video_capture_btn);
+		mVideoRecordingBtn = rootView.findViewById(R.id.video_capture_btn);
 		mVideoRecordingBtn.setOnClickListener(mOnClickListener);
 
 		// トレース実行
-		mTraceButton = (ImageButton)rootView.findViewById(R.id.trace_btn);
+		mTraceButton = rootView.findViewById(R.id.trace_btn);
 		mTraceButton.setOnClickListener(mOnClickListener);
 		mTraceButton.setOnLongClickListener(mOnLongClickListener);
 
@@ -270,25 +271,25 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 			((ICameraController)mController).sendCameraOrientation(0, 0);
 		}
 
-		mVideoView = (VideoView)rootView.findViewById(R.id.drone_view);
+		mVideoView = rootView.findViewById(R.id.drone_view);
 		mVideoView.setOnClickListener(mOnClickListener);
 
-		mDetectView = (SurfaceView)rootView.findViewById(R.id.detect_view);
+		mDetectView = rootView.findViewById(R.id.detect_view);
 		mDetectView.setVisibility(View.VISIBLE);
 //--------------------------------------------------------------------------------
 		final ConfigPagerAdapter adapter = new ConfigPagerAdapter(inflater);
-		final ViewPager pager = (ViewPager)rootView.findViewById(R.id.pager);
+		final ViewPager pager = rootView.findViewById(R.id.pager);
 		pager.setAdapter(adapter);
 		//
-		mTraceTv1 = (TextView)rootView.findViewById(R.id.trace1_tv);
-		mTraceTv2 = (TextView)rootView.findViewById(R.id.trace2_tv);
-		mTraceTv3 = (TextView)rootView.findViewById(R.id.trace3_tv);
+		mTraceTv1 = rootView.findViewById(R.id.trace1_tv);
+		mTraceTv2 = rootView.findViewById(R.id.trace2_tv);
+		mTraceTv3 = rootView.findViewById(R.id.trace3_tv);
 		//
-		mCpuLoadTv = (TextView)rootView.findViewById(R.id.cpu_load_textview);
+		mCpuLoadTv = rootView.findViewById(R.id.cpu_load_textview);
 		//
-		mFpsSrcTv = (TextView)rootView.findViewById(R.id.fps_src_textview);
+		mFpsSrcTv = rootView.findViewById(R.id.fps_src_textview);
 		mFpsSrcTv.setText(null);
-		mFpsResultTv = (TextView)rootView.findViewById(R.id.fps_result_textview);
+		mFpsResultTv = rootView.findViewById(R.id.fps_result_textview);
 		mFpsResultTv.setText(null);
 
 		return rootView;
@@ -1127,6 +1128,7 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 			try {
 				result = Integer.parseInt(pref.getString(key, Integer.toString(default_value)));
 			} catch (final Exception e1) {
+				// ignore
 			}
 		}
 		return result;
@@ -1142,8 +1144,9 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		}
 
 		@SuppressWarnings("deprecation")
+		@NonNull
 		@Override
-		public View getView(final int position, final View convertView, final ViewGroup parent) {
+		public View getView(final int position, final View convertView, @NonNull final ViewGroup parent) {
 			final View rootView = super.getView(position, convertView, parent);
 			changeColor(rootView, getContext().getResources().getColor(R.color.WHITE));
 			return rootView;
@@ -1713,38 +1716,38 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		SeekBar sb;
 		// ホワイトバランス
 		mCameraAutoWhiteBlance = getInt(mPref, KEY_CAMERA_WHITE_BLANCE, DEFAULT_CAMERA_WHITE_BLANCE);
-		final Spinner spinner = (Spinner)rootView.findViewById(R.id.camera_white_blance_spinner);
+		final Spinner spinner = rootView.findViewById(R.id.camera_white_blance_spinner);
 		spinner.setAdapter(new WhiteBlanceAdapter(getActivity()));
 		spinner.setSelection(mCameraAutoWhiteBlance + 1);
 		spinner.setOnItemSelectedListener(mOnItemSelectedListener);
 		// 露出
 		mCameraExposure = mPref.getFloat(KEY_CAMERA_EXPOSURE, DEFAULT_CAMERA_EXPOSURE);
-		mCameraExposureLabel = (TextView)rootView.findViewById(R.id.camera_exposure_textview);
-		sb = (SeekBar)rootView.findViewById(R.id.camera_exposure_seekbar);
+		mCameraExposureLabel = rootView.findViewById(R.id.camera_exposure_textview);
+		sb = rootView.findViewById(R.id.camera_exposure_seekbar);
 		sb.setMax(3000);
 		sb.setProgress(cameraExposureToProgress(mCameraExposure));	// [-1.5,+ 1.5] => [0, 3000]
 		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateCameraExposure(mCameraExposure);
 		// 彩度
 		mCameraSaturation = mPref.getFloat(KEY_CAMERA_SATURATION, DEFAULT_CAMERA_SATURATION);
-		mCameraSaturationLabel = (TextView)rootView.findViewById(R.id.camera_saturation_textview);
-		sb = (SeekBar)rootView.findViewById(R.id.camera_saturation_seekbar);
+		mCameraSaturationLabel = rootView.findViewById(R.id.camera_saturation_textview);
+		sb = rootView.findViewById(R.id.camera_saturation_seekbar);
 		sb.setMax(2000);
 		sb.setProgress((int)(mCameraSaturation * 10.0f) + 1000);	// [-100.0f, +100.0f] => [0, 2000]
 		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateCameraSaturation(mCameraSaturation);
 		// パン
 		mCameraPan = getInt(mPref, KEY_CAMERA_PAN, DEFAULT_CAMERA_PAN);
-		mCameraPanLabel = (TextView)rootView.findViewById(R.id.camera_pan_textview);
-		sb = (SeekBar)rootView.findViewById(R.id.camera_pan_seekbar);
+		mCameraPanLabel = rootView.findViewById(R.id.camera_pan_textview);
+		sb = rootView.findViewById(R.id.camera_pan_seekbar);
 		sb.setMax(40);
 		sb.setProgress(cameraPanTiltToProgress(mCameraPan));	// [-100,+100] => [0, 40]
 		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateCameraPan(mCameraPan);
 		// チルト
 		mCameraTilt = getInt(mPref, KEY_CAMERA_TILT, DEFAULT_CAMERA_TILT);
-		mCameraTiltLabel = (TextView)rootView.findViewById(R.id.camera_tilt_textview);
-		sb = (SeekBar)rootView.findViewById(R.id.camera_tilt_seekbar);
+		mCameraTiltLabel = rootView.findViewById(R.id.camera_tilt_textview);
+		sb = rootView.findViewById(R.id.camera_tilt_seekbar);
 		sb.setMax(40);
 		sb.setProgress(cameraPanTiltToProgress(mCameraTilt));	// [-100,+100] => [0, 40]
 		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
@@ -1824,32 +1827,32 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		Button btn;
 		// 露出
 		mExposure = mPref.getFloat(KEY_EXPOSURE, DEFAULT_EXPOSURE);
-		mExposureLabel = (TextView)rootView.findViewById(R.id.exposure_textview);
-		sb = (SeekBar)rootView.findViewById(R.id.exposure_seekbar);
+		mExposureLabel = rootView.findViewById(R.id.exposure_textview);
+		sb = rootView.findViewById(R.id.exposure_seekbar);
 		sb.setMax(6000);
 		sb.setProgress(exposureToProgress(mExposure));	// [-3,+ 3] => [0, 6000]
 		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateExposure(mExposure);
 		// 彩度
 		mSaturation = mPref.getFloat(KEY_SATURATION, DEFAULT_SATURATION);
-		mSaturationLabel = (TextView)rootView.findViewById(R.id.saturation_textview);
-		sb = (SeekBar)rootView.findViewById(R.id.saturation_seekbar);
+		mSaturationLabel = rootView.findViewById(R.id.saturation_textview);
+		sb = rootView.findViewById(R.id.saturation_seekbar);
 		sb.setMax(200);
 		sb.setProgress((int)(mSaturation * 100.0f) + 100);	// [-1.0f, +1.0f] => [0, 200]
 		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateSaturation(mSaturation);
 		// 明るさ
 		mBrightness = mPref.getFloat(KEY_BRIGHTNESS, DEFAULT_BRIGHTNESS);
-		mBrightnessLabel = (TextView)rootView.findViewById(R.id.brightness_textview);
-		sb = (SeekBar)rootView.findViewById(R.id.brightness_seekbar);
+		mBrightnessLabel = rootView.findViewById(R.id.brightness_textview);
+		sb = rootView.findViewById(R.id.brightness_seekbar);
 		sb.setMax(200);
 		sb.setProgress((int)(mBrightness * 100.0f) + 100);	// [-1.0f, +1.0f] => [0, 200]
 		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateBrightness(mBrightness);
 		// 二値化閾値
 		mBinarizeThreshold = mPref.getFloat(KEY_BINARIZE_THRESHOLD, DEFAULT_BINARIZE_THRESHOLD);
-		mBinarizeThresholdLabel = (TextView)rootView.findViewById(R.id.binarize_threshold_textview);
-		sb = (SeekBar)rootView.findViewById(R.id.binarize_threshold_seekbar);
+		mBinarizeThresholdLabel = rootView.findViewById(R.id.binarize_threshold_textview);
+		sb = rootView.findViewById(R.id.binarize_threshold_seekbar);
 		sb.setMax(100);
 		sb.setProgress((int)(mBinarizeThreshold * 100.0f));	// [0.0f, +1.0f] => [0, 100]
 		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
@@ -1926,14 +1929,14 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 
 		// OpenGL|ESで色抽出を使うかどうか
 		mEnableGLESExtraction = mPref.getBoolean(KEY_ENABLE_EXTRACTION, DEFAULT_ENABLE_EXTRACTION);
-		sw = (Switch)rootView.findViewById(R.id.use_extract_sw);
+		sw = rootView.findViewById(R.id.use_extract_sw);
 		sw.setChecked(mEnableGLESExtraction);
 		sw.setOnCheckedChangeListener(mOnCheckedChangeListener);
 		// 抽出色取得
-		btn = (Button)rootView.findViewById(R.id.update_extraction_color_btn);
+		btn = rootView.findViewById(R.id.update_extraction_color_btn);
 		btn.setOnClickListener(mOnClickListener);
 		// 抽出色リセット
-		btn = (Button)rootView.findViewById(R.id.reset_extraction_color_btn);
+		btn = rootView.findViewById(R.id.reset_extraction_color_btn);
 		btn.setOnClickListener(mOnClickListener);
 		// 抽出色
 		mExtractH = mPref.getFloat(KEY_EXTRACT_H, DEFAULT_EXTRACT_H);
@@ -1942,20 +1945,20 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		mExtractRangeS = mPref.getFloat(KEY_EXTRACT_RANGE_S, DEFAULT_EXTRACT_RANGE_S);
 		mExtractV = mPref.getFloat(KEY_EXTRACT_V, DEFAULT_EXTRACT_V);
 		mExtractRangeV = mPref.getFloat(KEY_EXTRACT_RANGE_V, DEFAULT_EXTRACT_RANGE_V);
-		mExtractRangeHLabel = (TextView)rootView.findViewById(R.id.extract_range_h_textview);
-		mExtractRangeHSeekbar = (SeekBar)rootView.findViewById(R.id.extract_range_h_seekbar);
+		mExtractRangeHLabel = rootView.findViewById(R.id.extract_range_h_textview);
+		mExtractRangeHSeekbar = rootView.findViewById(R.id.extract_range_h_seekbar);
 		mExtractRangeHSeekbar.setMax(100);
 		mExtractRangeHSeekbar.setProgress((int)(mExtractRangeH * 100)); 	   // [0.0f, 1.0f] => [0.0f, 100f]
 		mExtractRangeHSeekbar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateExtractRangeH(mExtractRangeH);
-		mExtractRangeSLabel = (TextView)rootView.findViewById(R.id.extract_range_s_textview);
-		mExtractRangeSSeekbar = (SeekBar)rootView.findViewById(R.id.extract_range_s_seekbar);
+		mExtractRangeSLabel = rootView.findViewById(R.id.extract_range_s_textview);
+		mExtractRangeSSeekbar = rootView.findViewById(R.id.extract_range_s_seekbar);
 		mExtractRangeSSeekbar.setMax(100);
 		mExtractRangeSSeekbar.setProgress((int)(mExtractRangeS * 100)); 	   // [0.0f, 1.0f] => [0.0f, 100f]
 		mExtractRangeSSeekbar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateExtractRangeS(mExtractRangeS);
-		mExtractRangeVLabel = (TextView)rootView.findViewById(R.id.extract_range_v_textview);
-		mExtractRangeVSeekbar = (SeekBar)rootView.findViewById(R.id.extract_range_v_seekbar);
+		mExtractRangeVLabel = rootView.findViewById(R.id.extract_range_v_textview);
+		mExtractRangeVSeekbar = rootView.findViewById(R.id.extract_range_v_seekbar);
 		mExtractRangeVSeekbar.setMax(100);
 		mExtractRangeVSeekbar.setProgress((int)(mExtractRangeV * 100)); 	   // [0.0f, 1.0f] => [0.0f, 100f]
 		mExtractRangeVSeekbar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
@@ -2108,32 +2111,32 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 
 		// 輪郭検出時の最小面積
 		mAreaLimitMin = mPref.getFloat(KEY_AREA_LIMIT_MIN, DEFAULT_AREA_LIMIT_MIN);
-		mAreaLimitMinLabel = (TextView)rootView.findViewById(R.id.area_limit_min_textview);
-		sb =(SeekBar)rootView.findViewById(R.id.area_limit_min_seekbar);
+		mAreaLimitMinLabel = rootView.findViewById(R.id.area_limit_min_textview);
+		sb =rootView.findViewById(R.id.area_limit_min_seekbar);
 		sb.setMax(9500);
 		sb.setProgress(areaLimitMinToProgress(mAreaLimitMin - 500)); 	   // [0,10000] => [0, 10000]
 		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateAreaLimitMin(mAreaLimitMin);
 		// ライン検出時の面積誤差1
 		mAreaErrLimit1 = mPref.getFloat(KEY_AREA_ERR_LIMIT1, DEFAULT_AREA_ERR_LIMIT1);
-		mAreaErrLimit1Label = (TextView)rootView.findViewById(R.id.area_err_limit1_textview);
-		sb =(SeekBar)rootView.findViewById(R.id.area_err_limit1_seekbar);
+		mAreaErrLimit1Label = rootView.findViewById(R.id.area_err_limit1_textview);
+		sb = rootView.findViewById(R.id.area_err_limit1_seekbar);
 		sb.setMax(100);
 		sb.setProgress((int)((mAreaErrLimit1 - 1.0f) * 100.0f)); 	   // [1,2] => [0, 100]
 		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateAreaErrLimit1(mAreaErrLimit1);
 		// ライン検出時の面積誤差2
 		mAreaErrLimit2 = mPref.getFloat(KEY_AREA_ERR_LIMIT2, DEFAULT_AREA_ERR_LIMIT2);
-		mAreaErrLimit2Label = (TextView)rootView.findViewById(R.id.area_err_limit2_textview);
-		sb =(SeekBar)rootView.findViewById(R.id.area_err_limit2_seekbar);
+		mAreaErrLimit2Label = rootView.findViewById(R.id.area_err_limit2_textview);
+		sb = rootView.findViewById(R.id.area_err_limit2_seekbar);
 		sb.setMax(100);
 		sb.setProgress((int)((mAreaErrLimit2 - 1.0f) * 100.0f)); 	   // [1,2] => [0, 100]
 		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateAreaErrLimit2(mAreaErrLimit2);
 		// ライン検出時の最小アスペクト比
 		mAspectLimitMin = mPref.getFloat(KEY_ASPECT_LIMIT_MIN, DEFAULT_ASPECT_LIMIT_MIN);
-		mAspectLimitMinLabel = (TextView)rootView.findViewById(R.id.aspect_limit_min_textview);
-		sb =(SeekBar)rootView.findViewById(R.id.aspect_limit_min_seekbar);
+		mAspectLimitMinLabel = rootView.findViewById(R.id.aspect_limit_min_textview);
+		sb =rootView.findViewById(R.id.aspect_limit_min_seekbar);
 		sb.setMax(190);
 		sb.setProgress((int)((mAspectLimitMin - 1.0f) * 10)); 	   // [1,20] => [0, 190]
 		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
@@ -2201,32 +2204,32 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		mTraceSensitivityFormat = getString(R.string.trace_config_trace_sensitivity);
 		// 移動方向逆バイアス
 		mTraceDirectionalReverseBias = mPref.getFloat(KEY_TRACE_DIR_REVERSE_BIAS, DEFAULT_TRACE_DIR_REVERSE_BIAS);
-		mTraceDirectionalReverseBiasLabel = (TextView)rootView.findViewById(R.id.trace_flight_reverse_bias_textview);
-		sb = (SeekBar)rootView.findViewById(R.id.trace_flight_reverse_bias_seekbar);
+		mTraceDirectionalReverseBiasLabel = rootView.findViewById(R.id.trace_flight_reverse_bias_textview);
+		sb = rootView.findViewById(R.id.trace_flight_reverse_bias_seekbar);
 		sb.setMax(200);
 		sb.setProgress((int)(mTraceDirectionalReverseBias * 100));	// [0.0f, 2.0f] => [0, 200]
 		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateTraceDirectionalReverseBias(mTraceDirectionalReverseBias);
 		// 移動平均タップ数
 		mTraceMovingAveTap = mPref.getInt(KEY_TRACE_MOVING_AVE_TAP, DEFAULT_TRACE_MOVING_AVE_TAP);
-		mTraceMovingAveTapLabel = (TextView)rootView.findViewById(R.id.trace_flight_moving_ave_tap_textview);
-		sb = (SeekBar)rootView.findViewById(R.id.trace_flight_moving_ave_tap_seekbar);
+		mTraceMovingAveTapLabel = rootView.findViewById(R.id.trace_flight_moving_ave_tap_textview);
+		sb = rootView.findViewById(R.id.trace_flight_moving_ave_tap_seekbar);
 		sb.setMax(19);
 		sb.setProgress(mTraceMovingAveTap - 1);	// [1, 20] => [0, 19]
 		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateTraceMovingAveTap(mTraceMovingAveTap);
 		// 減衰率
 		mTraceDecayRate = mPref.getFloat(KEY_TRACE_DECAY_RATE, DEFAULT_TRACE_DECAY_RATE);
-		mTraceDecayRateLabel = (TextView)rootView.findViewById(R.id.trace_flight_decay_rate_textview);
-		sb = (SeekBar)rootView.findViewById(R.id.trace_flight_decay_rate_seekbar);
+		mTraceDecayRateLabel = rootView.findViewById(R.id.trace_flight_decay_rate_textview);
+		sb = rootView.findViewById(R.id.trace_flight_decay_rate_seekbar);
 		sb.setMax(1000);
 		sb.setProgress((int)(mTraceDecayRate * 1000.0f));	// [0.000f, 1.000f] => [0, 1000]
 		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateTraceDecayRate(mTraceDecayRate);
 		// 制御感度
 		mTraceSensitivity = mPref.getFloat(KEY_TRACE_SENSITIVITY, DEFAULT_TRACE_SENSITIVITY);
-		mTraceSensitivityLabel = (TextView)rootView.findViewById(R.id.trace_flight_sensitivity_textview);
-		sb = (SeekBar)rootView.findViewById(R.id.trace_flight_sensitivity_seekbar);
+		mTraceSensitivityLabel = rootView.findViewById(R.id.trace_flight_sensitivity_textview);
+		sb = rootView.findViewById(R.id.trace_flight_sensitivity_seekbar);
 		sb.setMax(100);
 		sb.setProgress((int)(mTraceSensitivity));	// [0f, 100f] => [0, 100]
 		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
@@ -2284,29 +2287,29 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		mTraceAltitudeFormat = getString(R.string.trace_config_trace_altitude);
 		// 飛行姿勢(yaw)
 		mTraceAttitudeYaw = mPref.getFloat(KEY_TRACE_ATTITUDE_YAW, DEFAULT_TRACE_ATTITUDE_YAW);
-		mTraceAttitudeYawLabel = (TextView)rootView.findViewById(R.id.trace_flight_attitude_yaw_textview);
-		sb =(SeekBar)rootView.findViewById(R.id.trace_flight_attitude_yaw_seekbar);
+		mTraceAttitudeYawLabel = rootView.findViewById(R.id.trace_flight_attitude_yaw_textview);
+		sb = rootView.findViewById(R.id.trace_flight_attitude_yaw_seekbar);
 		sb.setMax(180);
 		sb.setProgress((int)(mTraceAttitudeYaw + 90));	// [-90,+90] => [0, 180]
 		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateTraceAttitudeYaw(mTraceAttitudeYaw);
 		// 飛行速度
 		mTraceSpeed = mPref.getFloat(KEY_TRACE_SPEED, DEFAULT_TRACE_SPEED);
-		mTraceSpeedLabel = (TextView)rootView.findViewById(R.id.trace_flight_speed_textview);
-		sb =(SeekBar)rootView.findViewById(R.id.trace_flight_speed_seekbar);
+		mTraceSpeedLabel = rootView.findViewById(R.id.trace_flight_speed_textview);
+		sb = rootView.findViewById(R.id.trace_flight_speed_seekbar);
 		sb.setMax(200);
 		sb.setProgress((int)(mTraceSpeed + 100));	// [-100,+100] => [0, 200]
 		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateTraceSpeed(mTraceSpeed);
 		// 高度制御
 		mTraceAltitudeEnabled = mPref.getBoolean(KEY_TRACE_ALTITUDE_ENABLED, DEFAULT_TRACE_ALTITUDE_ENABLED);
-		sw = (Switch)rootView.findViewById(R.id.trace_flight_altitude_enable_switch);
+		sw = rootView.findViewById(R.id.trace_flight_altitude_enable_switch);
 		sw.setChecked(mTraceAltitudeEnabled);
 		sw.setOnCheckedChangeListener(mOnCheckedChangeListener);
 		// 飛行高度
 		mTraceAltitude = Math.min(mPref.getFloat(KEY_TRACE_ALTITUDE, DEFAULT_TRACE_ALTITUDE), mFlightController.getMaxAltitude().current());
-		mTraceAltitudeLabel = (TextView)rootView.findViewById(R.id.trace_flight_altitude_textview);
-		sb =(SeekBar)rootView.findViewById(R.id.trace_flight_altitude_seekbar);
+		mTraceAltitudeLabel = rootView.findViewById(R.id.trace_flight_altitude_textview);
+		sb = rootView.findViewById(R.id.trace_flight_altitude_seekbar);
 		sb.setMax(45);
 		sb.setProgress((int)((mTraceAltitude - 0.5f) * 10.0f));	// [0.5,+5.0] => [0, 45]
 		sb.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
@@ -2361,8 +2364,8 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		mMaxVerticalSpeedFormat = getString(R.string.config_max_vertical_speed);
 		mMaxRotationSpeedFormat = getString(R.string.config_max_rotating_speed);
 		// 最大高度設定
-		mMaxAltitudeLabel = (TextView)root.findViewById(R.id.max_altitude_textview);
-		SeekBar seekbar = (SeekBar)root.findViewById(R.id.max_altitude_seekbar);
+		mMaxAltitudeLabel = root.findViewById(R.id.max_altitude_textview);
+		SeekBar seekbar = root.findViewById(R.id.max_altitude_seekbar);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
 		mMaxAltitude = mFlightController.getMaxAltitude();
@@ -2375,8 +2378,8 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		updateMaxAltitude(mMaxAltitude.current());
 		// 最大傾斜設定
 		// bebopは5-30度。最大時速約50km/hrからすると13.9m/s/30度≒0.46[m/s/度]
-		mMaxTiltLabel = (TextView)root.findViewById(R.id.max_tilt_textview);
-		seekbar = (SeekBar)root.findViewById(R.id.max_tilt_seekbar);
+		mMaxTiltLabel = root.findViewById(R.id.max_tilt_textview);
+		seekbar = root.findViewById(R.id.max_tilt_seekbar);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
 		mMaxTilt = mFlightController.getMaxTilt();
@@ -2388,8 +2391,8 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		seekbar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateMaxTilt(mMaxTilt.current());
 		// 最大上昇/降下速度設定, Bebop2は6m/s
-		mMaxVerticalSpeedLabel = (TextView)root.findViewById(R.id.max_vertical_speed_textview);
-		seekbar = (SeekBar)root.findViewById(R.id.max_vertical_speed_seekbar);
+		mMaxVerticalSpeedLabel = root.findViewById(R.id.max_vertical_speed_textview);
+		seekbar = root.findViewById(R.id.max_vertical_speed_seekbar);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
 		mMaxVerticalSpeed = mFlightController.getMaxVerticalSpeed();
@@ -2401,8 +2404,8 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		seekbar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateMaxVerticalSpeed(mMaxVerticalSpeed.current());
 		// 最大回転速度
-		mMaxRotationSpeedLabel = (TextView)root.findViewById(R.id.max_rotation_speed_textview);
-		seekbar = (SeekBar)root.findViewById(R.id.max_rotation_speed_seekbar);
+		mMaxRotationSpeedLabel = root.findViewById(R.id.max_rotation_speed_textview);
+		seekbar = root.findViewById(R.id.max_rotation_speed_seekbar);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
 		mMaxRotationSpeed = mFlightController.getMaxRotationSpeed();
@@ -2484,8 +2487,8 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		mAutopilotScaleRFormat = getString(R.string.config_scale_r);
 		mAutopilotMaxControlValueFormat = getString(R.string.config_control_max);
 		// 最大制御値設定
-		mAutopilotMaxControlValueLabel = (TextView)root.findViewById(R.id.max_control_value_textview);
-		SeekBar seekbar = (SeekBar)root.findViewById(R.id.max_control_value_seekbar);
+		mAutopilotMaxControlValueLabel = root.findViewById(R.id.max_control_value_textview);
+		SeekBar seekbar = root.findViewById(R.id.max_control_value_seekbar);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
 		mMaxControlValue = mPref.getFloat(APP_CONFIG_KEY_MAX_CONTROL_VALUE, APP_CONFIG_DEFAULT_MAX_CONTROL_VALUE);
@@ -2497,8 +2500,8 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		seekbar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateAutopilotMaxControlValue(mMaxControlValue);
 		// スケールX設定
-		mAutopilotScaleXLabel = (TextView)root.findViewById(R.id.scale_x_textview);
-		seekbar = (SeekBar)root.findViewById(R.id.scale_seekbar_x);
+		mAutopilotScaleXLabel = root.findViewById(R.id.scale_x_textview);
+		seekbar = root.findViewById(R.id.scale_seekbar_x);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
 		mScaleX = mPref.getFloat(APP_CONFIG_KEY_SCALE_X, APP_CONFIG_DEFAULT_SCALE_X);
@@ -2510,8 +2513,8 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		seekbar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateAutopilotScaleX(mScaleX);
 		// スケールY設定
-		mAutopilotScaleYLabel = (TextView)root.findViewById(R.id.scale_y_textview);
-		seekbar = (SeekBar)root.findViewById(R.id.scale_seekbar_y);
+		mAutopilotScaleYLabel = root.findViewById(R.id.scale_y_textview);
+		seekbar = root.findViewById(R.id.scale_seekbar_y);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
 		mScaleY = mPref.getFloat(APP_CONFIG_KEY_SCALE_Y, APP_CONFIG_DEFAULT_SCALE_Y);
@@ -2523,8 +2526,8 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		seekbar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateAutopilotScaleY(mScaleY);
 		// スケールZ設定
-		mAutopilotScaleZLabel = (TextView)root.findViewById(R.id.scale_z_textview);
-		seekbar = (SeekBar)root.findViewById(R.id.scale_seekbar_z);
+		mAutopilotScaleZLabel = root.findViewById(R.id.scale_z_textview);
+		seekbar = root.findViewById(R.id.scale_seekbar_z);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
 		mScaleZ = mPref.getFloat(APP_CONFIG_KEY_SCALE_Z, APP_CONFIG_DEFAULT_SCALE_Z);
@@ -2536,8 +2539,8 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		seekbar.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
 		updateAutopilotScaleZ(mScaleZ);
 		// スケールR設定
-		mAutopilotScaleRLabel = (TextView)root.findViewById(R.id.scale_r_textview);
-		seekbar = (SeekBar)root.findViewById(R.id.scale_seekbar_r);
+		mAutopilotScaleRLabel = root.findViewById(R.id.scale_r_textview);
+		seekbar = root.findViewById(R.id.scale_seekbar_r);
 		seekbar.setOnSeekBarChangeListener(null);
 		seekbar.setMax(1000);
 		mScaleR = mPref.getFloat(APP_CONFIG_KEY_SCALE_R, APP_CONFIG_DEFAULT_SCALE_R);
@@ -2725,8 +2728,9 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 			mConfigs = PAGER_CONFIG_TRACE;
 		}
 
+		@NonNull
 		@Override
-		public synchronized Object instantiateItem(final ViewGroup container, final int position) {
+		public synchronized Object instantiateItem(@NonNull final ViewGroup container, final int position) {
 			View view = null;
 			final int n = mConfigs != null ? mConfigs.length : 0;
 			if ((position >= 0) && (position < n)) {
@@ -2741,7 +2745,7 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		}
 
 		@Override
-		public synchronized void destroyItem(final ViewGroup container, final int position, final Object object) {
+		public synchronized void destroyItem(@NonNull final ViewGroup container, final int position, @NonNull final Object object) {
 			if (object instanceof View) {
 				container.removeView((View)object);
 			}
@@ -2753,7 +2757,7 @@ public abstract class BaseAutoPilotFragment extends BasePilotFragment {
 		}
 
 		@Override
-		public boolean isViewFromObject(final View view, final Object object) {
+		public boolean isViewFromObject(@NonNull final View view, @NonNull final Object object) {
 			return view.equals(object);
 		}
 

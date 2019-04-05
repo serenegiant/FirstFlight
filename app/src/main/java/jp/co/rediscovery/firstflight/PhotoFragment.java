@@ -38,12 +38,14 @@ package jp.co.rediscovery.firstflight;
 
 import android.database.DataSetObserver;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
+
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.serenegiant.media.MediaStoreImageAdapter;
+import com.serenegiant.mediastore.MediaStoreImageAdapter;
 
 /** 端末内の静止画を表示するためのFragment */
 public class PhotoFragment extends BaseFragment {
@@ -70,7 +72,9 @@ public class PhotoFragment extends BaseFragment {
 	}
 
 	@Override
-	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+	public View onCreateView(@NonNull final LayoutInflater inflater,
+		final ViewGroup container, final Bundle savedInstanceState) {
+
 		loadArguments(savedInstanceState);
 
 		final View rootView = inflater.inflate(R.layout.fragment_photo, container, false);

@@ -46,6 +46,8 @@ import android.view.ViewGroup;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
+import androidx.annotation.NonNull;
+
 /**
  * VideoView+MediaControllerを使って動画再生するためのFragment
  */
@@ -73,7 +75,9 @@ public class PlayerFragment extends BaseFragment {
 	}
 
 	@Override
-	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+	public View onCreateView(@NonNull final LayoutInflater inflater,
+		final ViewGroup container, final Bundle savedInstanceState) {
+
 		loadArguments(savedInstanceState);
 
 		final View rootView = inflater.inflate(R.layout.fragment_player2, container, false);

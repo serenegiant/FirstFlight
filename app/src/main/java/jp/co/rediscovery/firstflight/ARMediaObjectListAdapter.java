@@ -37,7 +37,7 @@ package jp.co.rediscovery.firstflight;
  */
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -116,6 +116,7 @@ public class ARMediaObjectListAdapter extends ArrayAdapter<ARMediaObject> {
 					final File file = new File(mediaObject.getFilePath());
 					holder.isPlayable = file.exists() && (file.length() == mediaObject.getSize());
 				} catch (final Exception e) {
+					// ignore
 				}
 				holder.playable.setVisibility(holder.isPlayable ? View.VISIBLE : View.INVISIBLE);
 			}

@@ -387,10 +387,7 @@ public class PilotFragment extends BasePilotFragment {
 						// check secondary touch
 						x = event.getX(ix1) - mSecondX;
 						y = event.getY(ix1) - mSecondY;
-						if (x * x + y * y < MIN_DISTANCE_SQUARE) {
-							// secondary touch is also at the almost same position.
-							return false;
-						}
+						return !(x * x + y * y < MIN_DISTANCE_SQUARE);
 					} else {
 						return false;
 					}

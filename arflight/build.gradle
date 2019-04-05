@@ -62,7 +62,7 @@ android {
 
 dependencies {
 	api fileTree(dir: 'libs', include: ['*.jar'])
-	implementation "com.android.support:appcompat-v7:${supportLibVersion}"
+	implementation "androidx.appcompat:appcompat:${androidXVersion}"
 	api ("com.parrot:arsdk:${arsdkVersion}") {
 		exclude group: 'com.android.support'
 	}

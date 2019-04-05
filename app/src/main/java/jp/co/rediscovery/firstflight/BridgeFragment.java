@@ -37,7 +37,6 @@ package jp.co.rediscovery.firstflight;
  */
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -58,6 +57,8 @@ import com.parrot.arsdk.ardiscovery.ARDiscoveryService;
 
 import java.util.Arrays;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import jp.co.rediscovery.arflight.ARDeviceInfoAdapter;
 import jp.co.rediscovery.arflight.DeviceInfo;
 import jp.co.rediscovery.arflight.IDeviceController;
@@ -92,8 +93,8 @@ public class BridgeFragment extends BaseControllerFragment {
 	}
 
 	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
+	public void onAttach(@NonNull final Context context) {
+		super.onAttach(context);
 		if (DEBUG) Log.v(TAG, "onAttach:");
 		final IntentFilter filter = new IntentFilter(ARFLIGHT_ACTION_DEVICE_LIST_CHANGED);
 		mLocalBroadcastManager.registerReceiver(mBroadcastReceiver, filter);
@@ -107,7 +108,7 @@ public class BridgeFragment extends BaseControllerFragment {
 	}
 
 	@Override
-	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+	public View onCreateView(@NonNull final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		if (DEBUG) Log.v(TAG, "onCreateView:");
 		onBeforeCreateView();
 		final View rootView = inflater.inflate(R.layout.fragment_bridge, container, false);
@@ -324,6 +325,7 @@ public class BridgeFragment extends BaseControllerFragment {
 //							replace(PilotFragment.newInstance(controller.getDeviceService(), info));
 						}
 					} catch (final Exception e) {
+						Log.w(TAG, e);
 					}
 				}
 			} , 1000);

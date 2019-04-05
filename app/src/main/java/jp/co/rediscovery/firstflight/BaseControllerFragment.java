@@ -195,7 +195,7 @@ public abstract class BaseControllerFragment extends BaseFragment {
 
 	protected IDeviceController getController() {
 		if (mController == null) {
-			final IDeviceController controller = ManagerFragment.getController(getActivity(), mDevice);
+			final IDeviceController controller = ManagerFragment.getController(requireActivity(), mDevice);
 			if ((mDeviceInfo != null) && (controller instanceof ISkyController)) {
 				if (DEBUG) Log.d(TAG, "ブリッジ接続");
 				// スカイコントローラー経由のブリッジ接続の時

@@ -37,7 +37,6 @@ package jp.co.rediscovery.firstflight;
  */
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -54,6 +53,8 @@ import com.parrot.arsdk.ardiscovery.ARDiscoveryService;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import jp.co.rediscovery.arflight.ARDeviceServiceAdapter;
 import jp.co.rediscovery.arflight.ManagerFragment;
 
@@ -78,7 +79,9 @@ public class ConnectionFragment extends BaseFragment {
 	}
 
 	@Override
-	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+	public View onCreateView(@NonNull final LayoutInflater inflater,
+		final ViewGroup container, final Bundle savedInstanceState) {
+
 //		if (DEBUG) Log.v(TAG, "onCreateView:");
 		loadArguments(savedInstanceState);
 		final View rootView = inflater.inflate(R.layout.fragment_connection, container, false);

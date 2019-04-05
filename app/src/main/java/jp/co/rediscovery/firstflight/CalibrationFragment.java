@@ -45,6 +45,7 @@ import android.widget.TextView;
 
 import com.parrot.arsdk.ardiscovery.ARDiscoveryDeviceService;
 
+import androidx.annotation.NonNull;
 import jp.co.rediscovery.arflight.IDeviceController;
 import jp.co.rediscovery.arflight.IFlightController;
 import jp.co.rediscovery.widget.VideoView;
@@ -81,7 +82,7 @@ public class CalibrationFragment extends BaseFlightControllerFragment {
 	}
 
 	@Override
-	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+	public View onCreateView(@NonNull final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		if (DEBUG) Log.v(TAG, "onCreateView:");
 		onBeforeCreateView();
 		final int model;

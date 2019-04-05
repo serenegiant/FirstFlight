@@ -36,8 +36,8 @@ package jp.co.rediscovery.firstflight;
  * the use of this software, even if advised of the possibility of such damage.
  */
 
-import android.support.annotation.NonNull;
-import android.support.v4.view.PagerAdapter;
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.PagerAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,6 +53,7 @@ public class ConfigPagerAdapter extends PagerAdapter {
 	private final BaseFragment mParent;
 	private final LayoutInflater mInflater;
 	private final PagerAdapterConfig[] mConfigs;
+
 	public ConfigPagerAdapter(final BaseFragment parent, final LayoutInflater inflater, final PagerAdapterConfig[] configs) {
 		super();
 		mParent = parent;

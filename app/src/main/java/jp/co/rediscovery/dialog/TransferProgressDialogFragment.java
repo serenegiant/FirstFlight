@@ -36,12 +36,10 @@ package jp.co.rediscovery.dialog;
  * the use of this software, even if advised of the possibility of such damage.
  */
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,8 +49,13 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import jp.co.rediscovery.firstflight.R;
 import com.serenegiant.utils.BuildCheck;
+
+import java.util.Locale;
 
 public class TransferProgressDialogFragment extends BaseDialogFragment {
 	private static final boolean DEBUG = false;	// FIXME 実働時はfalseにすること
@@ -62,10 +65,10 @@ public class TransferProgressDialogFragment extends BaseDialogFragment {
 		public void onCancel(final int requestID);
 	}
 
-	public static TransferProgressDialogFragment showDialog(final Activity parent, final String title, final String message) {
+	public static TransferProgressDialogFragment showDialog(final FragmentActivity parent, final String title, final String message) {
 		TransferProgressDialogFragment fragment = newInstance(-1, title, message);
 		try {
-			fragment.show(parent.getFragmentManager(), TAG);
+			fragment.show(parent.getSupportFragmentManager(), TAG);
 			final Dialog dialog = fragment.getDialog();
 		} catch (final IllegalStateException e) {
 			fragment = null;
@@ -104,6 +107,7 @@ public class TransferProgressDialogFragment extends BaseDialogFragment {
 		loadArgument(savedInstanceState);
 	}
 
+	@NonNull
 	@Override
 	public Dialog onCreateDialog(final Bundle savedInstanceState) {
 		final Dialog dialog = super.onCreateDialog(savedInstanceState);
@@ -113,34 +117,39 @@ public class TransferProgressDialogFragment extends BaseDialogFragment {
 		return dialog;
 	}
 
-	@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
 	@Override
-	public void onAttach(final Activity activity) {
-		super.onAttach(activity);
+	public void onAttach(@NonNull final Context context) {
+		super.onAttach(context);
 		if (DEBUG) Log.v(TAG, "onAttach:");
         // コールバックインターフェースを取得
     	try {
     		// 親がフラグメントの場合
 			mListener = (TransferProgressDialogListener)getTargetFragment();
     	} catch (final NullPointerException e1) {
+			// ignore
     	} catch (final ClassCastException e) {
+			// ignore
     	}
         if ((mListener == null) && BuildCheck.isAndroid4_2())
     	try {
     		// 親がフラグメントの場合
 			mListener = (TransferProgressDialogListener)getParentFragment();
     	} catch (final NullPointerException e1) {
+			// ignore
     	} catch (final ClassCastException e) {
+			// ignore
     	}
         if (mListener == null)
         try {
         	// 親がActivityの場合
-			mListener = (TransferProgressDialogListener)activity;
+			mListener = (TransferProgressDialogListener)context;
         } catch (final ClassCastException e) {
+			// ignore
     	} catch (final NullPointerException e1) {
+			// ignore
         }
 		if (mListener == null) {
-        	throw new ClassCastException(activity.toString() + " must implement TransferProgressDialogListener");
+        	throw new ClassCastException(context.toString() + " must implement TransferProgressDialogListener");
 		}
 	}
 
@@ -150,13 +159,15 @@ public class TransferProgressDialogFragment extends BaseDialogFragment {
 	private TextView progressTv2;
 
 	@Override
-	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+	public View onCreateView(@NonNull final LayoutInflater inflater,
+		final ViewGroup container, final Bundle savedInstanceState) {
+
 		final View rootView = inflater.inflate(R.layout.fragment_transfer_progress, container, false);
-		progressbar1 = (ProgressBar)rootView.findViewById(R.id.progressBar1);
-		progressTv1 = (TextView)rootView.findViewById(R.id.progress_textview1);
-		progressbar2 = (ProgressBar)rootView.findViewById(R.id.progressBar2);
-		progressTv2 = (TextView)rootView.findViewById(R.id.progress_textview2);
-		final Button button = (Button)rootView.findViewById(R.id.cancel_btn);
+		progressbar1 = rootView.findViewById(R.id.progressBar1);
+		progressTv1 = rootView.findViewById(R.id.progress_textview1);
+		progressbar2 = rootView.findViewById(R.id.progressBar2);
+		progressTv2 = rootView.findViewById(R.id.progress_textview2);
+		final Button button = rootView.findViewById(R.id.cancel_btn);
 		button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(final View view) {
@@ -183,16 +194,16 @@ public class TransferProgressDialogFragment extends BaseDialogFragment {
 		@Override
 		public void run() {
 			if ((progressbar1 != null) && (progressTv1 != null)) {
-				progressTv1.setText(String.format("%d%%", progressbar1.getProgress()));
+				progressTv1.setText(String.format(Locale.US, "%d%%", progressbar1.getProgress()));
 			}
 			if ((progressbar2 != null) && (progressTv2 != null)) {
-				progressTv2.setText(String.format("%d%%", progressbar2.getProgress()));
+				progressTv2.setText(String.format(Locale.US,"%d%%", progressbar2.getProgress()));
 			}
 		}
 	};
 
 	@Override
-	public void onCancel(final DialogInterface dialog) {
+	public void onCancel(@NonNull final DialogInterface dialog) {
 		super.onCancel(dialog);
 		doCancel();
 	}

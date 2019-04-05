@@ -36,7 +36,6 @@ package jp.co.rediscovery.firstflight;
  * the use of this software, even if advised of the possibility of such damage.
  */
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -46,8 +45,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
-import com.serenegiant.media.MediaStoreAdapter;
-import com.serenegiant.media.MediaStoreHelper;
+import com.serenegiant.mediastore.MediaStoreAdapter;
+import com.serenegiant.mediastore.MediaStoreHelper;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 /** 端末内の静止画・動画一覧を表示するためのFragment */
 public class GalleyFragment extends BaseFragment {
@@ -59,7 +61,6 @@ public class GalleyFragment extends BaseFragment {
 		return fragment;
 	}
 
-	private GridView mGalleyGridView;
 	private MediaStoreAdapter mMediaStoreAdapter;
 
 	public GalleyFragment() {
@@ -68,7 +69,7 @@ public class GalleyFragment extends BaseFragment {
 	}
 
 	@Override
-	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+	public View onCreateView(@NonNull final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		if (DEBUG) Log.v(TAG, "onCreateView:");
 		final View rootView = inflater.inflate(R.layout.fragment_galley, container, false);
 		initView(rootView);
@@ -80,10 +81,10 @@ public class GalleyFragment extends BaseFragment {
 	 * @param rootView
 	 */
 	private void initView(final View rootView) {
-		mGalleyGridView = rootView.findViewById(R.id.media_gridview);
+		final GridView gridView = rootView.findViewById(R.id.media_gridview);
 		mMediaStoreAdapter = new MediaStoreAdapter(getActivity(), R.layout.grid_item_media);
-		mGalleyGridView.setAdapter(mMediaStoreAdapter);
-		mGalleyGridView.setOnItemClickListener(mOnItemClickListener);
+		gridView.setAdapter(mMediaStoreAdapter);
+		gridView.setOnItemClickListener(mOnItemClickListener);
 	}
 
 	private final AdapterView.OnItemClickListener mOnItemClickListener = new AdapterView.OnItemClickListener() {

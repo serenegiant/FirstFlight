@@ -37,6 +37,7 @@ package jp.co.rediscovery.firstflight;
  */
 
 public class AppConst {
+	public static final String PREF_NAME = "jp.co.rediscovery.firstflight";
 	public static final String APP_EXTRA_DEVICE_SERVICE = "APP_EXTRA_DEVICE_SERVICE";
 	public static final String APP_EXTRA_DEVICE_INFO = "APP_EXTRA_DEVICE_INFO";
 

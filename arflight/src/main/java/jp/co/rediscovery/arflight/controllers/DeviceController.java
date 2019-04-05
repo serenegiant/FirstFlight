@@ -38,7 +38,7 @@ package jp.co.rediscovery.arflight.controllers;
 
 import android.content.Context;
 import android.os.Handler;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.parrot.arsdk.arcommands.ARCOMMANDS_COMMON_ACCESSORY_CONFIG_ACCESSORY_ENUM;

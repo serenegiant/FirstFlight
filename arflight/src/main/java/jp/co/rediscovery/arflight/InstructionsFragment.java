@@ -38,11 +38,10 @@ package jp.co.rediscovery.arflight;
 
 import android.animation.Animator;
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -56,6 +55,7 @@ import com.serenegiant.utils.ViewAnimationHelper;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.fragment.app.Fragment;
 import jp.co.rediscovery.widget.DroneNoticeView;
 
 /**
