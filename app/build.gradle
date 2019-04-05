@@ -67,7 +67,7 @@ android {
 //					def list = applicationId.split("\\.")
 //					def appName = list[list.length - 1]
 //					def date = new java.text.SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date())
-					def apkName = "firstflight__${variant.buildType.name}_r${versionName}_v${versionCode}.apk"
+					def apkName = "firstflight_${variant.buildType.name}_r${versionName}_v${versionCode}.apk"
 					if (output.hasProperty('outputFileName')) {
 						output.outputFileName = apkName
 					} else {
